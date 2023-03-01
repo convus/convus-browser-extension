@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="turbo-root" content="http://localhost:3009/"> <!-- Important for POSTs to work -->
+    <meta name="turbo-root" content="http://localhost:3009"> <!-- Important for POSTs to work -->
 
     <script src="popup.js"></script>
     <title>Convus</title>
   </head>
   <body id="body-popup">
-    <turbo-frame id="new_review" src="http://localhost:3009//reviews/new?source=chrome_extension" data-turbo="true">
+    <turbo-frame id="new_review" src="http://localhost:3009/reviews/new?source=chrome_extension" data-turbo="true">
       loading....
     </turbo-frame>
   </body>

@@ -7,7 +7,7 @@ const errorFilePath = 'esbuild_error'
 // In the future, there will be more differences for development vs production
 // ... and it might not be exclusively determined by watch
 const development = watch
-const baseUrl = development ? "http://localhost:3009/" : "https://www.convus.org"
+const baseUrl = development ? "http://localhost:3009" : "https://www.convus.org"
 // Generate relevant index.html file via this garbage
 let htmlContent = fs.readFileSync('src/index.html', 'utf8').replace(/{{baseUrl}}/g, baseUrl)
 fs.writeFileSync('popup/index.html', htmlContent.replace());

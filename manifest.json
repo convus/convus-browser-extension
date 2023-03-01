@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Convus Reviews",
-  "version": "0.1",
+  "version": "0.2",
   "description": "Add reviews to Convus for the page you're viewing",
 
   "icons": {
@@ -17,7 +17,8 @@
   },
 
  "host_permissions": [
-    "https://*.convus.org/"
+    "https://*.convus.org/",
+    "http://localhost:3009/"
   ],
 
  "permissions": [
