@@ -17,8 +17,7 @@
   },
 
  "host_permissions": [
-    "*://*.convus.org/",
-    "http://localhost:3009/"
+    "*://*.convus.org/"
   ],
 
  "permissions": [
