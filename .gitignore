@@ -2,3 +2,7 @@
 
 .DS_Store
 dump.rdb
+
+yarn-error.log
+/node_modules
+esbuild_error

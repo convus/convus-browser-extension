@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["popup.js"],
+  "sourcesContent": ["console.log(\"different party\");\n"],
+  "mappings": ";;;AAAA,YAAQ,IAAI,iBAAiB;;",
+  "names": []
+}

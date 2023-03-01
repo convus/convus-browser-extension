@@ -1,0 +1,26 @@
+{
+  "name": "convus_reviews_",
+  "private": "false",
+  "scripts": {
+    "build": "node esbuild.config.js",
+    "lint": "standard --fix"
+  },
+  "dependencies": {
+    "@hotwired/turbo": "^7.3.0",
+    "esbuild": "^0.15.3",
+    "loglevel": "^1.8.1",
+    "prettier-standard": "^16.4.1",
+    "standard": "^16.0.4"
+  },
+  "standard": {
+    "globals": [
+      "alert",
+      "confirm",
+      "fetch",
+      "localStorage"
+    ],
+    "ignore": [
+      "node_modules/*"
+    ]
+  }
+}
