@@ -1,8 +1,6 @@
 // Import turbo
-import "@hotwired/turbo"
+import '@hotwired/turbo'
 
 import log from './log'
 
-log.debug("testing now")
-
-
+log.debug('testing now')
