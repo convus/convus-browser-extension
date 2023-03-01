@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="turbo-root" content="http://localhost:3009"> <!-- Important for POSTs to work -->
 
+    <link rel="stylesheet" href="popup.css" data-turbo-track="reload" />
     <script src="turbo.es2017-umd.js"></script>
     <title>Convus</title>
   </head>
-  <body>
-    <h1>Convus reviews</h1>
+  <body id="body-popup">
     <turbo-frame id="content" src="http://localhost:3009/browser_extension" data-turbo="true">
       loading....
     </turbo-frame>

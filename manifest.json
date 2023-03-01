@@ -16,5 +16,14 @@
     "default_popup": "popup/index.html"
   },
 
+ "host_permissions": [
+    "*://*.convus.org/",
+    "http://localhost:3009/"
+  ],
+
+ "permissions": [
+    "cookies"
+  ],
+
   "content_scripts": []
 }
