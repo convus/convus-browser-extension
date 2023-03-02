@@ -4064,7 +4064,6 @@
     window.storedTabUrl = tabUrl;
     const title = "";
     setTimeout(updateReviewFields, 500, tabUrl, title);
-    return tabUrl;
   });
 })();
 //# sourceMappingURL=popup.js.map

@@ -8,6 +8,10 @@ const updateReviewFields = (tabUrl, title) => {
   document.getElementById('review_submitted_url').value = tabUrl
   document.getElementById('review_citation_title').value = title
 }
+
+// const function getTitle(){
+//   return document.querySelector('title').textContent
+// }
 // lastFocused might be right sometime?
 // chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -21,5 +25,18 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 
   setTimeout(updateReviewFields, 500, tabUrl, title)
 
-  return tabUrl
+  // return tabUrl
+
+  // Doesn't work :/
+  // let result;
+  // try {
+  //   [{result}] = await chrome.scripting.executeScript({
+  //     target: {tabId: tabs[0].id},
+  //     func: () => ,
+  //   });
+  // } catch (e) {
+  //   document.body.textContent = 'Cannot access page';
+  //   return;
+  // }
+  // console.log(result)
 })
