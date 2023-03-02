@@ -23,6 +23,15 @@
     "default_title": "Convus: review current page"
   },
 
+ "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+
+ "background": {
+    "service_worker": "popup/background.js"
+  },
+
   "action": {
     "default_popup": "popup/index.html"
   },
