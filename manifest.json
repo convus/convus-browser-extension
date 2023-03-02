@@ -12,17 +12,6 @@
     "512": "images/icon-512.png"
   },
 
-  "browser_action": {
-    "default_icon": {
-      "48": "images/icon-48.png",
-      "96": "images/icon-96.png",
-      "128": "images/icon-128.png",
-      "256": "images/icon-256.png",
-      "512": "images/icon-512.png"
-    },
-    "default_title": "Convus: review current page"
-  },
-
  "permissions": [
     "activeTab",
     "scripting"
@@ -33,7 +22,15 @@
   },
 
   "action": {
-    "default_popup": "popup/index.html"
+    "default_icon": {
+      "16": "images/icon-16.png",
+      "32": "images/icon-32.png",
+      "48": "images/icon-48.png",
+      "96": "images/icon-96.png",
+      "128": "images/icon-128.png"
+    },
+    "default_popup": "popup/index.html",
+    "default_title": "Convus: review current page"
   },
 
  "host_permissions": [
@@ -45,5 +42,15 @@
     "cookies"
   ],
 
-  "content_scripts": []
+  "content_scripts": [],
+
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+R",
+        "mac": "MacCtrl+Shift+R"
+      },
+      "description": "__MSG_commandOpenPopup__"
+    }
+  }
 }
