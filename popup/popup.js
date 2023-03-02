@@ -4054,6 +4054,16 @@
   var log_default = import_loglevel.default;
 
   // popup.js
-  log_default.debug("testing now");
+  var updateReviewFields = (tabUrl) => {
+    log_default.debug(window.storedTabUrl);
+    let reviewUrlField = document.getElementById("review_submitted_url");
+    reviewUrlField.value = tabUrl;
+  };
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    const tabUrl = tabs[0].url;
+    window.storedTabUrl = tabUrl;
+    setTimeout(updateReviewFields, 500, tabUrl);
+    return tabUrl;
+  });
 })();
 //# sourceMappingURL=popup.js.map

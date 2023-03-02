@@ -14,7 +14,8 @@
 
  "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "cookies"
   ],
 
  "background": {
@@ -36,10 +37,6 @@
  "host_permissions": [
     "https://*.convus.org/",
     "http://localhost:3009/"
-  ],
-
- "permissions": [
-    "cookies"
   ],
 
   "content_scripts": [],
