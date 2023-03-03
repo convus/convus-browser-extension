@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Convus Reviews",
   "version": "0.2",
-  "description": "Add reviews to Convus for the page you're viewing",
+  "description": "Add a review to Convus for the page you're viewing in your browser",
 
   "icons": {
     "48": "images/icon-48.png",

@@ -11,7 +11,7 @@ const updateReviewFields = (tabUrl, title) => {
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   // since only one tab should be active and in the current window at once
   // the return variable should only have one entry
-  const activeTab = tabs[0];
+  const activeTab = tabs[0]
   // window.storedTabUrl = activeTab.url // this is available in updateReviewFields
   // log.debug(tabs[0])
   setTimeout(updateReviewFields, 500, activeTab.url, activeTab.title)
