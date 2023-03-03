@@ -4051,20 +4051,15 @@
   // log.js
   var import_loglevel = __toESM(require_loglevel());
   import_loglevel.default.setLevel("debug");
-  var log_default = import_loglevel.default;
 
   // popup.js
   var updateReviewFields = (tabUrl, title) => {
-    log_default.debug(window.storedTabUrl);
     document.getElementById("review_submitted_url").value = tabUrl;
     document.getElementById("review_citation_title").value = title;
   };
   chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    const tabUrl = tabs[0].url;
-    window.storedTabUrl = tabUrl;
-    log_default.debug(tabs[0]);
-    const title = tabs[0].title;
-    setTimeout(updateReviewFields, 500, tabUrl, title);
+    const activeTab = tabs[0];
+    setTimeout(updateReviewFields, 500, activeTab.url, activeTab.title);
   });
 })();
 //# sourceMappingURL=popup.js.map

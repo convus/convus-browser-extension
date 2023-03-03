@@ -14,13 +14,8 @@
 
  "permissions": [
     "activeTab",
-    "scripting",
     "cookies"
   ],
-
- // "background": {
- //    "service_worker": "popup/background.js"
- //  },
 
   "action": {
     "default_icon": {
