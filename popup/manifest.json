@@ -30,8 +30,7 @@
   },
 
  "host_permissions": [
-    "https://*.convus.org/",
-    "http://localhost:3009/"
+    "https://*.convus.org/"
   ],
 
   "content_scripts": [],
