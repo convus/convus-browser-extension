@@ -15,12 +15,14 @@
   "standard": {
     "globals": [
       "alert",
+      "chrome",
       "confirm",
       "fetch",
       "localStorage"
     ],
     "ignore": [
-      "node_modules/*"
+      "node_modules/*",
+      "popup/popup.js"
     ]
   }
 }

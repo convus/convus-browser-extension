@@ -8,4 +8,6 @@ In your terminal, run:
 
     ./start
 
-To build and watch.
+To build and watch - which will build using `http://localhost:3009`
+
+To build the publishable version, use `yarn build` - which will build with `https://www.convus.org` as the source.

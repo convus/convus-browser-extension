@@ -4,6 +4,15 @@ const fs = require('fs')
 const watch = process.argv.includes('--watch')
 const errorFilePath = 'esbuild_error'
 
+// In the future, there will be more differences for development vs production
+// ... and it might not be exclusively determined by watch
+const development = watch
+const baseUrl = development ? 'http://localhost:3009' : 'https://www.convus.org'
+// Generate relevant index.html file via this garbage
+const htmlContent = fs.readFileSync('src/index.html', 'utf8').replace(/{{baseUrl}}/g, baseUrl)
+fs.writeFileSync('popup/index.html', htmlContent.replace())
+
+// esbuild, go to town
 const watchOptions = {
   onRebuild (error, result) {
     if (error) {
@@ -27,4 +36,4 @@ require('esbuild')
     // custom plugins will be inserted is this array
     plugins: []
   })
-  .then((result) => console.log('esbuild is watching for changes:', result))
+  .then((result) => console.log('esbuild updated:', result))

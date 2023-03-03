@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Convus Reviews",
+  "version": "0.2",
+  "description": "Add a review to Convus for the page you're viewing in your browser",
+
+  "icons": {
+    "48": "images/icon-48.png",
+    "96": "images/icon-96.png",
+    "128": "images/icon-128.png",
+    "256": "images/icon-256.png",
+    "512": "images/icon-512.png"
+  },
+
+ "permissions": [
+    "activeTab",
+    "cookies"
+  ],
+
+  "action": {
+    "default_icon": {
+      "16": "images/icon-16.png",
+      "32": "images/icon-32.png",
+      "48": "images/icon-48.png",
+      "96": "images/icon-96.png",
+      "128": "images/icon-128.png"
+    },
+    "default_popup": "index.html",
+    "default_title": "Convus: review current page"
+  },
+
+ "host_permissions": [
+    "https://*.convus.org/",
+    "http://localhost:3009/"
+  ],
+
+  "content_scripts": [],
+
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+R",
+        "mac": "MacCtrl+Shift+R"
+      },
+      "description": "__MSG_commandOpenPopup__"
+    }
+  }
+}
