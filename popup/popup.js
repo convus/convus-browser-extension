@@ -4062,7 +4062,8 @@
   chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     const tabUrl = tabs[0].url;
     window.storedTabUrl = tabUrl;
-    const title = "";
+    log_default.debug(tabs[0]);
+    const title = tabs[0].title;
     setTimeout(updateReviewFields, 500, tabUrl, title);
   });
 })();

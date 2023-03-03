@@ -21,7 +21,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   const tabUrl = tabs[0].url
   window.storedTabUrl = tabUrl
   // TODO: make this get the actual title
-  const title = ''
+  log.debug(tabs[0])
+  const title = tabs[0].title
 
   setTimeout(updateReviewFields, 500, tabUrl, title)
 
