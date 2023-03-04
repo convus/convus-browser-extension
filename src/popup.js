@@ -1,5 +1,5 @@
 // Import turbo
-import '@hotwired/turbo'
+// import '@hotwired/turbo'
 
 import log from './log'
 
@@ -8,24 +8,35 @@ const updateReviewFields = (tabUrl, title) => {
   document.getElementById('review_citation_title').value = title
 }
 
-const displayLoginForm = () => {
-  document.getElementById("login-form").classList.remove("hidden")
+const loginTime = () => {
+  log.debug("it's login time")
+  let loginForm = document.getElementById("login-form")
+  if  (typeof(loginForm) === 'undefined' || loginForm === null) {
+    return setTimeout(loginTime, 50)
+  }
+  // Remove the existing data that is incorrect - maybe actually do in form submit?
+  // chrome.storage.local.remove("reviewKey")
+  window.reviewKey = undefined
+  loginForm?.classList.remove("hidden")
+  document.getElementById("new_review")?.classList?.add("hidden")
 }
 
-chrome.storage.local.remove("reviewKey")
-
+// chrome.storage.local.remove("reviewKey")
 // chrome.storage.local.set({"reviewKey": "xxxxxx"})
 
-chrome.storage.local.get("reviewKey", function(data) {
-  log.debug(data)
-  if (typeof data !== undefined && data.reviewKey !== undefined) {
-    window.reviewKey = data.reviewKey
-  } else {
-    // wow, I need to enqueue updates I guess - might be solved by putting JS at the end
-    setTimeout(displayLoginForm, 100)
-  }
-});
+chrome.storage.local.get("reviewKey")
+  .then(data => data.reviewKey)
+  .then(reviewKey => {
+    log.debug("reviewKey:", reviewKey)
+    if (typeof reviewKey !== undefined) {
+      window.reviewKey = reviewKey
+      checkReviewKey(window.reviewKey)
+    } else {
+      loginTime()
+    }
+  })
 
+// const setReviewPageData =
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   // since only one tab should be active and in the current window at once
   // the return variable should only have one entry
@@ -35,5 +46,12 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   setTimeout(updateReviewFields, 500, activeTab.url, activeTab.title)
 })
 
+// getStoredReviewKey()
+// setReviewPageData()
+
 // Close the popup
 // window.close()
+
+const checkReviewKey = (key) => {
+  log.debug("checking review key:", key)
+}

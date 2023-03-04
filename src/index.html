@@ -11,8 +11,84 @@
   </head>
   <body id="body-popup">
     <div id="login-form" class="hidden">
-      <h1>Login form</h1>
+      <h2 class="mb-2">Log in</h2>
+      <form class="new_user" id="new_user" action="{{baseUrl}}/api/v1/auth" accept-charset="UTF-8" method="post">
+        <div class="form-row">
+          <label for="user_email">Email</label>
+          <input autofocus="autofocus" autocomplete="email" class="form-control" type="email" value="" name="user[email]" id="user_email" />
+        </div>
+        <div class="form-row">
+          <label for="user_password">Password</label>
+          <input autocomplete="current-password" class="form-control" type="password" name="user[password]" id="user_password" />
+        </div>
+        <div class="field">
+          <input name="user[remember_me]" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="user[remember_me]" id="user_remember_me" />
+          <label for="user_remember_me">Remember me</label>
+        </div>
+        <div class="form-row-btn">
+          <input type="submit" name="commit" value="Log in" class="btn btn-success" data-disable-with="Log in" />
+        </div>
+      </form>
+      <p class="mt-2"><a href="{{baseUrl}}/users/password/new" target="_blank">Forgot your password?</a></p>
+      <p class="mt-2"><a href="{{baseUrl}}/users/sign_up" target="_blank">Sign up</a></p>
     </div>
-    <turbo-frame id="new_review" src="{{baseUrl}}/reviews/new?source=chrome_extension" data-turbo="true"></turbo-frame>
+
+    <div id="new_review">
+      <form action="{{baseUrl}}/reviews" accept-charset="UTF-8" method="post">
+        <input class="form-control" autocomplete="off" type="hidden" value="chrome_extension" name="review[source]" id="review_source" />
+        <div class="form-row">
+          <input placeholder="URL" class="form-control hidden-in-browser-ext" autocomplete="off" type="text" name="review[submitted_url]" id="review_submitted_url" />
+        </div>
+        <div class="row grid-cols-2 divide-x">
+          <div class="col py-1">
+            <label class="reviews-radio-button" for="review_agreement_agree">
+              <input type="radio" value="agree" name="review[agreement]" id="review_agreement_agree" />
+              Agree
+            </label>
+            <label class="reviews-radio-button" for="review_agreement_neutral">
+              <input type="radio" value="neutral" checked="checked" name="review[agreement]" id="review_agreement_neutral" />
+              Neutral
+            </label>
+            <label class="reviews-radio-button" for="review_agreement_disagree">
+              <input type="radio" value="disagree" name="review[agreement]" id="review_agreement_disagree" />
+              Disagree
+            </label>
+          </div>
+          <div class="col py-1">
+            <label class="reviews-radio-button" for="review_quality_quality_high">
+              <input type="radio" value="quality_high" name="review[quality]" id="review_quality_quality_high" />
+              High Quality
+            </label>
+            <label class="reviews-radio-button" for="review_quality_quality_med">
+              <input type="radio" value="quality_med" checked="checked" name="review[quality]" id="review_quality_quality_med" />
+              Neutral
+            </label>
+            <label class="reviews-radio-button" for="review_quality_quality_low">
+              <input type="radio" value="quality_low" name="review[quality]" id="review_quality_quality_low" />
+              Low Quality
+            </label>
+          </div>
+        </div>
+        <div class="form-row ">
+          <label class="reviews-check" for="review_changed_my_opinion">
+            <input name="review[changed_my_opinion]" type="hidden" value="0" autocomplete="off" /><input class="form-check-input" type="checkbox" value="1" name="review[changed_my_opinion]" id="review_changed_my_opinion" />
+            Changed my opinion
+          </label>
+        </div>
+        <div class="form-row">
+          <label class="reviews-check" for="review_significant_factual_error">
+            <input name="review[significant_factual_error]" type="hidden" value="0" autocomplete="off" /><input class="form-check-input" type="checkbox" value="1" name="review[significant_factual_error]" id="review_significant_factual_error" />
+            Significant factual error(s)
+          </label>
+        </div>
+        <div class="form-row-btn mb-3">
+          <input type="submit" name="commit" value="save" class="btn btn-success" data-disable-with="save" />
+        </div>
+        <div class="form-row hidden-in-browser-ext">
+          <label for="review_citation_title">Title</label>
+          <input class="form-control" type="text" name="review[citation_title]" id="review_citation_title" />
+        </div>
+      </form>
+    </div>
   </body>
 </html>
