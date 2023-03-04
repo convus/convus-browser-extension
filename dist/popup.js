@@ -267,7 +267,7 @@
   });
   chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     const activeTab = tabs[0];
-    setTimeout(updateReviewFields, 500, activeTab.url, activeTab.title);
+    updateReviewFields(activeTab.url, activeTab.title);
   });
   var verifyReviewKey = (key) => {
     log_default.debug("checking review key:", key);
@@ -279,7 +279,12 @@
     log_default.debug(authUrl, formNewReviewUrl());
   };
   var updateReviewFields = (tabUrl, title) => {
-    document.getElementById("review_submitted_url").value = tabUrl;
+    const reviewUrlField = document.getElementById("review_submitted_url");
+    if (typeof reviewUrlField === "undefined" || reviewUrlField === null) {
+      log_default.debug("authUrl not present in DOM, trying later");
+      return setTimeout(reviewUrlField, 50, tabUrl, title);
+    }
+    reviewUrlField.value = tabUrl;
     document.getElementById("review_citation_title").value = title;
   };
   var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
@@ -295,5 +300,6 @@
     loginForm?.classList.remove("hidden");
     document.getElementById("new_review")?.classList?.add("hidden");
   };
+  chrome.storage.local.set({ "reviewKey": "xxxxxx" });
 })();
 //# sourceMappingURL=popup.js.map

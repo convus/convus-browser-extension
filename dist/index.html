@@ -37,7 +37,7 @@
       <form id="new_review_form" action="http://localhost:3009/reviews" accept-charset="UTF-8" method="post">
         <input class="form-control" autocomplete="off" type="hidden" value="chrome_extension" name="review[source]" id="review_source" />
         <div class="form-row">
-          <input placeholder="URL" class="form-control hidden-in-browser-ext" autocomplete="off" type="text" name="review[submitted_url]" id="review_submitted_url" />
+          <input placeholder="URL" class="form-control" autocomplete="off" type="text" name="review[submitted_url]" id="review_submitted_url" />
         </div>
         <div class="row grid-cols-2 divide-x">
           <div class="col py-1">
@@ -84,7 +84,7 @@
         <div class="form-row-btn mb-3">
           <input type="submit" name="commit" value="save" class="btn btn-success" data-disable-with="save" />
         </div>
-        <div class="form-row hidden-in-browser-ext">
+        <div class="form-row">
           <label for="review_citation_title">Title</label>
           <input class="form-control" type="text" name="review[citation_title]" id="review_citation_title" />
         </div>
