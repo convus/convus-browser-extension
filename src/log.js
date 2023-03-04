@@ -1,5 +1,5 @@
-import loglevel from 'loglevel'
+import loglevel from "loglevel";
 
-loglevel.setLevel('debug')
+if (process.env.NODE_ENV !== "production") loglevel.setLevel("debug");
 
-export default loglevel
+export default loglevel;

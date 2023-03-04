@@ -34,7 +34,7 @@
     </div>
 
     <div id="new_review">
-      <form action="{{baseUrl}}/reviews" accept-charset="UTF-8" method="post">
+      <form id="new_review_form" action="{{baseUrl}}/reviews" accept-charset="UTF-8" method="post">
         <input class="form-control" autocomplete="off" type="hidden" value="chrome_extension" name="review[source]" id="review_source" />
         <div class="form-row">
           <input placeholder="URL" class="form-control hidden-in-browser-ext" autocomplete="off" type="text" name="review[submitted_url]" id="review_submitted_url" />

@@ -10,7 +10,6 @@
     <title>Convus</title>
   </head>
   <body id="body-popup">
-
     <div id="login-form" class="hidden">
       <h2 class="mb-2">Log in</h2>
       <form class="new_user" id="new_user" action="http://localhost:3009/api/v1/auth" accept-charset="UTF-8" method="post">
@@ -35,13 +34,11 @@
     </div>
 
     <div id="new_review">
-      <form action="http://localhost:3009/reviews" accept-charset="UTF-8" method="post">
+      <form id="new_review_form" action="http://localhost:3009/reviews" accept-charset="UTF-8" method="post">
         <input class="form-control" autocomplete="off" type="hidden" value="chrome_extension" name="review[source]" id="review_source" />
-
         <div class="form-row">
           <input placeholder="URL" class="form-control hidden-in-browser-ext" autocomplete="off" type="text" name="review[submitted_url]" id="review_submitted_url" />
         </div>
-
         <div class="row grid-cols-2 divide-x">
           <div class="col py-1">
             <label class="reviews-radio-button" for="review_agreement_agree">
@@ -57,7 +54,6 @@
               Disagree
             </label>
           </div>
-
           <div class="col py-1">
             <label class="reviews-radio-button" for="review_quality_quality_high">
               <input type="radio" value="quality_high" name="review[quality]" id="review_quality_quality_high" />
@@ -73,7 +69,6 @@
             </label>
           </div>
         </div>
-
         <div class="form-row ">
           <label class="reviews-check" for="review_changed_my_opinion">
             <input name="review[changed_my_opinion]" type="hidden" value="0" autocomplete="off" /><input class="form-check-input" type="checkbox" value="1" name="review[changed_my_opinion]" id="review_changed_my_opinion" />
@@ -86,11 +81,9 @@
             Significant factual error(s)
           </label>
         </div>
-
         <div class="form-row-btn mb-3">
           <input type="submit" name="commit" value="save" class="btn btn-success" data-disable-with="save" />
         </div>
-
         <div class="form-row hidden-in-browser-ext">
           <label for="review_citation_title">Title</label>
           <input class="form-control" type="text" name="review[citation_title]" id="review_citation_title" />

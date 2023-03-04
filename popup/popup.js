@@ -253,26 +253,12 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  import_loglevel.default.setLevel("debug");
+  if (true)
+    import_loglevel.default.setLevel("debug");
   var log_default = import_loglevel.default;
 
   // popup.js
-  var updateReviewFields = (tabUrl, title) => {
-    document.getElementById("review_submitted_url").value = tabUrl;
-    document.getElementById("review_citation_title").value = title;
-  };
-  var loginTime = () => {
-    log_default.debug("it's login time");
-    let loginForm = document.getElementById("login-form");
-    if (typeof loginForm === "undefined" || loginForm === null) {
-      return setTimeout(loginTime, 50);
-    }
-    window.reviewKey = void 0;
-    loginForm?.classList.remove("hidden");
-    document.getElementById("new_review")?.classList?.add("hidden");
-  };
   chrome.storage.local.get("reviewKey").then((data) => data.reviewKey).then((reviewKey) => {
-    log_default.debug("reviewKey:", reviewKey);
     if (typeof reviewKey !== void 0) {
       window.reviewKey = reviewKey;
       checkReviewKey(window.reviewKey);
@@ -286,6 +272,28 @@
   });
   var checkReviewKey = (key) => {
     log_default.debug("checking review key:", key);
+    authUrl = formAuthUrl();
+    if (typeof authUrl === "undefined" || authUrl === null) {
+      log_default.debug("authUrl not present, trying later");
+      return setTimeout(checkReviewKey, 50, key);
+    }
+    log_default.debug(authUrl);
+  };
+  var updateReviewFields = (tabUrl, title) => {
+    document.getElementById("review_submitted_url").value = tabUrl;
+    document.getElementById("review_citation_title").value = title;
+  };
+  var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
+  var loginTime = () => {
+    log_default.debug("it's login time");
+    let loginForm = document.getElementById("login-form");
+    if (typeof loginForm === "undefined" || loginForm === null) {
+      log_default.debug("login form not present, trying later");
+      return setTimeout(loginTime, 50);
+    }
+    window.reviewKey = void 0;
+    loginForm?.classList.remove("hidden");
+    document.getElementById("new_review")?.classList?.add("hidden");
   };
 })();
 //# sourceMappingURL=popup.js.map

@@ -1,33 +1,8 @@
-// Import turbo
-// import '@hotwired/turbo'
-
 import log from './log'
-
-const updateReviewFields = (tabUrl, title) => {
-  document.getElementById('review_submitted_url').value = tabUrl
-  document.getElementById('review_citation_title').value = title
-}
-
-const loginTime = () => {
-  log.debug("it's login time")
-  let loginForm = document.getElementById("login-form")
-  if  (typeof(loginForm) === 'undefined' || loginForm === null) {
-    return setTimeout(loginTime, 50)
-  }
-  // Remove the existing data that is incorrect - maybe actually do in form submit?
-  // chrome.storage.local.remove("reviewKey")
-  window.reviewKey = undefined
-  loginForm?.classList.remove("hidden")
-  document.getElementById("new_review")?.classList?.add("hidden")
-}
-
-// chrome.storage.local.remove("reviewKey")
-// chrome.storage.local.set({"reviewKey": "xxxxxx"})
 
 chrome.storage.local.get("reviewKey")
   .then(data => data.reviewKey)
   .then(reviewKey => {
-    log.debug("reviewKey:", reviewKey)
     if (typeof reviewKey !== undefined) {
       window.reviewKey = reviewKey
       checkReviewKey(window.reviewKey)
@@ -54,4 +29,45 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 
 const checkReviewKey = (key) => {
   log.debug("checking review key:", key)
+  authUrl = formAuthUrl()
+  if (typeof(authUrl) === 'undefined' || authUrl === null) {
+    log.debug("authUrl not present, trying later")
+    return setTimeout(checkReviewKey, 50, key)
+  }
+  log.debug(authUrl)
 }
+
+const updateReviewFields = (tabUrl, title) => {
+  document.getElementById('review_submitted_url').value = tabUrl
+  document.getElementById('review_citation_title').value = title
+}
+
+const formAuthUrl = () => document.getElementById('new_user')?.getAttribute("action")
+const formNewReviewUrl = () => document.getElementById('new_review_form')?.getAttribute("action")
+// method: 'GET',
+// const fetchProperties = (reviewKey) => {
+//   {method: 'POST',
+//     async: true,
+//     headers: {
+//       Authorization: 'Bearer ' + reviewKey,
+//       'Content-Type': 'application/json'
+//     },
+//     'contentType': 'json'
+//   }
+
+const loginTime = () => {
+  log.debug("it's login time")
+  let loginForm = document.getElementById("login-form")
+  if  (typeof(loginForm) === 'undefined' || loginForm === null) {
+    log.debug("login form not present, trying later")
+    return setTimeout(loginTime, 50)
+  }
+  // Remove the existing data that is incorrect - maybe actually do in form submit?
+  // chrome.storage.local.remove("reviewKey")
+  window.reviewKey = undefined
+  loginForm?.classList.remove("hidden")
+  document.getElementById("new_review")?.classList?.add("hidden")
+}
+
+// chrome.storage.local.remove("reviewKey")
+// chrome.storage.local.set({"reviewKey": "xxxxxx"})
