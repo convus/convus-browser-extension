@@ -18,6 +18,10 @@ Submit a review of the website you are reading to Convus.org
 
 Required to get the url and title of the website you are reading, for your review.
 
+### storage justification
+
+Required to store a key to authenticate your review.
+
 ---
 
 ## Development
@@ -28,4 +32,4 @@ In your terminal, run:
 
 To build and watch - which will build using `http://localhost:3009`
 
-To build the publishable version, use `yarn build` - which will build with `https://www.convus.org` as the source.
+To build the publishable version, use `NODE_ENV=production yarn build` - which will build with `https://www.convus.org` as the source.

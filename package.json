@@ -29,7 +29,7 @@
     ],
     "ignore": [
       "node_modules/*",
-      "popup/popup.js"
+      "dist/popup.js"
     ]
   }
 }

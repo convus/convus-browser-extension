@@ -10,7 +10,7 @@ jobs:
     environment:
       NODE_ENV: test
     docker:
-      - image: cimg/node:19.7.0
+      - image: cimg/node:18.14.2
     steps:
       - checkout
       - restore_cache:
@@ -40,13 +40,13 @@ jobs:
       - run:
           name: JS lint check
           command: yarn standard
-       # - run:
-       #    name: "Jest: Tests"
-       #    command: |
-       #      mkdir -p test-results/junit
-       #      yarn test --ci --runInBand --reporters=default --reporters=jest-junit
-       #    environment:
-       #      JEST_JUNIT_OUTPUT_DIR: "test-results/junit/"
+       - run:
+          name: "Jest: Tests"
+          command: |
+            mkdir -p test-results/junit
+            yarn test --ci --runInBand --reporters=default --reporters=jest-junit
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: "test-results/junit/"
       - store_test_results:
           path: test-results
       - store_artifacts:
