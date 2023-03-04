@@ -259,11 +259,11 @@
 
   // popup.js
   chrome.storage.local.get("reviewKey").then((data) => data.reviewKey).then((reviewKey) => {
-    if (typeof reviewKey !== void 0) {
+    if (typeof reviewKey === "undefined" || reviewKey === null) {
+      loginTime();
+    } else {
       window.reviewKey = reviewKey;
       checkReviewKey(window.reviewKey);
-    } else {
-      loginTime();
     }
   });
   chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
@@ -272,21 +272,22 @@
   });
   var checkReviewKey = (key) => {
     log_default.debug("checking review key:", key);
-    authUrl = formAuthUrl();
+    const authUrl = formAuthUrl();
     if (typeof authUrl === "undefined" || authUrl === null) {
       log_default.debug("authUrl not present, trying later");
       return setTimeout(checkReviewKey, 50, key);
     }
-    log_default.debug(authUrl);
+    log_default.debug(authUrl, formNewReviewUrl());
   };
   var updateReviewFields = (tabUrl, title) => {
     document.getElementById("review_submitted_url").value = tabUrl;
     document.getElementById("review_citation_title").value = title;
   };
   var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
+  var formNewReviewUrl = () => document.getElementById("new_review_form")?.getAttribute("action");
   var loginTime = () => {
     log_default.debug("it's login time");
-    let loginForm = document.getElementById("login-form");
+    const loginForm = document.getElementById("login-form");
     if (typeof loginForm === "undefined" || loginForm === null) {
       log_default.debug("login form not present, trying later");
       return setTimeout(loginTime, 50);

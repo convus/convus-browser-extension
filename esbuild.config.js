@@ -5,8 +5,8 @@ const watch = process.argv.includes('--watch')
 
 // NOTE: index.html and manifest.json are generated via this script
 // THEY DO NOT UPDATE ON SAVE when watching (the JS does)
-process.env.NODE_ENV ||= "development"
-const baseUrl = process.env.NODE_ENV == "production" ? 'https://www.convus.org' : 'http://localhost:3009'
+process.env.NODE_ENV ||= 'development'
+const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.convus.org' : 'http://localhost:3009'
 const version = process.env.npm_package_version
 // Generate relevant index.html file via this hack
 const htmlContent = fs.readFileSync('src/index.html', 'utf8')

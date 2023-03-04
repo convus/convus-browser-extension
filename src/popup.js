@@ -1,13 +1,13 @@
 import log from './log'
 
-chrome.storage.local.get("reviewKey")
+chrome.storage.local.get('reviewKey')
   .then(data => data.reviewKey)
   .then(reviewKey => {
-    if (typeof reviewKey !== undefined) {
+    if (typeof (reviewKey) === 'undefined' || reviewKey === null) {
+      loginTime()
+    } else {
       window.reviewKey = reviewKey
       checkReviewKey(window.reviewKey)
-    } else {
-      loginTime()
     }
   })
 
@@ -28,13 +28,13 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 // window.close()
 
 const checkReviewKey = (key) => {
-  log.debug("checking review key:", key)
-  authUrl = formAuthUrl()
-  if (typeof(authUrl) === 'undefined' || authUrl === null) {
-    log.debug("authUrl not present, trying later")
+  log.debug('checking review key:', key)
+  const authUrl = formAuthUrl()
+  if (typeof (authUrl) === 'undefined' || authUrl === null) {
+    log.debug('authUrl not present, trying later')
     return setTimeout(checkReviewKey, 50, key)
   }
-  log.debug(authUrl)
+  log.debug(authUrl, formNewReviewUrl())
 }
 
 const updateReviewFields = (tabUrl, title) => {
@@ -42,8 +42,8 @@ const updateReviewFields = (tabUrl, title) => {
   document.getElementById('review_citation_title').value = title
 }
 
-const formAuthUrl = () => document.getElementById('new_user')?.getAttribute("action")
-const formNewReviewUrl = () => document.getElementById('new_review_form')?.getAttribute("action")
+const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
+const formNewReviewUrl = () => document.getElementById('new_review_form')?.getAttribute('action')
 // method: 'GET',
 // const fetchProperties = (reviewKey) => {
 //   {method: 'POST',
@@ -57,16 +57,16 @@ const formNewReviewUrl = () => document.getElementById('new_review_form')?.getAt
 
 const loginTime = () => {
   log.debug("it's login time")
-  let loginForm = document.getElementById("login-form")
-  if  (typeof(loginForm) === 'undefined' || loginForm === null) {
-    log.debug("login form not present, trying later")
+  const loginForm = document.getElementById('login-form')
+  if (typeof (loginForm) === 'undefined' || loginForm === null) {
+    log.debug('login form not present, trying later')
     return setTimeout(loginTime, 50)
   }
   // Remove the existing data that is incorrect - maybe actually do in form submit?
   // chrome.storage.local.remove("reviewKey")
   window.reviewKey = undefined
-  loginForm?.classList.remove("hidden")
-  document.getElementById("new_review")?.classList?.add("hidden")
+  loginForm?.classList.remove('hidden')
+  document.getElementById('new_review')?.classList?.add('hidden')
 }
 
 // chrome.storage.local.remove("reviewKey")
