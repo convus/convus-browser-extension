@@ -3,12 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="turbo-root" content="https://www.convus.org"> <!-- Important for POSTs to work -->
+
+    <link rel="stylesheet" href="application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css">
 
     <script src="popup.js"></script>
     <title>Convus</title>
   </head>
   <body id="body-popup">
-    <turbo-frame id="new_review" src="https://www.convus.org/reviews/new?source=chrome_extension" data-turbo="true"></turbo-frame>
+    <div id="login-form" class="hidden">
+      <h1>Login form</h1>
+    </div>
+    <turbo-frame id="new_review" src="http://localhost:3009/reviews/new?source=chrome_extension" data-turbo="true"></turbo-frame>
   </body>
 </html>
