@@ -30,6 +30,9 @@
     "ignore": [
       "node_modules/*",
       "dist/popup.js"
+    ],
+    "env": [
+      "jest"
     ]
   }
 }

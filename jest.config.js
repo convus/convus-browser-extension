@@ -3,7 +3,7 @@ module.exports = {
   transformIgnorePatterns: ['<rootDir>/node_modules/'],
   moduleFileExtensions: ['js'],
   testMatch: [
-    '<rootDir>/(tests/**/*.spec.(js)|**/__tests__/*.(js))'
+    '<rootDir>/(tests/**/*.test.(js)|**/__tests__/*.(js))'
   ],
   testEnvironment: 'jsdom',
   transform: {
