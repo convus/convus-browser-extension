@@ -1,11 +1,6 @@
-/*
-  Private
-*/
-
 // method: 'GET',
 const requestProps = (reviewKey) => {
   return {
-    method: 'POST',
     async: true,
     headers: {
       Authorization: 'Bearer ' + reviewKey,
@@ -14,10 +9,7 @@ const requestProps = (reviewKey) => {
     contentType: 'json'
   }
 }
-
-// /*
-//   Public
-// */
+// method: 'POST',
 
 export default {
   requestProps

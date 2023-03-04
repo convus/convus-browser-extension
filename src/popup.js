@@ -1,4 +1,5 @@
 import log from './log'
+import api from './api'
 
 chrome.storage.local.get('reviewKey')
   .then(data => data.reviewKey)
@@ -6,8 +7,8 @@ chrome.storage.local.get('reviewKey')
     if (typeof (reviewKey) === 'undefined' || reviewKey === null) {
       loginTime()
     } else {
-      window.reviewKey = reviewKey
-      checkReviewKey(window.reviewKey)
+      // window.reviewKey = reviewKey
+      verifyReviewKey(window.reviewKey)
     }
   })
 
@@ -27,12 +28,12 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 // Close the popup
 // window.close()
 
-const checkReviewKey = (key) => {
+const verifyReviewKey = (key) => {
   log.debug('checking review key:', key)
   const authUrl = formAuthUrl()
   if (typeof (authUrl) === 'undefined' || authUrl === null) {
-    log.debug('authUrl not present, trying later')
-    return setTimeout(checkReviewKey, 50, key)
+    log.debug('authUrl not present in DOM, trying later')
+    return setTimeout(verifyReviewKey, 50, key)
   }
   log.debug(authUrl, formNewReviewUrl())
 }
@@ -44,22 +45,12 @@ const updateReviewFields = (tabUrl, title) => {
 
 const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
 const formNewReviewUrl = () => document.getElementById('new_review_form')?.getAttribute('action')
-// method: 'GET',
-// const fetchProperties = (reviewKey) => {
-//   {method: 'POST',
-//     async: true,
-//     headers: {
-//       Authorization: 'Bearer ' + reviewKey,
-//       'Content-Type': 'application/json'
-//     },
-//     'contentType': 'json'
-//   }
 
 const loginTime = () => {
   log.debug("it's login time")
   const loginForm = document.getElementById('login-form')
   if (typeof (loginForm) === 'undefined' || loginForm === null) {
-    log.debug('login form not present, trying later')
+    log.debug('login form not present in DOM, trying later')
     return setTimeout(loginTime, 50)
   }
   // Remove the existing data that is incorrect - maybe actually do in form submit?

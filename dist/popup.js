@@ -262,20 +262,19 @@
     if (typeof reviewKey === "undefined" || reviewKey === null) {
       loginTime();
     } else {
-      window.reviewKey = reviewKey;
-      checkReviewKey(window.reviewKey);
+      verifyReviewKey(window.reviewKey);
     }
   });
   chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     const activeTab = tabs[0];
     setTimeout(updateReviewFields, 500, activeTab.url, activeTab.title);
   });
-  var checkReviewKey = (key) => {
+  var verifyReviewKey = (key) => {
     log_default.debug("checking review key:", key);
     const authUrl = formAuthUrl();
     if (typeof authUrl === "undefined" || authUrl === null) {
-      log_default.debug("authUrl not present, trying later");
-      return setTimeout(checkReviewKey, 50, key);
+      log_default.debug("authUrl not present in DOM, trying later");
+      return setTimeout(verifyReviewKey, 50, key);
     }
     log_default.debug(authUrl, formNewReviewUrl());
   };
@@ -289,7 +288,7 @@
     log_default.debug("it's login time");
     const loginForm = document.getElementById("login-form");
     if (typeof loginForm === "undefined" || loginForm === null) {
-      log_default.debug("login form not present, trying later");
+      log_default.debug("login form not present in DOM, trying later");
       return setTimeout(loginTime, 50);
     }
     window.reviewKey = void 0;

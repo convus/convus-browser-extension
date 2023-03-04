@@ -40,7 +40,7 @@ jobs:
       - run:
           name: JS lint check
           command: yarn standard
-       - run:
+      - run:
           name: "Jest: Tests"
           command: |
             mkdir -p test-results/junit
