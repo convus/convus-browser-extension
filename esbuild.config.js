@@ -34,13 +34,13 @@ const watchOptions = {
 
 require('esbuild')
   .build({
+    define: { 'process.env.NODE_ENV': `"${process.env.NODE_ENV}"` },
     entryPoints: ['popup.js'],
     bundle: true,
     sourcemap: true,
     outdir: path.join(process.cwd(), 'dist'),
     absWorkingDir: path.join(process.cwd(), 'src'),
     watch: watch && watchOptions,
-    // custom plugins will be inserted is this array
     plugins: []
   })
   .then((result) => console.log('esbuild updated:', result))
