@@ -3,6 +3,8 @@ const fs = require('fs')
 
 const watch = process.argv.includes('--watch')
 
+const target = "firefox"
+
 // NOTE: index.html and manifest.json are generated via this script
 // THEY DO NOT UPDATE ON SAVE when watching (the JS does)
 process.env.NODE_ENV ||= 'development'
@@ -11,12 +13,12 @@ const version = process.env.npm_package_version
 // Generate relevant index.html file via this hack
 const htmlContent = fs.readFileSync('src/index.html', 'utf8')
   .replace(/{{baseUrl}}/g, baseUrl)
-fs.writeFileSync('dist/index.html', htmlContent)
+fs.writeFileSync(`${target}/index.html`, htmlContent)
 // Generate manifest for the current env
 const manifestContent = fs.readFileSync('src/manifest.json', 'utf8')
   .replace(/{{baseUrl}}/g, baseUrl) // Not using host permissions, so this doesn't update anything now...
   .replace(/{{version}}/g, version)
-fs.writeFileSync('dist/manifest.json', manifestContent)
+fs.writeFileSync(`${target}/manifest.json`, manifestContent)
 
 // esbuild, go to town
 const errorFilePath = 'esbuild_error'
@@ -38,7 +40,7 @@ require('esbuild')
     entryPoints: ['popup.js'],
     bundle: true,
     sourcemap: true,
-    outdir: path.join(process.cwd(), 'dist'),
+    outdir: path.join(process.cwd(), `${target}`),
     absWorkingDir: path.join(process.cwd(), 'src'),
     watch: watch && watchOptions,
     plugins: []
