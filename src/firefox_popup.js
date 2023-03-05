@@ -1,4 +1,4 @@
-import log from './log' // eslint-disable-line
+// import log from './log' // eslint-disable-line
 import api from './api' // eslint-disable-line
 
 browser.storage.local.get('reviewToken')
@@ -26,7 +26,7 @@ const checkReviewToken = async function (token) {
   const authUrl = formAuthUrl()
   // pause and rerun if DOM hasn't loaded
   if (typeof (authUrl) === 'undefined' || authUrl === null) {
-    log.debug(`authUrl not present in DOM, trying later (${token})`)
+    // log.debug(`authUrl not present in DOM, trying later (${token})`)
     return setTimeout(checkReviewToken, 50, token)
   }
   // log.debug('checking review token:', token)
@@ -42,7 +42,7 @@ const updateReviewFields = (tabUrl, title) => {
   // pause and rerun if DOM hasn't loaded
   const reviewUrlField = document.getElementById('submitted_url')
   if (typeof (reviewUrlField) === 'undefined' || reviewUrlField === null) {
-    log.debug('reviewUrlField not present in DOM, trying later')
+    // log.debug('reviewUrlField not present in DOM, trying later')
     return setTimeout(updateReviewFields, 50, tabUrl, title)
   }
   reviewUrlField.value = tabUrl
@@ -53,11 +53,11 @@ const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('act
 const formNewReviewUrl = () => document.getElementById('new_review')?.getAttribute('action')
 
 const loginTime = () => {
-  log.debug("it's login time")
+  // log.debug("it's login time")
   // pause and rerun if DOM hasn't loaded
   const loginForm = document.getElementById('new_user')
   if (typeof (loginForm) === 'undefined' || loginForm === null) {
-    log.debug('login form not present in DOM, trying later')
+    // log.debug('login form not present in DOM, trying later')
     return setTimeout(loginTime, 50)
   }
   loginForm.classList.remove('hidden')
@@ -69,7 +69,7 @@ const reviewTime = () => {
   // pause and rerun if DOM hasn't loaded
   const reviewForm = document.getElementById('new_review')
   if (typeof (reviewForm) === 'undefined' || reviewForm === null) {
-    log.debug('review form not present in DOM, trying later')
+    // log.debug('review form not present in DOM, trying later')
     return setTimeout(reviewTime, 50)
   }
   // I think it's a good thing to attach the event listener to the review form
@@ -87,7 +87,7 @@ const handleLoginSubmit = async function (e) {
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
 
   const result = await api.getReviewToken(formAuthUrl(), jsonFormData)
-  log.debug(result)
+  // log.debug(result)
 
   if (typeof (result.reviewToken) === 'undefined' || result.reviewToken === null) {
     renderAlerts(result.messages)
@@ -106,7 +106,7 @@ const handleReviewSubmit = async function (e) {
   const formData = new FormData(document.getElementById('new_review'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
   const result = await api.submitReview(formNewReviewUrl(), window.reviewToken, jsonFormData)
-  log.debug(result)
+  // log.debug(result)
 
   renderAlerts(result.messages)
   if (result.success) {

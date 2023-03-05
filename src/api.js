@@ -1,4 +1,4 @@
-import log from './log' // eslint-disable-line
+// import log from './log' // eslint-disable-line
 
 const requestProps = (reviewToken = false, extraProps = {}) => {
   const headers = { 'Content-Type': 'application/json' }
@@ -56,7 +56,7 @@ const getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject)
 const submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((resolve, reject) => {
   const rProps = requestProps(reviewToken, { body: reviewFormData })
 
-  log.debug(rProps)
+  // log.debug(rProps)
   return fetch(reviewUrl, rProps)
     .then(response => response.json()
       .then((json) => {
