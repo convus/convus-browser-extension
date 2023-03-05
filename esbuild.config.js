@@ -13,6 +13,7 @@ const version = process.env.npm_package_version
 // Generate relevant index.html file via this hack
 const htmlContent = fs.readFileSync('src/index.html', 'utf8')
   .replace(/{{baseUrl}}/g, baseUrl)
+  .replace(/{{target}}/g, target)
 fs.writeFileSync('dist/index.html', htmlContent)
 // Generate manifest for the current env
 const manifestContent = fs.readFileSync(`src/${target}_manifest.json`, 'utf8')
