@@ -8,7 +8,7 @@ Convus.org lets you review the websites you read so you can track articles that 
 
 This browser extension makes the process of submitting reviews easy.
 
-Use `control` + `shift` + `R` to open the review dialog
+Use `control` + `shift` + `R` to open the review dialog.
 
 ### Single purpose description
 
