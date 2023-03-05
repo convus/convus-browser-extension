@@ -11,8 +11,6 @@ const requestProps = (reviewToken, extraProps = {}) => {
   }
   return { ...defaultProps, ...extraProps }
 }
-// method: 'GET'
-// method: 'POST'
 
 const verifyReviewTokenValid = (reviewToken, authUrl) => new Promise((resolve, reject) => {
   const authStatusUrl = `${authUrl}/status`
@@ -20,18 +18,12 @@ const verifyReviewTokenValid = (reviewToken, authUrl) => new Promise((resolve, r
   return fetch(authStatusUrl, requestProps(reviewToken, { method: 'GET' }))
     .then(response => response.json()
       .then((json) => {
-        resolve(json.message !== "missing user" && response.status == 200)
+        resolve(json.message !== 'missing user' && response.status === 200)
       })
-      ).catch((e) => {
-        reject(e)
+    ).catch((e) => {
+      reject(e)
     })
 })
-
-// async function verifyReviewTokenValid(reviewToken, authUrl) {
-//   const authStatusUrl = `${authUrl}/status`
-
-//   return new fetch(authStatusUrl, requestProps(reviewToken))
-// }
 
 export default {
   requestProps,

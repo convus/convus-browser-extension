@@ -273,7 +273,7 @@
     const authStatusUrl = `${authUrl}/status`;
     return fetch(authStatusUrl, requestProps(reviewToken, { method: "GET" })).then(
       (response) => response.json().then((json) => {
-        resolve(json.message !== "missing user" && response.status == 200);
+        resolve(json.message !== "missing user" && response.status === 200);
       })
     ).catch((e) => {
       reject(e);
@@ -304,7 +304,6 @@
     }
     log_default.debug("checking review token:", token);
     const result = await api_default.verifyReviewTokenValid(token, authUrl);
-    log_default.debug(result);
     if (!result) {
       loginTime();
     }

@@ -12,7 +12,6 @@ chrome.storage.local.get('reviewToken')
     }
   })
 
-// const setReviewPageData =
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   // since only one tab should be active and in the current window at once
   // the return variable should only have one entry
@@ -30,19 +29,18 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 
 const checkReviewToken = async function (token) {
   const authUrl = formAuthUrl()
-  // rerun after pause rerun if DOM hasn't loaded
+  // pause and rerun if DOM hasn't loaded
   if (typeof (authUrl) === 'undefined' || authUrl === null) {
     log.debug(`authUrl not present in DOM, trying later (${token})`)
     return setTimeout(checkReviewToken, 50, token)
   }
   log.debug('checking review token:', token)
   const result = await api.verifyReviewTokenValid(token, authUrl)
-  log.debug(result)
   if (!result) { loginTime() }
 }
 
 const updateReviewFields = (tabUrl, title) => {
-  // rerun after pause rerun if DOM hasn't loaded
+  // pause and rerun if DOM hasn't loaded
   const reviewUrlField = document.getElementById('review_submitted_url')
   if (typeof (reviewUrlField) === 'undefined' || reviewUrlField === null) {
     log.debug('authUrl not present in DOM, trying later')
@@ -53,11 +51,11 @@ const updateReviewFields = (tabUrl, title) => {
 }
 
 const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
-const formNewReviewUrl = () => document.getElementById('new_review_form')?.getAttribute('action')
+// const formNewReviewUrl = () => document.getElementById('new_review_form')?.getAttribute('action')
 
 const loginTime = () => {
   log.debug("it's login time")
-  // rerun after pause rerun if DOM hasn't loaded
+  // pause and rerun if DOM hasn't loaded
   const loginForm = document.getElementById('login-form')
   if (typeof (loginForm) === 'undefined' || loginForm === null) {
     log.debug('login form not present in DOM, trying later')

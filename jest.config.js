@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.js$': 'babel-jest'
   },
   automock: false,
-  setupFiles: ["./setupJest.js"]
+  setupFiles: ['./setupJest.js']
 }

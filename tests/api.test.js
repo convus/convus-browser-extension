@@ -2,8 +2,8 @@ import api from '../src/api'
 import log from '../src/log' // eslint-disable-line
 
 beforeEach(() => {
-  fetch.resetMocks();
-});
+  fetch.resetMocks()
+})
 
 const authUrl = 'http://localhost:3009/api/v1/auth'
 
@@ -28,15 +28,15 @@ test('api returns target with extra', () => {
 })
 
 test('verifyReviewTokenValid returns false for missing', async () => {
-  fetch.mockResponseOnce(JSON.stringify({"message":"missing users"}), {status: 401})
+  fetch.mockResponseOnce(JSON.stringify({ message: 'missing users' }), { status: 401 })
 
-  const res = await api.verifyReviewTokenValid(authUrl, "xxxx");
+  const res = await api.verifyReviewTokenValid(authUrl, 'xxxx')
   expect(res).toBe(false)
 })
 
 test('verifyReviewTokenValid returns true for authenticated', async () => {
-  fetch.mockResponseOnce(JSON.stringify({"message":"authenticated"}), {status: 200})
+  fetch.mockResponseOnce(JSON.stringify({ message: 'authenticated' }), { status: 200 })
 
-  const res = await api.verifyReviewTokenValid(authUrl, "xxxx");
+  const res = await api.verifyReviewTokenValid(authUrl, 'xxxx')
   expect(res).toBe(true)
 })
