@@ -1,14 +1,14 @@
-import log from './log'
-import api from './api'
+import log from './log' // eslint-disable-line
+import api from './api' // eslint-disable-line
 
-chrome.storage.local.get('reviewKey')
-  .then(data => data.reviewKey)
-  .then(reviewKey => {
-    if (typeof (reviewKey) === 'undefined' || reviewKey === null) {
+chrome.storage.local.get('reviewToken')
+  .then(data => data.reviewToken)
+  .then(reviewToken => {
+    if (typeof (reviewToken) === 'undefined' || reviewToken === null) {
       loginTime()
     } else {
-      // window.reviewKey = reviewKey
-      verifyReviewKey(window.reviewKey)
+      // window.reviewToken = reviewToken
+      checkReviewToken(reviewToken)
     }
   })
 
@@ -22,22 +22,23 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   updateReviewFields(activeTab.url, activeTab.title)
 })
 
-// getStoredReviewKey()
+// getStoredReviewToken()
 // setReviewPageData()
 
 // Close the popup
 // window.close()
 
-const verifyReviewKey = (key) => {
-  log.debug('checking review key:', key)
+const checkReviewToken = async function (token) {
   const authUrl = formAuthUrl()
   // rerun after pause rerun if DOM hasn't loaded
   if (typeof (authUrl) === 'undefined' || authUrl === null) {
-    log.debug('authUrl not present in DOM, trying later')
-    return setTimeout(verifyReviewKey, 50, key)
+    log.debug(`authUrl not present in DOM, trying later (${token})`)
+    return setTimeout(checkReviewToken, 50, token)
   }
-  log.debug(authUrl, formNewReviewUrl())
-
+  log.debug('checking review token:', token)
+  const result = await api.verifyReviewTokenValid(token, authUrl)
+  log.debug(result)
+  if (!result) { loginTime() }
 }
 
 const updateReviewFields = (tabUrl, title) => {
@@ -63,11 +64,11 @@ const loginTime = () => {
     return setTimeout(loginTime, 50)
   }
   // Remove the existing data that is incorrect - maybe actually do in form submit?
-  // chrome.storage.local.remove("reviewKey")
-  window.reviewKey = undefined
+  // chrome.storage.local.remove("reviewToken")
+  // window.reviewToken = undefined
   loginForm?.classList.remove('hidden')
   document.getElementById('new_review')?.classList?.add('hidden')
 }
 
-// chrome.storage.local.remove("reviewKey")
-chrome.storage.local.set({"reviewKey": "xxxxxx"})
+// chrome.storage.local.remove("reviewToken")
+// chrome.storage.local.set({"reviewToken": "xxxxxx"})

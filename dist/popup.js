@@ -257,26 +257,57 @@
     import_loglevel.default.setLevel("debug");
   var log_default = import_loglevel.default;
 
+  // api.js
+  var requestProps = (reviewToken, extraProps = {}) => {
+    const defaultProps = {
+      async: true,
+      headers: {
+        Authorization: "Bearer " + reviewToken,
+        "Content-Type": "application/json"
+      },
+      contentType: "json"
+    };
+    return { ...defaultProps, ...extraProps };
+  };
+  var verifyReviewTokenValid = (reviewToken, authUrl) => new Promise((resolve, reject) => {
+    const authStatusUrl = `${authUrl}/status`;
+    return fetch(authStatusUrl, requestProps(reviewToken, { method: "GET" })).then(
+      (response) => response.json().then((json) => {
+        resolve(json.message !== "missing user" && response.status == 200);
+      })
+    ).catch((e) => {
+      reject(e);
+    });
+  });
+  var api_default = {
+    requestProps,
+    verifyReviewTokenValid
+  };
+
   // popup.js
-  chrome.storage.local.get("reviewKey").then((data) => data.reviewKey).then((reviewKey) => {
-    if (typeof reviewKey === "undefined" || reviewKey === null) {
+  chrome.storage.local.get("reviewToken").then((data) => data.reviewToken).then((reviewToken) => {
+    if (typeof reviewToken === "undefined" || reviewToken === null) {
       loginTime();
     } else {
-      verifyReviewKey(window.reviewKey);
+      checkReviewToken(reviewToken);
     }
   });
   chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     const activeTab = tabs[0];
     updateReviewFields(activeTab.url, activeTab.title);
   });
-  var verifyReviewKey = (key) => {
-    log_default.debug("checking review key:", key);
+  var checkReviewToken = async function(token) {
     const authUrl = formAuthUrl();
     if (typeof authUrl === "undefined" || authUrl === null) {
-      log_default.debug("authUrl not present in DOM, trying later");
-      return setTimeout(verifyReviewKey, 50, key);
+      log_default.debug(`authUrl not present in DOM, trying later (${token})`);
+      return setTimeout(checkReviewToken, 50, token);
     }
-    log_default.debug(authUrl, formNewReviewUrl());
+    log_default.debug("checking review token:", token);
+    const result = await api_default.verifyReviewTokenValid(token, authUrl);
+    log_default.debug(result);
+    if (!result) {
+      loginTime();
+    }
   };
   var updateReviewFields = (tabUrl, title) => {
     const reviewUrlField = document.getElementById("review_submitted_url");
@@ -288,7 +319,6 @@
     document.getElementById("review_citation_title").value = title;
   };
   var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
-  var formNewReviewUrl = () => document.getElementById("new_review_form")?.getAttribute("action");
   var loginTime = () => {
     log_default.debug("it's login time");
     const loginForm = document.getElementById("login-form");
@@ -296,10 +326,8 @@
       log_default.debug("login form not present in DOM, trying later");
       return setTimeout(loginTime, 50);
     }
-    window.reviewKey = void 0;
     loginForm?.classList.remove("hidden");
     document.getElementById("new_review")?.classList?.add("hidden");
   };
-  chrome.storage.local.set({ "reviewKey": "xxxxxx" });
 })();
 //# sourceMappingURL=popup.js.map
