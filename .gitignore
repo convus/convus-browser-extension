@@ -6,3 +6,6 @@ dump.rdb
 yarn-error.log
 /node_modules
 esbuild_error
+
+# Ignore builds
+_builds

@@ -1,14 +1,22 @@
 {
-  "name": "convus_reviews_",
+  "name": "convus_reviews_browser_extension",
   "private": "false",
+  "version": "0.3.0",
   "scripts": {
     "build": "node esbuild.config.js",
-    "lint": "standard --fix"
+    "lint": "standard --fix",
+    "test": "jest"
   },
   "dependencies": {
-    "@hotwired/turbo": "^7.3.0",
     "esbuild": "^0.15.3",
-    "loglevel": "^1.8.1",
+    "loglevel": "^1.8.1"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.16.4",
+    "babel-jest": "^27.4.6",
+    "jest-cli": "^27.4.7",
+    "jest-fetch-mock": "^3.0.3",
+    "jest-junit": "^13.0.0",
     "prettier-standard": "^16.4.1",
     "standard": "^16.0.4"
   },
@@ -18,11 +26,15 @@
       "chrome",
       "confirm",
       "fetch",
+      "FormData",
       "localStorage"
     ],
     "ignore": [
       "node_modules/*",
-      "popup/popup.js"
+      "dist/popup.js"
+    ],
+    "env": [
+      "jest"
     ]
   }
 }

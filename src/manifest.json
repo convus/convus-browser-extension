@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Convus Reviews",
-  "version": "0.2",
+  "version": "{{version}}",
   "description": "Add a review to Convus for the page you're viewing in your browser",
 
   "icons": {
@@ -14,7 +14,7 @@
 
  "permissions": [
     "activeTab",
-    "cookies"
+    "storage"
   ],
 
   "action": {
@@ -29,10 +29,7 @@
     "default_title": "Convus: review current page"
   },
 
- "host_permissions": [
-    "https://*.convus.org/",
-    "http://localhost:3009/"
-  ],
+ "host_permissions": ["{{baseUrl}}/"],
 
   "content_scripts": [],
 
