@@ -8,6 +8,7 @@ chrome.storage.local.get('reviewToken')
       loginTime()
     } else {
       window.reviewToken = reviewToken
+      reviewTime() // I'm worried that this will interfere with
       checkReviewToken(reviewToken)
     }
   })
@@ -28,24 +29,28 @@ const checkReviewToken = async function (token) {
     log.debug(`authUrl not present in DOM, trying later (${token})`)
     return setTimeout(checkReviewToken, 50, token)
   }
-  log.debug('checking review token:', token)
+  // log.debug('checking review token:', token)
   const result = await api.verifyReviewTokenValid(token, authUrl)
-  if (!result) { loginTime() }
+  if (result) { return }
+  // Remove the existing data that is incorrect - maybe actually do in form submit?
+  chrome.storage.local.remove("reviewToken")
+  window.reviewToken = undefined
+  loginTime()
 }
 
 const updateReviewFields = (tabUrl, title) => {
   // pause and rerun if DOM hasn't loaded
-  const reviewUrlField = document.getElementById('review_submitted_url')
+  const reviewUrlField = document.getElementById('submitted_url')
   if (typeof (reviewUrlField) === 'undefined' || reviewUrlField === null) {
-    log.debug('authUrl not present in DOM, trying later')
-    return setTimeout(reviewUrlField, 50, tabUrl, title)
+    log.debug('reviewUrlField not present in DOM, trying later')
+    return setTimeout(updateReviewFields, 50, tabUrl, title)
   }
   reviewUrlField.value = tabUrl
-  document.getElementById('review_citation_title').value = title
+  document.getElementById('citation_title').value = title
 }
 
 const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
-// const formNewReviewUrl = () => document.getElementById('new_review_form')?.getAttribute('action')
+// const formNewReviewUrl = () => document.getElementById('new_review')?.getAttribute('action')
 
 const loginTime = () => {
   log.debug("it's login time")
@@ -55,19 +60,31 @@ const loginTime = () => {
     log.debug('login form not present in DOM, trying later')
     return setTimeout(loginTime, 50)
   }
-  // Remove the existing data that is incorrect - maybe actually do in form submit?
-  // chrome.storage.local.remove("reviewToken")
-  // window.reviewToken = undefined
   loginForm.classList.remove('hidden')
   document.getElementById('new_review')?.classList?.add('hidden')
-  loginForm.addEventListener("submit", submitLogin);
+  loginForm.addEventListener('submit', submitLogin)
+}
+
+const reviewTime = () => {
+  // pause and rerun if DOM hasn't loaded
+  const reviewForm = document.getElementById('new_review')
+  if (typeof (reviewForm) === 'undefined' || reviewForm === null) {
+    log.debug('review form not present in DOM, trying later')
+    return setTimeout(reviewTime, 50)
+  }
+  // I think it's a good thing to attach the event listener to the review form
+  reviewForm.addEventListener('submit', submitReview)
+  // ... but only show or hide the form if reviewToken is set, in case of weird callback stuff
+  if (window.reviewToken) {
+    document.getElementById('new_user').classList.add('hidden')
+    reviewForm.classList.remove('hidden')
+  }
 }
 
 const submitLogin = async function (e) {
   e.preventDefault()
-  const formData = new FormData(document.getElementById('new_user'));
+  const formData = new FormData(document.getElementById('new_user'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
-  log.debug(jsonFormData)
 
   const result = await api.getReviewToken(jsonFormData, formAuthUrl())
   log.debug(result)
@@ -75,9 +92,9 @@ const submitLogin = async function (e) {
     renderAlert(result.message)
   } else {
     chrome.storage.local.set(result)
+    window.reviewToken = result.reviewToken
     hideAlerts()
-    document.getElementById('new_user').classList.add('hidden')
-    document.getElementById('new_review').classList.remove('hidden')
+    reviewTime()
   }
 
   return false // fallback prevent submit
@@ -85,29 +102,28 @@ const submitLogin = async function (e) {
 
 const submitReview = async function (e) {
   e.preventDefault()
-  const formData = new FormData(document.getElementById('new_review'));
+  const formData = new FormData(document.getElementById('new_review'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
   log.debug(jsonFormData)
 
   // Close the popup
-  // window.close()
-  return setTimeout(window.close, 500, token)
+  // return setTimeout(window.close, 1000)
 
   return false // fallback prevent submit
 }
 
 const hideAlerts = () => {
-  const visibleAlerts = document.querySelectorAll(".alert.visible")
-  log.debug(visibleAlerts)
-  visibleAlerts.forEach(el=>el.classList.add('hidden'))
-  visibleAlerts.forEach(el=>el.classList.add('visible'))
+  const visibleAlerts = document.querySelectorAll('.alert')
+  visibleAlerts.forEach(el => el.classList.add('hidden'))
 }
 
-const renderAlert = (text, kind = "error") => {
+const renderAlert = (text, kind = 'error') => {
   hideAlerts()
-  const body = document.getElementById("body-popup")
-  let alert = document.createElement("div")
+  const body = document.getElementById('body-popup')
+  const alert = document.createElement('div')
   alert.textContent = text
-  alert.classList.add(`alert-${kind}`, "alert", "my-4", "visible")
+  alert.classList.add(`alert-${kind}`, 'alert', 'my-4')
   body.prepend(alert)
 }
+
+// chrome.storage.local.remove("reviewToken")

@@ -311,6 +311,7 @@
       loginTime();
     } else {
       window.reviewToken = reviewToken;
+      reviewTime();
       checkReviewToken(reviewToken);
     }
   });
@@ -318,26 +319,28 @@
     const activeTab = tabs[0];
     updateReviewFields(activeTab.url, activeTab.title);
   });
-  var checkReviewToken = async function(token2) {
+  var checkReviewToken = async function(token) {
     const authUrl = formAuthUrl();
     if (typeof authUrl === "undefined" || authUrl === null) {
-      log_default.debug(`authUrl not present in DOM, trying later (${token2})`);
-      return setTimeout(checkReviewToken, 50, token2);
+      log_default.debug(`authUrl not present in DOM, trying later (${token})`);
+      return setTimeout(checkReviewToken, 50, token);
     }
-    log_default.debug("checking review token:", token2);
-    const result = await api_default.verifyReviewTokenValid(token2, authUrl);
-    if (!result) {
-      loginTime();
+    const result = await api_default.verifyReviewTokenValid(token, authUrl);
+    if (result) {
+      return;
     }
+    chrome.storage.local.remove("reviewToken");
+    window.reviewToken = void 0;
+    loginTime();
   };
   var updateReviewFields = (tabUrl, title) => {
-    const reviewUrlField = document.getElementById("review_submitted_url");
+    const reviewUrlField = document.getElementById("submitted_url");
     if (typeof reviewUrlField === "undefined" || reviewUrlField === null) {
-      log_default.debug("authUrl not present in DOM, trying later");
-      return setTimeout(reviewUrlField, 50, tabUrl, title);
+      log_default.debug("reviewUrlField not present in DOM, trying later");
+      return setTimeout(updateReviewFields, 50, tabUrl, title);
     }
     reviewUrlField.value = tabUrl;
-    document.getElementById("review_citation_title").value = title;
+    document.getElementById("citation_title").value = title;
   };
   var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
   var loginTime = () => {
@@ -351,35 +354,51 @@
     document.getElementById("new_review")?.classList?.add("hidden");
     loginForm.addEventListener("submit", submitLogin);
   };
+  var reviewTime = () => {
+    const reviewForm = document.getElementById("new_review");
+    if (typeof reviewForm === "undefined" || reviewForm === null) {
+      log_default.debug("review form not present in DOM, trying later");
+      return setTimeout(reviewTime, 50);
+    }
+    reviewForm.addEventListener("submit", submitReview);
+    if (window.reviewToken) {
+      document.getElementById("new_user").classList.add("hidden");
+      reviewForm.classList.remove("hidden");
+    }
+  };
   var submitLogin = async function(e) {
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_user"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    log_default.debug(jsonFormData);
     const result = await api_default.getReviewToken(jsonFormData, formAuthUrl());
     log_default.debug(result);
     if (typeof result.reviewToken === "undefined" || result.reviewToken === null) {
       renderAlert(result.message);
     } else {
       chrome.storage.local.set(result);
+      window.reviewToken = result.reviewToken;
       hideAlerts();
-      document.getElementById("new_user").classList.add("hidden");
-      document.getElementById("new_review").classList.remove("hidden");
+      reviewTime();
     }
     return false;
   };
+  var submitReview = async function(e) {
+    e.preventDefault();
+    const formData = new FormData(document.getElementById("new_review"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    log_default.debug(jsonFormData);
+    return false;
+  };
   var hideAlerts = () => {
-    const visibleAlerts = document.querySelectorAll(".alert.visible");
-    log_default.debug(visibleAlerts);
+    const visibleAlerts = document.querySelectorAll(".alert");
     visibleAlerts.forEach((el) => el.classList.add("hidden"));
-    visibleAlerts.forEach((el) => el.classList.add("visible"));
   };
   var renderAlert = (text, kind = "error") => {
     hideAlerts();
     const body = document.getElementById("body-popup");
-    let alert = document.createElement("div");
+    const alert = document.createElement("div");
     alert.textContent = text;
-    alert.classList.add(`alert-${kind}`, "alert", "my-4", "visible");
+    alert.classList.add(`alert-${kind}`, "alert", "my-4");
     body.prepend(alert);
   };
 })();
