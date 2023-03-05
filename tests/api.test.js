@@ -9,6 +9,7 @@ beforeEach(() => {
 })
 
 const authUrl = 'http://localhost:3009/api/v1/auth'
+const reviewUrl = 'http://localhost:3009/api/v1/reviews'
 
 test('api returns target requestProps', () => {
   const target = {
@@ -58,4 +59,13 @@ test('getReviewToken returns reviewToken for authenticated', async () => {
 
   const res = await api.getReviewToken(loginFormJson, authUrl)
   expect(res).toStrictEqual({ reviewToken: 'zzzzz' })
+})
+
+test('submitReview returns', async () => {
+  fetch.mockResponseOnce(JSON.stringify({ message: 'review added' }), { status: 200 })
+
+  const reviewJson = {"source":"chrome_extension","submitted_url":"https://github.com/convus/convus-browser-extension/pull/4","agreement":"neutral","quality":"quality_med","changed_my_opinion":"1","significant_factual_error":"0","citation_title":"Remove remote code loading by sethherr · Pull Request #4 · convus/convus-browser-extension"}
+
+  const res = await api.submitReview("xxxx", reviewJson, reviewUrl)
+  expect(res).toStrictEqual({ message: 'review added' })
 })

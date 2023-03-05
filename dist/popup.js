@@ -352,7 +352,7 @@
     }
     loginForm.classList.remove("hidden");
     document.getElementById("new_review")?.classList?.add("hidden");
-    loginForm.addEventListener("submit", submitLogin);
+    loginForm.addEventListener("submit", handleLoginSubmit);
   };
   var reviewTime = () => {
     const reviewForm = document.getElementById("new_review");
@@ -360,13 +360,13 @@
       log_default.debug("review form not present in DOM, trying later");
       return setTimeout(reviewTime, 50);
     }
-    reviewForm.addEventListener("submit", submitReview);
+    reviewForm.addEventListener("submit", handleReviewSubmit);
     if (window.reviewToken) {
       document.getElementById("new_user").classList.add("hidden");
       reviewForm.classList.remove("hidden");
     }
   };
-  var submitLogin = async function(e) {
+  var handleLoginSubmit = async function(e) {
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_user"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
@@ -382,7 +382,7 @@
     }
     return false;
   };
-  var submitReview = async function(e) {
+  var handleReviewSubmit = async function(e) {
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_review"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));

@@ -62,7 +62,7 @@ const loginTime = () => {
   }
   loginForm.classList.remove('hidden')
   document.getElementById('new_review')?.classList?.add('hidden')
-  loginForm.addEventListener('submit', submitLogin)
+  loginForm.addEventListener('submit', handleLoginSubmit)
 }
 
 const reviewTime = () => {
@@ -73,7 +73,7 @@ const reviewTime = () => {
     return setTimeout(reviewTime, 50)
   }
   // I think it's a good thing to attach the event listener to the review form
-  reviewForm.addEventListener('submit', submitReview)
+  reviewForm.addEventListener('submit', handleReviewSubmit)
   // ... but only show or hide the form if reviewToken is set, in case of weird callback stuff
   if (window.reviewToken) {
     document.getElementById('new_user').classList.add('hidden')
@@ -81,7 +81,7 @@ const reviewTime = () => {
   }
 }
 
-const submitLogin = async function (e) {
+const handleLoginSubmit = async function (e) {
   e.preventDefault()
   const formData = new FormData(document.getElementById('new_user'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
@@ -100,7 +100,7 @@ const submitLogin = async function (e) {
   return false // fallback prevent submit
 }
 
-const submitReview = async function (e) {
+const handleReviewSubmit = async function (e) {
   e.preventDefault()
   const formData = new FormData(document.getElementById('new_review'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
