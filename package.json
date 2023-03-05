@@ -1,7 +1,7 @@
 {
   "name": "convus_reviews_browser_extension",
   "private": "false",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "scripts": {
     "build": "node esbuild.config.js",
     "lint": "standard --fix",
@@ -23,6 +23,7 @@
   "standard": {
     "globals": [
       "alert",
+      "browser",
       "chrome",
       "confirm",
       "fetch",

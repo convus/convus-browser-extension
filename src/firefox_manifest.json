@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Convus Reviews",
-  "version": "0.4.1",
+  "version": "{{version}}",
   "description": "Add a review to Convus for the page you're viewing in your browser",
 
   "icons": {
