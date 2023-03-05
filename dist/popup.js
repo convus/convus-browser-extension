@@ -318,14 +318,14 @@
     const activeTab = tabs[0];
     updateReviewFields(activeTab.url, activeTab.title);
   });
-  var checkReviewToken = async function(token) {
+  var checkReviewToken = async function(token2) {
     const authUrl = formAuthUrl();
     if (typeof authUrl === "undefined" || authUrl === null) {
-      log_default.debug(`authUrl not present in DOM, trying later (${token})`);
-      return setTimeout(checkReviewToken, 50, token);
+      log_default.debug(`authUrl not present in DOM, trying later (${token2})`);
+      return setTimeout(checkReviewToken, 50, token2);
     }
-    log_default.debug("checking review token:", token);
-    const result = await api_default.verifyReviewTokenValid(token, authUrl);
+    log_default.debug("checking review token:", token2);
+    const result = await api_default.verifyReviewTokenValid(token2, authUrl);
     if (!result) {
       loginTime();
     }
@@ -364,7 +364,7 @@
       chrome.storage.local.set(result);
       hideAlerts();
       document.getElementById("new_user").classList.add("hidden");
-      document.getElementById("new_review")?.classList.remove("hidden");
+      document.getElementById("new_review").classList.remove("hidden");
     }
     return false;
   };
@@ -374,12 +374,12 @@
     visibleAlerts.forEach((el) => el.classList.add("hidden"));
     visibleAlerts.forEach((el) => el.classList.add("visible"));
   };
-  var renderAlert = (text) => {
+  var renderAlert = (text, kind = "error") => {
     hideAlerts();
     const body = document.getElementById("body-popup");
     let alert = document.createElement("div");
     alert.textContent = text;
-    alert.classList.add("alert", "alert-error", "my-4", "visible");
+    alert.classList.add(`alert-${kind}`, "alert", "my-4", "visible");
     body.prepend(alert);
   };
 })();

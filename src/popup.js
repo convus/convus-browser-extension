@@ -77,34 +77,37 @@ const submitLogin = async function (e) {
     chrome.storage.local.set(result)
     hideAlerts()
     document.getElementById('new_user').classList.add('hidden')
-    document.getElementById('new_review')?.classList.remove('hidden')
+    document.getElementById('new_review').classList.remove('hidden')
   }
 
   return false // fallback prevent submit
 }
 
+const submitReview = async function (e) {
+  e.preventDefault()
+  const formData = new FormData(document.getElementById('new_review'));
+  const jsonFormData = JSON.stringify(Object.fromEntries(formData))
+  log.debug(jsonFormData)
+
+  // Close the popup
+  // window.close()
+  return setTimeout(window.close, 500, token)
+
+  return false // fallback prevent submit
+}
+
 const hideAlerts = () => {
-  // const visibleAlerts = document.getElementsByClassName("alert visible")
   const visibleAlerts = document.querySelectorAll(".alert.visible")
   log.debug(visibleAlerts)
   visibleAlerts.forEach(el=>el.classList.add('hidden'))
   visibleAlerts.forEach(el=>el.classList.add('visible'))
 }
 
-const renderAlert = (text) => {
+const renderAlert = (text, kind = "error") => {
   hideAlerts()
   const body = document.getElementById("body-popup")
   let alert = document.createElement("div")
   alert.textContent = text
-  alert.classList.add("alert", "alert-error", "my-4", "visible")
+  alert.classList.add(`alert-${kind}`, "alert", "my-4", "visible")
   body.prepend(alert)
 }
-
-// chrome.storage.local.remove("reviewToken")
-// chrome.storage.local.set({"reviewToken": "xxxxxx"})
-
-// getStoredReviewToken()
-// setReviewPageData()
-
-// Close the popup
-// window.close()

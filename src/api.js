@@ -26,9 +26,10 @@ const verifyReviewTokenValid = (reviewToken, authUrl) => new Promise((resolve, r
 })
 
 const getReviewToken = (loginFormData, authUrl) => new Promise((resolve, reject) => {
-  const authProps = {method: 'POST',
+  const authProps = {
+    method: 'POST',
     async: true,
-    headers: {'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     contentType: 'json',
     body: loginFormData
   }
@@ -38,7 +39,7 @@ const getReviewToken = (loginFormData, authUrl) => new Promise((resolve, reject)
         if (typeof (json.review_token) === 'undefined' || json.review_token === null) {
           resolve(json)
         } else {
-          resolve({reviewToken: json.review_token})
+          resolve({ reviewToken: json.review_token })
         }
       })
     ).catch((e) => {

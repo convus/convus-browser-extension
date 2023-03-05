@@ -45,18 +45,17 @@ test('verifyReviewTokenValid returns true for authenticated', async () => {
 })
 
 test('getReviewToken returns message for not-authenticated', async () => {
-  fetch.mockResponseOnce(JSON.stringify({ message: "Incorrect email or password" }), { status: 401 })
-  const loginFormJson = {email: 'test@example.com', password: "fakepass"}
+  fetch.mockResponseOnce(JSON.stringify({ message: 'Incorrect email or password' }), { status: 401 })
+  const loginFormJson = { email: 'test@example.com', password: 'fakepass' }
 
   const res = await api.getReviewToken(loginFormJson, authUrl)
-  expect(res).toStrictEqual({message: "Incorrect email or password"})
+  expect(res).toStrictEqual({ message: 'Incorrect email or password' })
 })
-
 
 test('getReviewToken returns reviewToken for authenticated', async () => {
   fetch.mockResponseOnce(JSON.stringify({ review_token: 'zzzzz' }), { status: 200 })
-  const loginFormJson = {email: 'test@example.com', password: "fakepass"}
+  const loginFormJson = { email: 'test@example.com', password: 'fakepass' }
 
   const res = await api.getReviewToken(loginFormJson, authUrl)
-  expect(res).toStrictEqual({reviewToken: "zzzzz"})
+  expect(res).toStrictEqual({ reviewToken: 'zzzzz' })
 })
