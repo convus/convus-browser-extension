@@ -85,7 +85,7 @@ describe("submitReview", function() {
 
     const reviewJson = {"source":"chrome_extension","submitted_url":"https://github.com/convus/convus-browser-extension/pull/4","agreement":"neutral","quality":"quality_med","changed_my_opinion":"1","significant_factual_error":"0","citation_title":"Remove remote code loading by sethherr · Pull Request #4 · convus/convus-browser-extension"}
 
-    const res = await api.submitReview("xxxx", reviewJson, reviewUrl)
-    expect(res).toStrictEqual({ success: 'review added' })
+    const res = await api.submitReview(reviewUrl, "xxxx", reviewJson)
+    expect(res).toStrictEqual({ success: true, messages: [['success', 'review added']]})
   })
 })

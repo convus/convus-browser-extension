@@ -30,14 +30,14 @@ const isReviewTokenValid = (authUrl, reviewToken) => new Promise((resolve, rejec
 })
 
 const getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
-  const authProps = {
+  const rProps = {
     method: 'POST',
     async: true,
     headers: { 'Content-Type': 'application/json' },
     contentType: 'json',
     body: loginFormData
   }
-  return fetch(authUrl, authProps)
+  return fetch(authUrl, rProps)
     .then(response => response.json()
       .then((json) => {
         let result = {}
@@ -53,22 +53,22 @@ const getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject)
     })
 })
 
-const submitReview = (authUrl, reviewToken, reviewFormData) => new Promise((resolve, reject) => {
-  const authProps = requestProps(reviewToken, {body: {review: reviewFormData}})
-  console.log(authProps);
+const submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((resolve, reject) => {
+  const rProps = requestProps(reviewToken, {body: reviewFormData})
 
-  // return fetch(authUrl, authProps)
-  //   .then(response => response.json()
-  //     .then((json) => {
-  //       if (typeof (json.review_token) === 'undefined' || json.review_token === null) {
-  //         resolve(json)
-  //       } else {
-  //         resolve({ reviewToken: json.review_token })
-  //       }
-  //     })
-  //   ).catch((e) => {
-  //     reject(e)
-  //   })
+  log.debug(rProps)
+  return fetch(reviewUrl, rProps)
+    .then(response => response.json()
+      .then((json) => {
+        if (response.status == 200) {
+          resolve({success: true, messages: [['success', json.message]]})
+        } else {
+          resolve({success: false, messages: [['error', json.message]]})
+        }
+      })
+    ).catch((e) => {
+      reject(e)
+    })
 })
 
 export default {

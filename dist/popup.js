@@ -282,14 +282,14 @@
     });
   });
   var getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
-    const authProps = {
+    const rProps = {
       method: "POST",
       async: true,
       headers: { "Content-Type": "application/json" },
       contentType: "json",
       body: loginFormData
     };
-    return fetch(authUrl, authProps).then(
+    return fetch(authUrl, rProps).then(
       (response) => response.json().then((json) => {
         let result = {};
         if (response.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
@@ -303,9 +303,20 @@
       reject(e);
     });
   });
-  var submitReview = (authUrl, reviewToken, reviewFormData) => new Promise((resolve, reject) => {
-    const authProps = requestProps(reviewToken, { body: { review: reviewFormData } });
-    console.log(authProps);
+  var submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((resolve, reject) => {
+    const rProps = requestProps(reviewToken, { body: reviewFormData });
+    log_default.debug(rProps);
+    return fetch(reviewUrl, rProps).then(
+      (response) => response.json().then((json) => {
+        if (response.status == 200) {
+          resolve({ success: true, messages: [["success", json.message]] });
+        } else {
+          resolve({ success: false, messages: [["error", json.message]] });
+        }
+      })
+    ).catch((e) => {
+      reject(e);
+    });
   });
   var api_default = {
     requestProps,
@@ -352,6 +363,7 @@
     document.getElementById("citation_title").value = title;
   };
   var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
+  var formNewReviewUrl = () => document.getElementById("new_review")?.getAttribute("action");
   var loginTime = () => {
     log_default.debug("it's login time");
     const loginForm = document.getElementById("new_user");
@@ -395,7 +407,13 @@
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_review"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    log_default.debug(jsonFormData);
+    const result = await api_default.submitReview(formNewReviewUrl(), window.reviewToken, jsonFormData);
+    log_default.debug(result);
+    renderAlerts(result.messages);
+    if (result.success) {
+      document.getElementById("new_review").classList.add("hidden");
+      return setTimeout(window.close, 3e3);
+    }
     return false;
   };
   var hideAlerts = () => {

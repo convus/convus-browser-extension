@@ -50,7 +50,7 @@ const updateReviewFields = (tabUrl, title) => {
 }
 
 const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
-// const formNewReviewUrl = () => document.getElementById('new_review')?.getAttribute('action')
+const formNewReviewUrl = () => document.getElementById('new_review')?.getAttribute('action')
 
 const loginTime = () => {
   log.debug("it's login time")
@@ -105,10 +105,15 @@ const handleReviewSubmit = async function (e) {
   e.preventDefault()
   const formData = new FormData(document.getElementById('new_review'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
-  log.debug(jsonFormData)
+  const result = await api.submitReview(formNewReviewUrl(), window.reviewToken, jsonFormData)
+  log.debug(result)
 
-  // Close the popup
-  // return setTimeout(window.close, 1000)
+  renderAlerts(result.messages)
+  if (result.success) {
+    document.getElementById('new_review').classList.add('hidden')
+    // Close the popup after pause
+    return setTimeout(window.close, 3000)
+  }
 
   return false // fallback prevent submit
 }
