@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Convus Reviews",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Add a review to Convus for the page you're viewing in your browser",
 
   "icons": {
@@ -29,7 +29,7 @@
     "default_title": "Convus: review current page"
   },
 
- "host_permissions": ["https://www.convus.org/"],
+ "host_permissions": [],
 
   "content_scripts": [],
 
