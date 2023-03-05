@@ -33,7 +33,7 @@ const checkReviewToken = async function (token) {
   const result = await api.isReviewTokenValid(authUrl, token)
   if (result) { return }
   // Remove the existing data that is incorrect - maybe actually do in form submit?
-  chrome.storage.local.remove("reviewToken")
+  chrome.storage.local.remove('reviewToken')
   window.reviewToken = undefined
   loginTime()
 }

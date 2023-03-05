@@ -259,9 +259,9 @@
 
   // api.js
   var requestProps = (reviewToken = false, extraProps = {}) => {
-    let headers = { "Content-Type": "application/json" };
+    const headers = { "Content-Type": "application/json" };
     if (reviewToken) {
-      headers["Authorization"] = `Bearer ${reviewToken}`;
+      headers.Authorization = `Bearer ${reviewToken}`;
     }
     const defaultProps = {
       method: "POST",
@@ -293,7 +293,7 @@
       (response) => response.json().then((json) => {
         let result = {};
         if (response.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
-          result["messages"] = [["error", json.message]];
+          result.messages = [["error", json.message]];
         } else {
           result = { reviewToken: json.review_token, messages: [["success", "authenticated"]] };
         }
@@ -308,7 +308,7 @@
     log_default.debug(rProps);
     return fetch(reviewUrl, rProps).then(
       (response) => response.json().then((json) => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           resolve({ success: true, messages: [["success", json.message]] });
         } else {
           resolve({ success: false, messages: [["error", json.message]] });

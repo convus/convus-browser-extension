@@ -1,9 +1,9 @@
 import log from './log' // eslint-disable-line
 
 const requestProps = (reviewToken = false, extraProps = {}) => {
-  let headers = {'Content-Type': 'application/json'}
+  const headers = { 'Content-Type': 'application/json' }
   if (reviewToken) {
-    headers["Authorization"] = `Bearer ${reviewToken}`
+    headers.Authorization = `Bearer ${reviewToken}`
   }
 
   const defaultProps = {
@@ -42,9 +42,9 @@ const getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject)
       .then((json) => {
         let result = {}
         if (response.status !== 200 || typeof (json.review_token) === 'undefined' || json.review_token === null) {
-          result["messages"] = [['error', json.message]]
+          result.messages = [['error', json.message]]
         } else {
-          result = {reviewToken: json.review_token, messages: [['success', "authenticated"]]}
+          result = { reviewToken: json.review_token, messages: [['success', 'authenticated']] }
         }
         resolve(result)
       })
@@ -54,16 +54,16 @@ const getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject)
 })
 
 const submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((resolve, reject) => {
-  const rProps = requestProps(reviewToken, {body: reviewFormData})
+  const rProps = requestProps(reviewToken, { body: reviewFormData })
 
   log.debug(rProps)
   return fetch(reviewUrl, rProps)
     .then(response => response.json()
       .then((json) => {
-        if (response.status == 200) {
-          resolve({success: true, messages: [['success', json.message]]})
+        if (response.status === 200) {
+          resolve({ success: true, messages: [['success', json.message]] })
         } else {
-          resolve({success: false, messages: [['error', json.message]]})
+          resolve({ success: false, messages: [['error', json.message]] })
         }
       })
     ).catch((e) => {
