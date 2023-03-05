@@ -1,6 +1,9 @@
 import api from '../src/api'
 import log from '../src/log' // eslint-disable-line
 
+// TODO: switch to using nock and recording requests
+// requires nock supporting fetch - https://github.com/nock/nock/issues/2397
+
 beforeEach(() => {
   fetch.resetMocks()
 })
@@ -39,4 +42,21 @@ test('verifyReviewTokenValid returns true for authenticated', async () => {
 
   const res = await api.verifyReviewTokenValid(authUrl, 'xxxx')
   expect(res).toBe(true)
+})
+
+test('getReviewToken returns message for not-authenticated', async () => {
+  fetch.mockResponseOnce(JSON.stringify({ message: "Incorrect email or password" }), { status: 401 })
+  const loginFormJson = {email: 'test@example.com', password: "fakepass"}
+
+  const res = await api.getReviewToken(loginFormJson, authUrl)
+  expect(res).toStrictEqual({message: "Incorrect email or password"})
+})
+
+
+test('getReviewToken returns reviewToken for authenticated', async () => {
+  fetch.mockResponseOnce(JSON.stringify({ review_token: 'zzzzz' }), { status: 200 })
+  const loginFormJson = {email: 'test@example.com', password: "fakepass"}
+
+  const res = await api.getReviewToken(loginFormJson, authUrl)
+  expect(res).toStrictEqual({reviewToken: "zzzzz"})
 })

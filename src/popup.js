@@ -7,7 +7,7 @@ chrome.storage.local.get('reviewToken')
     if (typeof (reviewToken) === 'undefined' || reviewToken === null) {
       loginTime()
     } else {
-      // window.reviewToken = reviewToken
+      window.reviewToken = reviewToken
       checkReviewToken(reviewToken)
     }
   })
@@ -20,12 +20,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   // log.debug(tabs[0])
   updateReviewFields(activeTab.url, activeTab.title)
 })
-
-// getStoredReviewToken()
-// setReviewPageData()
-
-// Close the popup
-// window.close()
 
 const checkReviewToken = async function (token) {
   const authUrl = formAuthUrl()
@@ -56,7 +50,7 @@ const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('act
 const loginTime = () => {
   log.debug("it's login time")
   // pause and rerun if DOM hasn't loaded
-  const loginForm = document.getElementById('login-form')
+  const loginForm = document.getElementById('new_user')
   if (typeof (loginForm) === 'undefined' || loginForm === null) {
     log.debug('login form not present in DOM, trying later')
     return setTimeout(loginTime, 50)
@@ -64,9 +58,53 @@ const loginTime = () => {
   // Remove the existing data that is incorrect - maybe actually do in form submit?
   // chrome.storage.local.remove("reviewToken")
   // window.reviewToken = undefined
-  loginForm?.classList.remove('hidden')
+  loginForm.classList.remove('hidden')
   document.getElementById('new_review')?.classList?.add('hidden')
+  loginForm.addEventListener("submit", submitLogin);
+}
+
+const submitLogin = async function (e) {
+  e.preventDefault()
+  const formData = new FormData(document.getElementById('new_user'));
+  const jsonFormData = JSON.stringify(Object.fromEntries(formData))
+  log.debug(jsonFormData)
+
+  const result = await api.getReviewToken(jsonFormData, formAuthUrl())
+  log.debug(result)
+  if (typeof (result.reviewToken) === 'undefined' || result.reviewToken === null) {
+    renderAlert(result.message)
+  } else {
+    chrome.storage.local.set(result)
+    hideAlerts()
+    document.getElementById('new_user').classList.add('hidden')
+    document.getElementById('new_review')?.classList.remove('hidden')
+  }
+
+  return false // fallback prevent submit
+}
+
+const hideAlerts = () => {
+  // const visibleAlerts = document.getElementsByClassName("alert visible")
+  const visibleAlerts = document.querySelectorAll(".alert.visible")
+  log.debug(visibleAlerts)
+  visibleAlerts.forEach(el=>el.classList.add('hidden'))
+  visibleAlerts.forEach(el=>el.classList.add('visible'))
+}
+
+const renderAlert = (text) => {
+  hideAlerts()
+  const body = document.getElementById("body-popup")
+  let alert = document.createElement("div")
+  alert.textContent = text
+  alert.classList.add("alert", "alert-error", "my-4", "visible")
+  body.prepend(alert)
 }
 
 // chrome.storage.local.remove("reviewToken")
 // chrome.storage.local.set({"reviewToken": "xxxxxx"})
+
+// getStoredReviewToken()
+// setReviewPageData()
+
+// Close the popup
+// window.close()

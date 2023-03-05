@@ -279,8 +279,29 @@
       reject(e);
     });
   });
+  var getReviewToken = (loginFormData, authUrl) => new Promise((resolve, reject) => {
+    const authProps = {
+      method: "POST",
+      async: true,
+      headers: { "Content-Type": "application/json" },
+      contentType: "json",
+      body: loginFormData
+    };
+    return fetch(authUrl, authProps).then(
+      (response) => response.json().then((json) => {
+        if (typeof json.review_token === "undefined" || json.review_token === null) {
+          resolve(json);
+        } else {
+          resolve({ reviewToken: json.review_token });
+        }
+      })
+    ).catch((e) => {
+      reject(e);
+    });
+  });
   var api_default = {
     requestProps,
+    getReviewToken,
     verifyReviewTokenValid
   };
 
@@ -289,6 +310,7 @@
     if (typeof reviewToken === "undefined" || reviewToken === null) {
       loginTime();
     } else {
+      window.reviewToken = reviewToken;
       checkReviewToken(reviewToken);
     }
   });
@@ -320,13 +342,45 @@
   var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
   var loginTime = () => {
     log_default.debug("it's login time");
-    const loginForm = document.getElementById("login-form");
+    const loginForm = document.getElementById("new_user");
     if (typeof loginForm === "undefined" || loginForm === null) {
       log_default.debug("login form not present in DOM, trying later");
       return setTimeout(loginTime, 50);
     }
-    loginForm?.classList.remove("hidden");
+    loginForm.classList.remove("hidden");
     document.getElementById("new_review")?.classList?.add("hidden");
+    loginForm.addEventListener("submit", submitLogin);
+  };
+  var submitLogin = async function(e) {
+    e.preventDefault();
+    const formData = new FormData(document.getElementById("new_user"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    log_default.debug(jsonFormData);
+    const result = await api_default.getReviewToken(jsonFormData, formAuthUrl());
+    log_default.debug(result);
+    if (typeof result.reviewToken === "undefined" || result.reviewToken === null) {
+      renderAlert(result.message);
+    } else {
+      chrome.storage.local.set(result);
+      hideAlerts();
+      document.getElementById("new_user").classList.add("hidden");
+      document.getElementById("new_review")?.classList.remove("hidden");
+    }
+    return false;
+  };
+  var hideAlerts = () => {
+    const visibleAlerts = document.querySelectorAll(".alert.visible");
+    log_default.debug(visibleAlerts);
+    visibleAlerts.forEach((el) => el.classList.add("hidden"));
+    visibleAlerts.forEach((el) => el.classList.add("visible"));
+  };
+  var renderAlert = (text) => {
+    hideAlerts();
+    const body = document.getElementById("body-popup");
+    let alert = document.createElement("div");
+    alert.textContent = text;
+    alert.classList.add("alert", "alert-error", "my-4", "visible");
+    body.prepend(alert);
   };
 })();
 //# sourceMappingURL=popup.js.map
