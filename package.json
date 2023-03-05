@@ -27,7 +27,8 @@
       "confirm",
       "fetch",
       "FormData",
-      "localStorage"
+      "localStorage",
+      "storage"
     ],
     "ignore": [
       "node_modules/*",

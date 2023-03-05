@@ -253,7 +253,7 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  if (true) {
+  if (false) {
     import_loglevel.default.setLevel("warn");
   } else {
     import_loglevel.default.setLevel("debug");
@@ -328,8 +328,8 @@
     submitReview
   };
 
-  // popup.js
-  chrome.storage.local.get("reviewToken").then((data) => data.reviewToken).then((reviewToken) => {
+  // firefox_popup.js
+  browser.storage.local.get("reviewToken").then((data) => data.reviewToken).then((reviewToken) => {
     if (typeof reviewToken === "undefined" || reviewToken === null) {
       loginTime();
     } else {
@@ -338,7 +338,7 @@
       checkReviewToken(reviewToken);
     }
   });
-  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+  browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     const activeTab = tabs[0];
     updateReviewFields(activeTab.url, activeTab.title);
   });
@@ -352,7 +352,7 @@
     if (result) {
       return;
     }
-    chrome.storage.local.remove("reviewToken");
+    browser.storage.local.remove("reviewToken");
     window.reviewToken = void 0;
     loginTime();
   };
@@ -399,7 +399,7 @@
     if (typeof result.reviewToken === "undefined" || result.reviewToken === null) {
       renderAlerts(result.messages);
     } else {
-      chrome.storage.local.set(result);
+      browser.storage.local.set(result);
       window.reviewToken = result.reviewToken;
       hideAlerts();
       reviewTime();

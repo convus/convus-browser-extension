@@ -1,3 +1,0 @@
-(() => {
-})();
-//# sourceMappingURL=popup.js.map

@@ -3,7 +3,7 @@ const fs = require('fs')
 
 const watch = process.argv.includes('--watch')
 
-const target = "firefox"
+const target = 'firefox'
 
 // NOTE: index.html and manifest.json are generated via this script
 // THEY DO NOT UPDATE ON SAVE when watching (the JS does)
@@ -40,7 +40,7 @@ require('esbuild')
     entryPoints: [`${target}_popup.js`],
     bundle: true,
     sourcemap: true,
-    outfile: 'dist/popup.js',
+    outfile: path.join(process.cwd(), 'dist', 'popup.js'),
     absWorkingDir: path.join(process.cwd(), 'src'),
     watch: watch && watchOptions,
     plugins: []
