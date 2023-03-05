@@ -29,7 +29,7 @@
     "default_title": "Convus: review current page"
   },
 
- "host_permissions": ["http://localhost:3009/"],
+ "host_permissions": ["https://www.convus.org/"],
 
   "content_scripts": [],
 
