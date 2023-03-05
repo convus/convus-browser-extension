@@ -258,18 +258,20 @@
   var log_default = import_loglevel.default;
 
   // api.js
-  var requestProps = (reviewToken, extraProps = {}) => {
+  var requestProps = (reviewToken = false, extraProps = {}) => {
+    let headers = { "Content-Type": "application/json" };
+    if (reviewToken) {
+      headers["Authorization"] = `Bearer ${reviewToken}`;
+    }
     const defaultProps = {
+      method: "POST",
       async: true,
-      headers: {
-        Authorization: "Bearer " + reviewToken,
-        "Content-Type": "application/json"
-      },
+      headers,
       contentType: "json"
     };
     return { ...defaultProps, ...extraProps };
   };
-  var verifyReviewTokenValid = (reviewToken, authUrl) => new Promise((resolve, reject) => {
+  var isReviewTokenValid = (authUrl, reviewToken) => new Promise((resolve, reject) => {
     const authStatusUrl = `${authUrl}/status`;
     return fetch(authStatusUrl, requestProps(reviewToken, { method: "GET" })).then(
       (response) => response.json().then((json) => {
@@ -279,7 +281,7 @@
       reject(e);
     });
   });
-  var getReviewToken = (loginFormData, authUrl) => new Promise((resolve, reject) => {
+  var getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
     const authProps = {
       method: "POST",
       async: true,
@@ -289,20 +291,27 @@
     };
     return fetch(authUrl, authProps).then(
       (response) => response.json().then((json) => {
-        if (typeof json.review_token === "undefined" || json.review_token === null) {
-          resolve(json);
+        let result = {};
+        if (response.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
+          result["messages"] = [["error", json.message]];
         } else {
-          resolve({ reviewToken: json.review_token });
+          result = { reviewToken: json.review_token, messages: [["success", "authenticated"]] };
         }
+        resolve(result);
       })
     ).catch((e) => {
       reject(e);
     });
   });
+  var submitReview = (authUrl, reviewToken, reviewFormData) => new Promise((resolve, reject) => {
+    const authProps = requestProps(reviewToken, { body: { review: reviewFormData } });
+    console.log(authProps);
+  });
   var api_default = {
     requestProps,
     getReviewToken,
-    verifyReviewTokenValid
+    submitReview,
+    isReviewTokenValid
   };
 
   // popup.js
@@ -325,7 +334,7 @@
       log_default.debug(`authUrl not present in DOM, trying later (${token})`);
       return setTimeout(checkReviewToken, 50, token);
     }
-    const result = await api_default.verifyReviewTokenValid(token, authUrl);
+    const result = await api_default.isReviewTokenValid(authUrl, token);
     if (result) {
       return;
     }
@@ -370,10 +379,10 @@
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_user"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.getReviewToken(jsonFormData, formAuthUrl());
+    const result = await api_default.getReviewToken(formAuthUrl(), jsonFormData);
     log_default.debug(result);
     if (typeof result.reviewToken === "undefined" || result.reviewToken === null) {
-      renderAlert(result.message);
+      renderAlerts(result.messages);
     } else {
       chrome.storage.local.set(result);
       window.reviewToken = result.reviewToken;
@@ -393,13 +402,15 @@
     const visibleAlerts = document.querySelectorAll(".alert");
     visibleAlerts.forEach((el) => el.classList.add("hidden"));
   };
-  var renderAlert = (text, kind = "error") => {
+  var renderAlerts = (messages) => {
     hideAlerts();
-    const body = document.getElementById("body-popup");
-    const alert = document.createElement("div");
-    alert.textContent = text;
-    alert.classList.add(`alert-${kind}`, "alert", "my-4");
-    body.prepend(alert);
+    messages.forEach((arr) => {
+      const body = document.getElementById("body-popup");
+      const alert = document.createElement("div");
+      alert.textContent = arr[1];
+      alert.classList.add(`alert-${arr[0]}`, "alert", "my-4");
+      body.prepend(alert);
+    });
   };
 })();
 //# sourceMappingURL=popup.js.map

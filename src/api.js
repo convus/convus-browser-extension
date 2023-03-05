@@ -1,18 +1,22 @@
 import log from './log' // eslint-disable-line
 
-const requestProps = (reviewToken, extraProps = {}) => {
+const requestProps = (reviewToken = false, extraProps = {}) => {
+  let headers = {'Content-Type': 'application/json'}
+  if (reviewToken) {
+    headers["Authorization"] = `Bearer ${reviewToken}`
+  }
+
   const defaultProps = {
+    method: 'POST', // because default to some method
     async: true,
-    headers: {
-      Authorization: 'Bearer ' + reviewToken,
-      'Content-Type': 'application/json'
-    },
+    headers: headers,
     contentType: 'json'
   }
   return { ...defaultProps, ...extraProps }
 }
 
-const verifyReviewTokenValid = (reviewToken, authUrl) => new Promise((resolve, reject) => {
+// Returns true/false
+const isReviewTokenValid = (authUrl, reviewToken) => new Promise((resolve, reject) => {
   const authStatusUrl = `${authUrl}/status`
 
   return fetch(authStatusUrl, requestProps(reviewToken, { method: 'GET' }))
@@ -25,7 +29,7 @@ const verifyReviewTokenValid = (reviewToken, authUrl) => new Promise((resolve, r
     })
 })
 
-const getReviewToken = (loginFormData, authUrl) => new Promise((resolve, reject) => {
+const getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
   const authProps = {
     method: 'POST',
     async: true,
@@ -36,19 +40,40 @@ const getReviewToken = (loginFormData, authUrl) => new Promise((resolve, reject)
   return fetch(authUrl, authProps)
     .then(response => response.json()
       .then((json) => {
-        if (typeof (json.review_token) === 'undefined' || json.review_token === null) {
-          resolve(json)
+        let result = {}
+        if (response.status !== 200 || typeof (json.review_token) === 'undefined' || json.review_token === null) {
+          result["messages"] = [['error', json.message]]
         } else {
-          resolve({ reviewToken: json.review_token })
+          result = {reviewToken: json.review_token, messages: [['success', "authenticated"]]}
         }
+        resolve(result)
       })
     ).catch((e) => {
       reject(e)
     })
 })
 
+const submitReview = (authUrl, reviewToken, reviewFormData) => new Promise((resolve, reject) => {
+  const authProps = requestProps(reviewToken, {body: {review: reviewFormData}})
+  console.log(authProps);
+
+  // return fetch(authUrl, authProps)
+  //   .then(response => response.json()
+  //     .then((json) => {
+  //       if (typeof (json.review_token) === 'undefined' || json.review_token === null) {
+  //         resolve(json)
+  //       } else {
+  //         resolve({ reviewToken: json.review_token })
+  //       }
+  //     })
+  //   ).catch((e) => {
+  //     reject(e)
+  //   })
+})
+
 export default {
   requestProps,
   getReviewToken,
-  verifyReviewTokenValid
+  submitReview,
+  isReviewTokenValid
 }

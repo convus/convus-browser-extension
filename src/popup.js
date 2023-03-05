@@ -30,7 +30,7 @@ const checkReviewToken = async function (token) {
     return setTimeout(checkReviewToken, 50, token)
   }
   // log.debug('checking review token:', token)
-  const result = await api.verifyReviewTokenValid(token, authUrl)
+  const result = await api.isReviewTokenValid(authUrl, token)
   if (result) { return }
   // Remove the existing data that is incorrect - maybe actually do in form submit?
   chrome.storage.local.remove("reviewToken")
@@ -86,10 +86,11 @@ const handleLoginSubmit = async function (e) {
   const formData = new FormData(document.getElementById('new_user'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
 
-  const result = await api.getReviewToken(jsonFormData, formAuthUrl())
+  const result = await api.getReviewToken(formAuthUrl(), jsonFormData)
   log.debug(result)
+
   if (typeof (result.reviewToken) === 'undefined' || result.reviewToken === null) {
-    renderAlert(result.message)
+    renderAlerts(result.messages)
   } else {
     chrome.storage.local.set(result)
     window.reviewToken = result.reviewToken
@@ -117,13 +118,16 @@ const hideAlerts = () => {
   visibleAlerts.forEach(el => el.classList.add('hidden'))
 }
 
-const renderAlert = (text, kind = 'error') => {
+const renderAlerts = (messages) => {
   hideAlerts()
-  const body = document.getElementById('body-popup')
-  const alert = document.createElement('div')
-  alert.textContent = text
-  alert.classList.add(`alert-${kind}`, 'alert', 'my-4')
-  body.prepend(alert)
+  // messages are arrays of: [kind, text]
+  messages.forEach(arr => {
+    const body = document.getElementById('body-popup')
+    const alert = document.createElement('div')
+    alert.textContent = arr[1]
+    alert.classList.add(`alert-${arr[0]}`, 'alert', 'my-4')
+    body.prepend(alert)
+  })
 }
 
 // chrome.storage.local.remove("reviewToken")
