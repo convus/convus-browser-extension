@@ -23,12 +23,12 @@
   "standard": {
     "globals": [
       "alert",
+      "browser",
       "chrome",
       "confirm",
       "fetch",
       "FormData",
-      "localStorage",
-      "storage"
+      "localStorage"
     ],
     "ignore": [
       "node_modules/*",
