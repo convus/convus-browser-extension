@@ -14,7 +14,7 @@ const htmlContent = fs.readFileSync('src/index.html', 'utf8')
 fs.writeFileSync('dist/index.html', htmlContent)
 // Generate manifest for the current env
 const manifestContent = fs.readFileSync('src/manifest.json', 'utf8')
-  .replace(/{{baseUrl}}/g, baseUrl)
+  .replace(/{{baseUrl}}/g, baseUrl) // Not using host permissions, so this doesn't update anything now...
   .replace(/{{version}}/g, version)
 fs.writeFileSync('dist/manifest.json', manifestContent)
 
