@@ -322,10 +322,10 @@
     });
   });
   var api_default = {
-    requestProps,
     getReviewToken,
-    submitReview,
-    isReviewTokenValid
+    isReviewTokenValid,
+    requestProps,
+    submitReview
   };
 
   // popup.js

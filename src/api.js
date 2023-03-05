@@ -72,8 +72,8 @@ const submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((re
 })
 
 export default {
-  requestProps,
   getReviewToken,
-  submitReview,
-  isReviewTokenValid
+  isReviewTokenValid,
+  requestProps,
+  submitReview
 }
