@@ -13,8 +13,8 @@
 		5D8F00F529B574AD003A1EE5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F00F329B574AD003A1EE5 /* Main.storyboard */; };
 		5D8F00FE29B574AD003A1EE5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F00FD29B574AD003A1EE5 /* AppDelegate.swift */; };
 		5D8F010129B574AD003A1EE5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F00FF29B574AD003A1EE5 /* Main.storyboard */; };
-		5D8F010929B574AD003A1EE5 /* Convus Reviews Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5D8F010829B574AD003A1EE5 /* Convus Reviews Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		5D8F011329B574AD003A1EE5 /* Convus Reviews Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5D8F011229B574AD003A1EE5 /* Convus Reviews Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5D8F010929B574AD003A1EE5 /* Convus Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5D8F010829B574AD003A1EE5 /* Convus Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5D8F011329B574AD003A1EE5 /* Convus Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5D8F011229B574AD003A1EE5 /* Convus Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		5D8F011929B574AD003A1EE5 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F00DC29B574AC003A1EE5 /* Main.html */; };
 		5D8F011A29B574AD003A1EE5 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F00DC29B574AC003A1EE5 /* Main.html */; };
 		5D8F011B29B574AD003A1EE5 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F00DE29B574AC003A1EE5 /* Icon.png */; };
@@ -47,14 +47,14 @@
 			containerPortal = 5D8F00D629B574AC003A1EE5 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5D8F010729B574AD003A1EE5;
-			remoteInfo = "Convus Reviews Extension (iOS)";
+			remoteInfo = "Convus Extension (iOS)";
 		};
 		5D8F011429B574AD003A1EE5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5D8F00D629B574AC003A1EE5 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5D8F011129B574AD003A1EE5;
-			remoteInfo = "Convus Reviews Extension (macOS)";
+			remoteInfo = "Convus Extension (macOS)";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -65,7 +65,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				5D8F010929B574AD003A1EE5 /* Convus Reviews Extension.appex in Embed Foundation Extensions */,
+				5D8F010929B574AD003A1EE5 /* Convus Extension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -76,7 +76,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				5D8F011329B574AD003A1EE5 /* Convus Reviews Extension.appex in Embed Foundation Extensions */,
+				5D8F011329B574AD003A1EE5 /* Convus Extension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -91,22 +91,22 @@
 		5D8F00E129B574AC003A1EE5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5D8F00E229B574AD003A1EE5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5D8F00E429B574AD003A1EE5 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
-		5D8F00E929B574AD003A1EE5 /* Convus Reviews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Convus Reviews.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D8F00E929B574AD003A1EE5 /* Convus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Convus.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D8F00EC29B574AD003A1EE5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5D8F00EE29B574AD003A1EE5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		5D8F00F129B574AD003A1EE5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5D8F00F429B574AD003A1EE5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5D8F00F629B574AD003A1EE5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5D8F00FB29B574AD003A1EE5 /* Convus Reviews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Convus Reviews.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D8F00FB29B574AD003A1EE5 /* Convus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Convus.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D8F00FD29B574AD003A1EE5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5D8F010029B574AD003A1EE5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5D8F010229B574AD003A1EE5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5D8F010329B574AD003A1EE5 /* Convus Reviews.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Convus Reviews.entitlements"; sourceTree = "<group>"; };
-		5D8F010829B574AD003A1EE5 /* Convus Reviews Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Convus Reviews Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D8F010329B574AD003A1EE5 /* Convus.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Convus.entitlements"; sourceTree = "<group>"; };
+		5D8F010829B574AD003A1EE5 /* Convus Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Convus Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D8F010D29B574AD003A1EE5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5D8F011229B574AD003A1EE5 /* Convus Reviews Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Convus Reviews Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D8F011229B574AD003A1EE5 /* Convus Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Convus Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D8F011729B574AD003A1EE5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5D8F011829B574AD003A1EE5 /* Convus Reviews.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Convus Reviews.entitlements"; sourceTree = "<group>"; };
+		5D8F011829B574AD003A1EE5 /* Convus.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Convus.entitlements"; sourceTree = "<group>"; };
 		5D8F013829B574AD003A1EE5 /* popup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = popup.js; path = ../../dist/popup.js; sourceTree = "<group>"; };
 		5D8F013929B574AD003A1EE5 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = index.html; path = ../../dist/index.html; sourceTree = "<group>"; };
 		5D8F013A29B574AD003A1EE5 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; name = images; path = ../../dist/images; sourceTree = "<group>"; };
@@ -194,10 +194,10 @@
 		5D8F00EA29B574AD003A1EE5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5D8F00E929B574AD003A1EE5 /* Convus Reviews.app */,
-				5D8F00FB29B574AD003A1EE5 /* Convus Reviews.app */,
-				5D8F010829B574AD003A1EE5 /* Convus Reviews Extension.appex */,
-				5D8F011229B574AD003A1EE5 /* Convus Reviews Extension.appex */,
+				5D8F00E929B574AD003A1EE5 /* Convus.app */,
+				5D8F00FB29B574AD003A1EE5 /* Convus.app */,
+				5D8F010829B574AD003A1EE5 /* Convus Extension.appex */,
+				5D8F011229B574AD003A1EE5 /* Convus Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -220,7 +220,7 @@
 				5D8F00FD29B574AD003A1EE5 /* AppDelegate.swift */,
 				5D8F00FF29B574AD003A1EE5 /* Main.storyboard */,
 				5D8F010229B574AD003A1EE5 /* Info.plist */,
-				5D8F010329B574AD003A1EE5 /* Convus Reviews.entitlements */,
+				5D8F010329B574AD003A1EE5 /* Convus.entitlements */,
 			);
 			path = "macOS (App)";
 			sourceTree = "<group>";
@@ -237,7 +237,7 @@
 			isa = PBXGroup;
 			children = (
 				5D8F011729B574AD003A1EE5 /* Info.plist */,
-				5D8F011829B574AD003A1EE5 /* Convus Reviews.entitlements */,
+				5D8F011829B574AD003A1EE5 /* Convus.entitlements */,
 			);
 			path = "macOS (Extension)";
 			sourceTree = "<group>";
@@ -258,9 +258,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5D8F00E829B574AD003A1EE5 /* Convus Reviews (iOS) */ = {
+		5D8F00E829B574AD003A1EE5 /* Convus (iOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5D8F012D29B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Reviews (iOS)" */;
+			buildConfigurationList = 5D8F012D29B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus (iOS)" */;
 			buildPhases = (
 				5D8F00E529B574AD003A1EE5 /* Sources */,
 				5D8F00E629B574AD003A1EE5 /* Frameworks */,
@@ -272,14 +272,14 @@
 			dependencies = (
 				5D8F010B29B574AD003A1EE5 /* PBXTargetDependency */,
 			);
-			name = "Convus Reviews (iOS)";
-			productName = "Convus Reviews (iOS)";
-			productReference = 5D8F00E929B574AD003A1EE5 /* Convus Reviews.app */;
+			name = "Convus (iOS)";
+			productName = "Convus (iOS)";
+			productReference = 5D8F00E929B574AD003A1EE5 /* Convus.app */;
 			productType = "com.apple.product-type.application";
 		};
-		5D8F00FA29B574AD003A1EE5 /* Convus Reviews (macOS) */ = {
+		5D8F00FA29B574AD003A1EE5 /* Convus (macOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5D8F013429B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Reviews (macOS)" */;
+			buildConfigurationList = 5D8F013429B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus (macOS)" */;
 			buildPhases = (
 				5D8F00F729B574AD003A1EE5 /* Sources */,
 				5D8F00F829B574AD003A1EE5 /* Frameworks */,
@@ -291,14 +291,14 @@
 			dependencies = (
 				5D8F011529B574AD003A1EE5 /* PBXTargetDependency */,
 			);
-			name = "Convus Reviews (macOS)";
-			productName = "Convus Reviews (macOS)";
-			productReference = 5D8F00FB29B574AD003A1EE5 /* Convus Reviews.app */;
+			name = "Convus (macOS)";
+			productName = "Convus (macOS)";
+			productReference = 5D8F00FB29B574AD003A1EE5 /* Convus.app */;
 			productType = "com.apple.product-type.application";
 		};
-		5D8F010729B574AD003A1EE5 /* Convus Reviews Extension (iOS) */ = {
+		5D8F010729B574AD003A1EE5 /* Convus Extension (iOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5D8F012929B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Reviews Extension (iOS)" */;
+			buildConfigurationList = 5D8F012929B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Extension (iOS)" */;
 			buildPhases = (
 				5D8F010429B574AD003A1EE5 /* Sources */,
 				5D8F010529B574AD003A1EE5 /* Frameworks */,
@@ -308,14 +308,14 @@
 			);
 			dependencies = (
 			);
-			name = "Convus Reviews Extension (iOS)";
-			productName = "Convus Reviews Extension (iOS)";
-			productReference = 5D8F010829B574AD003A1EE5 /* Convus Reviews Extension.appex */;
+			name = "Convus Extension (iOS)";
+			productName = "Convus Extension (iOS)";
+			productReference = 5D8F010829B574AD003A1EE5 /* Convus Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		5D8F011129B574AD003A1EE5 /* Convus Reviews Extension (macOS) */ = {
+		5D8F011129B574AD003A1EE5 /* Convus Extension (macOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5D8F013029B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Reviews Extension (macOS)" */;
+			buildConfigurationList = 5D8F013029B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Extension (macOS)" */;
 			buildPhases = (
 				5D8F010E29B574AD003A1EE5 /* Sources */,
 				5D8F010F29B574AD003A1EE5 /* Frameworks */,
@@ -325,9 +325,9 @@
 			);
 			dependencies = (
 			);
-			name = "Convus Reviews Extension (macOS)";
-			productName = "Convus Reviews Extension (macOS)";
-			productReference = 5D8F011229B574AD003A1EE5 /* Convus Reviews Extension.appex */;
+			name = "Convus Extension (macOS)";
+			productName = "Convus Extension (macOS)";
+			productReference = 5D8F011229B574AD003A1EE5 /* Convus Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -354,7 +354,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5D8F00D929B574AC003A1EE5 /* Build configuration list for PBXProject "Convus Reviews" */;
+			buildConfigurationList = 5D8F00D929B574AC003A1EE5 /* Build configuration list for PBXProject "Convus" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -367,10 +367,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5D8F00E829B574AD003A1EE5 /* Convus Reviews (iOS) */,
-				5D8F00FA29B574AD003A1EE5 /* Convus Reviews (macOS) */,
-				5D8F010729B574AD003A1EE5 /* Convus Reviews Extension (iOS) */,
-				5D8F011129B574AD003A1EE5 /* Convus Reviews Extension (macOS) */,
+				5D8F00E829B574AD003A1EE5 /* Convus (iOS) */,
+				5D8F00FA29B574AD003A1EE5 /* Convus (macOS) */,
+				5D8F010729B574AD003A1EE5 /* Convus Extension (iOS) */,
+				5D8F011129B574AD003A1EE5 /* Convus Extension (macOS) */,
 			);
 		};
 /* End PBXProject section */
@@ -470,12 +470,12 @@
 /* Begin PBXTargetDependency section */
 		5D8F010B29B574AD003A1EE5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5D8F010729B574AD003A1EE5 /* Convus Reviews Extension (iOS) */;
+			target = 5D8F010729B574AD003A1EE5 /* Convus Extension (iOS) */;
 			targetProxy = 5D8F010A29B574AD003A1EE5 /* PBXContainerItemProxy */;
 		};
 		5D8F011529B574AD003A1EE5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5D8F011129B574AD003A1EE5 /* Convus Reviews Extension (macOS) */;
+			target = 5D8F011129B574AD003A1EE5 /* Convus Extension (macOS) */;
 			targetProxy = 5D8F011429B574AD003A1EE5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -647,7 +647,7 @@
 					SafariServices,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Convus.Extension;
-				PRODUCT_NAME = "Convus Reviews Extension";
+				PRODUCT_NAME = "Convus Extension";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -678,7 +678,7 @@
 					SafariServices,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Convus.Extension;
-				PRODUCT_NAME = "Convus Reviews Extension";
+				PRODUCT_NAME = "Convus Extension";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -699,7 +699,7 @@
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Convus Reviews";
+				INFOPLIST_KEY_CFBundleDisplayName = "Convus";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -717,7 +717,7 @@
 					WebKit,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Convus;
-				PRODUCT_NAME = "Convus Reviews";
+				PRODUCT_NAME = "Convus";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -736,7 +736,7 @@
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Convus Reviews";
+				INFOPLIST_KEY_CFBundleDisplayName = "Convus";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -754,7 +754,7 @@
 					WebKit,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Convus;
-				PRODUCT_NAME = "Convus Reviews";
+				PRODUCT_NAME = "Convus";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -766,14 +766,14 @@
 		5D8F013129B574AD003A1EE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/Convus Reviews.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/Convus.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Convus Reviews Extension";
+				INFOPLIST_KEY_CFBundleDisplayName = "Convus Extension";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -787,7 +787,7 @@
 					SafariServices,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Convus.Extension;
-				PRODUCT_NAME = "Convus Reviews Extension";
+				PRODUCT_NAME = "Convus Extension";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -798,14 +798,14 @@
 		5D8F013229B574AD003A1EE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/Convus Reviews.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/Convus.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Convus Reviews Extension";
+				INFOPLIST_KEY_CFBundleDisplayName = "Convus Extension";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -819,7 +819,7 @@
 					SafariServices,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Convus.Extension;
-				PRODUCT_NAME = "Convus Reviews Extension";
+				PRODUCT_NAME = "Convus Extension";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -833,14 +833,14 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "macOS (App)/Convus Reviews.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "macOS (App)/Convus.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (App)/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Convus Reviews";
+				INFOPLIST_KEY_CFBundleDisplayName = "Convus";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -856,7 +856,7 @@
 					WebKit,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Convus;
-				PRODUCT_NAME = "Convus Reviews";
+				PRODUCT_NAME = "Convus";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -869,14 +869,14 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "macOS (App)/Convus Reviews.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "macOS (App)/Convus.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (App)/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Convus Reviews";
+				INFOPLIST_KEY_CFBundleDisplayName = "Convus";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -892,7 +892,7 @@
 					WebKit,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Convus;
-				PRODUCT_NAME = "Convus Reviews";
+				PRODUCT_NAME = "Convus";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -902,7 +902,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5D8F00D929B574AC003A1EE5 /* Build configuration list for PBXProject "Convus Reviews" */ = {
+		5D8F00D929B574AC003A1EE5 /* Build configuration list for PBXProject "Convus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D8F012729B574AD003A1EE5 /* Debug */,
@@ -911,7 +911,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5D8F012929B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Reviews Extension (iOS)" */ = {
+		5D8F012929B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Extension (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D8F012A29B574AD003A1EE5 /* Debug */,
@@ -920,7 +920,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5D8F012D29B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Reviews (iOS)" */ = {
+		5D8F012D29B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D8F012E29B574AD003A1EE5 /* Debug */,
@@ -929,7 +929,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5D8F013029B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Reviews Extension (macOS)" */ = {
+		5D8F013029B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Extension (macOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D8F013129B574AD003A1EE5 /* Debug */,
@@ -938,7 +938,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5D8F013429B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus Reviews (macOS)" */ = {
+		5D8F013429B574AD003A1EE5 /* Build configuration list for PBXNativeTarget "Convus (macOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D8F013529B574AD003A1EE5 /* Debug */,
