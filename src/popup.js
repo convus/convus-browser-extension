@@ -1,4 +1,4 @@
-// import log from './log' // eslint-disable-line
+import log from './log' // eslint-disable-line
 import api from './api' // eslint-disable-line
 
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
@@ -29,7 +29,7 @@ const checkReviewToken = async function (token) {
   const authUrl = formAuthUrl()
   // pause and rerun if DOM hasn't loaded
   if (typeof (authUrl) === 'undefined' || authUrl === null) {
-    // log.debug(`authUrl not present in DOM, trying later (${token})`)
+    log.debug(`authUrl not present in DOM, trying later (${token})`)
     return setTimeout(checkReviewToken, 50, token)
   }
   // log.debug('checking review token:', token)
@@ -45,7 +45,7 @@ const updateReviewFields = (tabUrl, title) => {
   // pause and rerun if DOM hasn't loaded
   const reviewUrlField = document.getElementById('submitted_url')
   if (typeof (reviewUrlField) === 'undefined' || reviewUrlField === null) {
-    // log.debug('reviewUrlField not present in DOM, trying later')
+    log.debug('reviewUrlField not present in DOM, trying later')
     return setTimeout(updateReviewFields, 50, tabUrl, title)
   }
   reviewUrlField.value = tabUrl
@@ -60,7 +60,7 @@ const loginTime = () => {
   // pause and rerun if DOM hasn't loaded
   const loginForm = document.getElementById('new_user')
   if (typeof (loginForm) === 'undefined' || loginForm === null) {
-    // log.debug('login form not present in DOM, trying later')
+    log.debug('login form not present in DOM, trying later')
     return setTimeout(loginTime, 50)
   }
   loginForm.classList.remove('hidden')
@@ -72,7 +72,7 @@ const reviewTime = () => {
   // pause and rerun if DOM hasn't loaded
   const reviewForm = document.getElementById('new_review')
   if (typeof (reviewForm) === 'undefined' || reviewForm === null) {
-    // log.debug('review form not present in DOM, trying later')
+    log.debug('review form not present in DOM, trying later')
     return setTimeout(reviewTime, 50)
   }
   // I think it's a good thing to attach the event listener to the review form
