@@ -29,8 +29,6 @@
     "default_title": "Convus: review current page"
   },
 
-  "content_scripts": [],
-
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {

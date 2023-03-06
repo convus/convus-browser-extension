@@ -157,7 +157,9 @@
 				5D8F011629B574AD003A1EE5 /* macOS (Extension) */,
 				5D8F00EA29B574AD003A1EE5 /* Products */,
 			);
+			indentWidth = 2;
 			sourceTree = "<group>";
+			tabWidth = 2;
 		};
 		5D8F00DA29B574AC003A1EE5 /* Shared (App) */ = {
 			isa = PBXGroup;
@@ -715,7 +717,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Convus-Reviews";
+				PRODUCT_BUNDLE_IDENTIFIER = Convus;
 				PRODUCT_NAME = "Convus Reviews";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -753,7 +755,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Convus-Reviews";
+				PRODUCT_BUNDLE_IDENTIFIER = Convus;
 				PRODUCT_NAME = "Convus Reviews";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -855,7 +857,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Convus-Reviews";
+				PRODUCT_BUNDLE_IDENTIFIER = Convus;
 				PRODUCT_NAME = "Convus Reviews";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -891,7 +893,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Convus-Reviews";
+				PRODUCT_BUNDLE_IDENTIFIER = Convus;
 				PRODUCT_NAME = "Convus Reviews";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
