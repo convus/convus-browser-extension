@@ -2,7 +2,7 @@ import log from './log' // eslint-disable-line
 import api from './api' // eslint-disable-line
 
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
-if (typeof (chrome) === 'object') { browser = chrome }
+if (typeof (chrome) === 'object') { browser = chrome } // eslint-disable-line
 
 browser.storage.local.get('reviewToken')
   .then(data => data.reviewToken)
