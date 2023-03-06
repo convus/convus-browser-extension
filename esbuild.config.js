@@ -38,7 +38,10 @@ const watchOptions = {
 
 require('esbuild')
   .build({
-    define: { 'process.env.NODE_ENV': `"${process.env.NODE_ENV}"` },
+    define: {
+      'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
+      'process.env.browser_target': `"${target}"`
+    },
     entryPoints: ['popup.js'],
     bundle: true,
     sourcemap: true,
