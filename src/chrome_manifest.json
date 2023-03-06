@@ -29,8 +29,6 @@
     "default_title": "Convus: review current page"
   },
 
- "host_permissions": [],
-
   "content_scripts": [],
 
   "commands": {
@@ -38,8 +36,7 @@
       "suggested_key": {
         "default": "Ctrl+Shift+R",
         "mac": "MacCtrl+Shift+R"
-      },
-      "description": "__MSG_commandOpenPopup__"
+      }
     }
   }
 }

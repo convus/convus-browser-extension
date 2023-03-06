@@ -3,6 +3,7 @@ const fs = require('fs')
 
 const watch = process.argv.includes('--watch')
 
+// Current options: chrome, firefox
 const target = 'firefox'
 
 // NOTE: index.html and manifest.json are generated via this script
@@ -37,8 +38,11 @@ const watchOptions = {
 
 require('esbuild')
   .build({
-    define: { 'process.env.NODE_ENV': `"${process.env.NODE_ENV}"` },
-    entryPoints: [`${target}_popup.js`],
+    define: {
+      'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
+      'process.env.browser_target': `"${target}"`
+    },
+    entryPoints: ['popup.js'],
     bundle: true,
     sourcemap: true,
     outfile: path.join(process.cwd(), 'dist', 'popup.js'),
