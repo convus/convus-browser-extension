@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Convus Reviews",
+  "name": "Convus",
   "version": "{{version}}",
   "description": "Add a review to Convus for the page you're viewing in your browser",
 

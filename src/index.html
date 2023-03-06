@@ -29,7 +29,7 @@
 
     <form id="new_review" action="{{baseUrl}}/api/v1/reviews" accept-charset="UTF-8" method="post">
       <input class="form-control" autocomplete="off" type="hidden" value="{{target}}_extension" name="source" id="source" />
-      <div class="form-row hidden-in-browser-ext">
+      <div class="form-row hidden">
         <input placeholder="URL" class="form-control" autocomplete="off" type="text" name="submitted_url" id="submitted_url" />
       </div>
       <div class="row grid-cols-2 divide-x">
@@ -77,7 +77,7 @@
       <div class="form-row-btn mb-3">
         <input type="submit" name="commit" value="save" class="btn btn-success" data-disable-with="save" />
       </div>
-      <div class="form-row hidden-in-browser-ext">
+      <div class="form-row hidden">
         <label for="citation_title">Title</label>
         <input class="form-control" type="text" name="citation_title" id="citation_title" />
       </div>
