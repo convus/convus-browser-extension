@@ -1,7 +1,9 @@
 import log from './log' // eslint-disable-line
 import api from './api' // eslint-disable-line
 
-chrome.storage.local.get('reviewToken')
+const browser = chrome
+
+browser.storage.local.get('reviewToken')
   .then(data => data.reviewToken)
   .then(reviewToken => {
     if (typeof (reviewToken) === 'undefined' || reviewToken === null) {
@@ -13,7 +15,7 @@ chrome.storage.local.get('reviewToken')
     }
   })
 
-chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   // since only one tab should be active and in the current window at once
   // the return variable should only have one entry
   const activeTab = tabs[0]
@@ -33,7 +35,7 @@ const checkReviewToken = async function (token) {
   const result = await api.isReviewTokenValid(authUrl, token)
   if (result) { return }
   // Remove the existing data that is incorrect - maybe actually do in form submit?
-  chrome.storage.local.remove('reviewToken')
+  browser.storage.local.remove('reviewToken')
   window.reviewToken = undefined
   loginTime()
 }
@@ -92,7 +94,7 @@ const handleLoginSubmit = async function (e) {
   if (typeof (result.reviewToken) === 'undefined' || result.reviewToken === null) {
     renderAlerts(result.messages)
   } else {
-    chrome.storage.local.set(result)
+    browser.storage.local.set(result)
     window.reviewToken = result.reviewToken
     hideAlerts()
     reviewTime()
@@ -135,4 +137,4 @@ const renderAlerts = (messages) => {
   })
 }
 
-// chrome.storage.local.remove("reviewToken")
+// browser.storage.local.remove("reviewToken")
