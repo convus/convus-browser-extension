@@ -65,9 +65,6 @@
     submitReview
   };
 
-  if (false) {
-    browser = chrome;
-  }
   browser.storage.local.get("reviewToken").then((data) => data.reviewToken).then((reviewToken) => {
     if (typeof reviewToken === "undefined" || reviewToken === null) {
       loginTime();
