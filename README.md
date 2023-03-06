@@ -34,4 +34,4 @@ To build and watch - which will build using `http://localhost:3009`
 
 To build the publishable version, use `NODE_ENV=production yarn build` - which will build with `https://www.convus.org` as the source.
 
-There are some configuration options in [esbuild.config.js] (for example - specify whether you're building for Firefox or Chrome)
+There are some configuration options in [esbuild.config.js](esbuild.config.js) (for example - specify whether you're building for Firefox or Chrome)
