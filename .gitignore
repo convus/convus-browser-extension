@@ -9,3 +9,9 @@ esbuild_error
 
 # Ignore builds
 _builds
+
+# xcode stuff
+*.swp
+*~.nib
+xcuserdata
+
