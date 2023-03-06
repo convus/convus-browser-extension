@@ -3,6 +3,7 @@ const fs = require('fs')
 
 const watch = process.argv.includes('--watch')
 
+// Current options: chrome, firefox
 const target = 'chrome'
 
 // NOTE: index.html and manifest.json are generated via this script

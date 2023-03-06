@@ -1,7 +1,8 @@
 import log from './log' // eslint-disable-line
 import api from './api' // eslint-disable-line
 
-const browser = chrome
+// Oh Chrome, it would be great if you used `browser` instead of `chrome`
+if (typeof (chrome) === 'object') { browser = chrome }
 
 browser.storage.local.get('reviewToken')
   .then(data => data.reviewToken)
@@ -89,7 +90,7 @@ const handleLoginSubmit = async function (e) {
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
 
   const result = await api.getReviewToken(formAuthUrl(), jsonFormData)
-  log.debug(result)
+  // log.debug(result)
 
   if (typeof (result.reviewToken) === 'undefined' || result.reviewToken === null) {
     renderAlerts(result.messages)

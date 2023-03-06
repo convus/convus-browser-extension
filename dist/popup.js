@@ -328,7 +328,9 @@
   };
 
   // popup.js
-  var browser = chrome;
+  if (typeof chrome === "object") {
+    browser = chrome;
+  }
   browser.storage.local.get("reviewToken").then((data) => data.reviewToken).then((reviewToken) => {
     if (typeof reviewToken === "undefined" || reviewToken === null) {
       loginTime();
@@ -395,7 +397,6 @@
     const formData = new FormData(document.getElementById("new_user"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
     const result = await api_default.getReviewToken(formAuthUrl(), jsonFormData);
-    log_default.debug(result);
     if (typeof result.reviewToken === "undefined" || result.reviewToken === null) {
       renderAlerts(result.messages);
     } else {
