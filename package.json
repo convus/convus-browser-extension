@@ -31,8 +31,9 @@
       "localStorage"
     ],
     "ignore": [
-      "node_modules/*",
-      "dist/popup.js"
+      "apple/*",
+      "dist/popup.js",
+      "node_modules/*"
     ],
     "env": [
       "jest"
