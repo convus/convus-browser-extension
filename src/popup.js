@@ -16,6 +16,10 @@ browser.storage.local.get('reviewToken')
     }
   })
 
+browser.storage.local.get('topicsVisible')
+  .then(data => data.topicsVisible)
+  .then(topicsVisible => {toggleTopicsVisible(topicsVisible)})
+
 browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   // since only one tab should be active and in the current window at once
   // the return variable should only have one entry
@@ -77,6 +81,9 @@ const reviewTime = () => {
   }
   // I think it's a good thing to attach the event listener to the review form
   reviewForm.addEventListener('submit', handleReviewSubmit)
+  // Attach the menu functionality
+  document.getElementById('review-menu-btn').addEventListener('click', toggleMenu)
+  document.querySelectorAll('#review-menu .form-control-check input').forEach(el => el.addEventListener('change', updateMenuCheck))
   // ... but only show or hide the form if reviewToken is set, in case of weird callback stuff
   if (window.reviewToken) {
     document.getElementById('new_user').classList.add('hidden')
@@ -136,6 +143,43 @@ const renderAlerts = (messages) => {
     alert.classList.add(`alert-${arr[0]}`, 'alert', 'my-4')
     body.prepend(alert)
   })
+}
+
+const toggleTopicsVisible = (isVisible) => {
+  window.topicsVisibile = isVisible
+  if (window.topicsVisibile) {
+    document.getElementById('field-group-topics').classList.remove('hidden')
+  } else {
+    document.getElementById('field-group-topics').classList.add('hidden')
+  }
+  browser.storage.local.set({topicsVisible: isVisible})
+}
+
+const toggleMenu = (e) => {
+  e.preventDefault()
+  const menuBtn = document.getElementById('review-menu-btn')
+  const menu = document.getElementById('review-menu')
+  if (menu.classList.contains('active')) {
+    menu.classList.add('hidden')
+    menu.classList.remove('active')
+    menuBtn.classList.remove('active')
+  } else {
+    menu.classList.remove('hidden')
+    menu.classList.add('active')
+    menuBtn.classList.add('active')
+  }
+}
+const updateMenuCheck = (e) => {
+  const el = e.target
+  const fieldId = el.getAttribute('data-target-id')
+
+  if (fieldId === 'field-group-topics') {
+    toggleTopicsVisible(el.checked)
+  } else if (el.checked) {
+    document.getElementById(fieldId).classList.remove('hidden')
+  } else {
+    document.getElementById(fieldId).classList.add('hidden')
+  }
 }
 
 // browser.storage.local.remove("reviewToken")

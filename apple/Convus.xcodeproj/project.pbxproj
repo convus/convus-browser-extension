@@ -646,7 +646,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Convus.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = convus.Extension;
 				PRODUCT_NAME = "Convus Extension";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -677,7 +677,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Convus.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.convus.Extension;
 				PRODUCT_NAME = "Convus Extension";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -711,16 +711,19 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.5.1;
+				MARKETING_VERSION = 0.5.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Convus;
+				PRODUCT_BUNDLE_IDENTIFIER = convus;
 				PRODUCT_NAME = Convus;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -750,16 +753,19 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.5.1;
+				MARKETING_VERSION = 0.5.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Convus;
+				PRODUCT_BUNDLE_IDENTIFIER = org.convus;
 				PRODUCT_NAME = Convus;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -787,12 +793,12 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 0.5.1;
+				MARKETING_VERSION = 0.5.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Convus.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = convus.Extension;
 				PRODUCT_NAME = "Convus Extension";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -821,12 +827,12 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 0.5.1;
+				MARKETING_VERSION = 0.5.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Convus.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.convus.Extension;
 				PRODUCT_NAME = "Convus Extension";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -865,7 +871,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Convus;
+				PRODUCT_BUNDLE_IDENTIFIER = convus;
 				PRODUCT_NAME = Convus;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -903,7 +909,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Convus;
+				PRODUCT_BUNDLE_IDENTIFIER = org.convus;
 				PRODUCT_NAME = Convus;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
