@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Convus Reviews",
+  "name": "Convus",
   "version": "{{version}}",
   "description": "Add a review to Convus for the page you're viewing in your browser",
 
@@ -28,8 +28,6 @@
     "default_popup": "index.html",
     "default_title": "Convus: review current page"
   },
-
-  "content_scripts": [],
 
   "commands": {
     "_execute_action": {

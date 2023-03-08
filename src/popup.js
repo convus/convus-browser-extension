@@ -11,10 +11,14 @@ browser.storage.local.get('reviewToken')
       loginTime()
     } else {
       window.reviewToken = reviewToken
-      reviewTime() // I'm worried that this will interfere with
+      reviewTime()
       checkReviewToken(reviewToken)
     }
   })
+
+browser.storage.local.get('topicsVisible')
+  .then(data => data.topicsVisible)
+  .then(topicsVisible => { toggleTopicsVisible(topicsVisible, true) })
 
 browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   // since only one tab should be active and in the current window at once
@@ -27,9 +31,8 @@ browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 
 const checkReviewToken = async function (token) {
   const authUrl = formAuthUrl()
-  // pause and rerun if DOM hasn't loaded
   if (typeof (authUrl) === 'undefined' || authUrl === null) {
-    log.debug(`authUrl not present in DOM, trying later (${token})`)
+    log.debug('authUrl not present in DOM, trying again in 50ms')
     return setTimeout(checkReviewToken, 50, token)
   }
   // log.debug('checking review token:', token)
@@ -45,7 +48,7 @@ const updateReviewFields = (tabUrl, title) => {
   // pause and rerun if DOM hasn't loaded
   const reviewUrlField = document.getElementById('submitted_url')
   if (typeof (reviewUrlField) === 'undefined' || reviewUrlField === null) {
-    log.debug('reviewUrlField not present in DOM, trying later')
+    log.debug('reviewUrlField not present in DOM, trying again in 50ms')
     return setTimeout(updateReviewFields, 50, tabUrl, title)
   }
   reviewUrlField.value = tabUrl
@@ -57,10 +60,9 @@ const formNewReviewUrl = () => document.getElementById('new_review')?.getAttribu
 
 const loginTime = () => {
   // log.debug("it's login time")
-  // pause and rerun if DOM hasn't loaded
   const loginForm = document.getElementById('new_user')
   if (typeof (loginForm) === 'undefined' || loginForm === null) {
-    log.debug('login form not present in DOM, trying later')
+    log.debug('login form not present in DOM, trying again in 50ms')
     return setTimeout(loginTime, 50)
   }
   loginForm.classList.remove('hidden')
@@ -69,14 +71,17 @@ const loginTime = () => {
 }
 
 const reviewTime = () => {
-  // pause and rerun if DOM hasn't loaded
   const reviewForm = document.getElementById('new_review')
   if (typeof (reviewForm) === 'undefined' || reviewForm === null) {
-    log.debug('review form not present in DOM, trying later')
+    log.debug('review form not present in DOM, trying again in 50ms')
     return setTimeout(reviewTime, 50)
   }
   // I think it's a good thing to attach the event listener to the review form
   reviewForm.addEventListener('submit', handleReviewSubmit)
+  // Attach the menu functionality
+  document.getElementById('review-menu-btn').addEventListener('click', toggleMenu)
+  document.querySelectorAll('#review-menu .form-control-check input').forEach(el => el.addEventListener('change', updateMenuCheck))
+  document.getElementById('logout-btn').addEventListener('click', logout)
   // ... but only show or hide the form if reviewToken is set, in case of weird callback stuff
   if (window.reviewToken) {
     document.getElementById('new_user').classList.add('hidden')
@@ -115,7 +120,7 @@ const handleReviewSubmit = async function (e) {
   if (result.success) {
     document.getElementById('new_review').classList.add('hidden')
     // Close the popup after pause
-    return setTimeout(window.close, 3000)
+    return setTimeout(window.close, 2000)
   }
 
   return false // fallback prevent submit
@@ -138,4 +143,57 @@ const renderAlerts = (messages) => {
   })
 }
 
-// browser.storage.local.remove("reviewToken")
+const toggleTopicsVisible = (isVisible, isOnLoad = false) => {
+  window.topicsVisibile = isVisible
+  const topicsField = document.getElementById('field-group-topics')
+  if (typeof (topicsField) === 'undefined' || topicsField === null) {
+    log.debug('topics field not present in DOM, trying again in 50ms')
+    return setTimeout(toggleTopicsVisible, 50, isVisible, isOnLoad)
+  }
+  if (window.topicsVisibile) {
+    topicsField.classList.remove('hidden')
+  } else {
+    topicsField.classList.add('hidden')
+  }
+  // If it's on load, set the checkbox - otherwise, set the local storage
+  if (isOnLoad) {
+    document.getElementById('show_topics').checked = isVisible
+  } else {
+    browser.storage.local.set({ topicsVisible: isVisible })
+  }
+}
+
+// closeMenu can be: ["toggle", true, false]
+const toggleMenu = (e = null, closeMenu = 'toggle') => {
+  e?.preventDefault()
+  const menuBtn = document.getElementById('review-menu-btn')
+  const menu = document.getElementById('review-menu')
+  const action = closeMenu === 'toggle' ? menu.classList.contains('active') : closeMenu
+  if (action) {
+    menu.classList.add('hidden')
+    menu.classList.remove('active')
+    menuBtn.classList.remove('active')
+  } else {
+    menu.classList.remove('hidden')
+    menu.classList.add('active')
+    menuBtn.classList.add('active')
+  }
+}
+const updateMenuCheck = (e) => {
+  const el = e.target
+  const fieldId = el.getAttribute('data-target-id')
+
+  if (fieldId === 'field-group-topics') {
+    toggleTopicsVisible(el.checked)
+  } else if (el.checked) {
+    document.getElementById(fieldId).classList.remove('hidden')
+  } else {
+    document.getElementById(fieldId).classList.add('hidden')
+  }
+}
+
+const logout = () => {
+  browser.storage.local.remove('reviewToken')
+  toggleMenu(null, true)
+  loginTime()
+}
