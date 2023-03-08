@@ -340,6 +340,9 @@
       checkReviewToken(reviewToken);
     }
   });
+  browser.storage.local.get("topicsVisible").then((data) => data.topicsVisible).then((topicsVisible) => {
+    toggleTopicsVisible(topicsVisible);
+  });
   browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     const activeTab = tabs[0];
     updateReviewFields(activeTab.url, activeTab.title);
@@ -386,6 +389,9 @@
       return setTimeout(reviewTime, 50);
     }
     reviewForm.addEventListener("submit", handleReviewSubmit);
+    document.getElementById("review-menu-btn").addEventListener("click", toggleMenu);
+    document.querySelectorAll("#review-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
+    document.getElementById("logout-btn").addEventListener("click", logout);
     if (window.reviewToken) {
       document.getElementById("new_user").classList.add("hidden");
       reviewForm.classList.remove("hidden");
@@ -431,6 +437,44 @@
       alert.classList.add(`alert-${arr[0]}`, "alert", "my-4");
       body.prepend(alert);
     });
+  };
+  var toggleTopicsVisible = (isVisible) => {
+    window.topicsVisibile = isVisible;
+    if (window.topicsVisibile) {
+      document.getElementById("field-group-topics").classList.remove("hidden");
+    } else {
+      document.getElementById("field-group-topics").classList.add("hidden");
+    }
+    browser.storage.local.set({ topicsVisible: isVisible });
+  };
+  var toggleMenu = (e) => {
+    e.preventDefault();
+    const menuBtn = document.getElementById("review-menu-btn");
+    const menu = document.getElementById("review-menu");
+    if (menu.classList.contains("active")) {
+      menu.classList.add("hidden");
+      menu.classList.remove("active");
+      menuBtn.classList.remove("active");
+    } else {
+      menu.classList.remove("hidden");
+      menu.classList.add("active");
+      menuBtn.classList.add("active");
+    }
+  };
+  var updateMenuCheck = (e) => {
+    const el = e.target;
+    const fieldId = el.getAttribute("data-target-id");
+    if (fieldId === "field-group-topics") {
+      toggleTopicsVisible(el.checked);
+    } else if (el.checked) {
+      document.getElementById(fieldId).classList.remove("hidden");
+    } else {
+      document.getElementById(fieldId).classList.add("hidden");
+    }
+  };
+  var logout = () => {
+    browser.storage.local.remove("reviewToken");
+    loginTime();
   };
 })();
 //# sourceMappingURL=popup.js.map

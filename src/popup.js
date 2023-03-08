@@ -18,7 +18,7 @@ browser.storage.local.get('reviewToken')
 
 browser.storage.local.get('topicsVisible')
   .then(data => data.topicsVisible)
-  .then(topicsVisible => {toggleTopicsVisible(topicsVisible)})
+  .then(topicsVisible => { toggleTopicsVisible(topicsVisible) })
 
 browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   // since only one tab should be active and in the current window at once
@@ -84,6 +84,7 @@ const reviewTime = () => {
   // Attach the menu functionality
   document.getElementById('review-menu-btn').addEventListener('click', toggleMenu)
   document.querySelectorAll('#review-menu .form-control-check input').forEach(el => el.addEventListener('change', updateMenuCheck))
+  document.getElementById('logout-btn').addEventListener('click', logout)
   // ... but only show or hide the form if reviewToken is set, in case of weird callback stuff
   if (window.reviewToken) {
     document.getElementById('new_user').classList.add('hidden')
@@ -152,7 +153,7 @@ const toggleTopicsVisible = (isVisible) => {
   } else {
     document.getElementById('field-group-topics').classList.add('hidden')
   }
-  browser.storage.local.set({topicsVisible: isVisible})
+  browser.storage.local.set({ topicsVisible: isVisible })
 }
 
 const toggleMenu = (e) => {
@@ -182,4 +183,7 @@ const updateMenuCheck = (e) => {
   }
 }
 
-// browser.storage.local.remove("reviewToken")
+const logout = () => {
+  browser.storage.local.remove('reviewToken')
+  loginTime()
+}

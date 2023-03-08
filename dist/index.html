@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="stylesheet" href="application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css">
+    <link rel="stylesheet" href="application-3fc34da7f1117a47b36700a4c4a9df95e3aa0414.css">
 
     <script src="popup.js"></script>
     <title>Convus</title>
@@ -29,58 +29,105 @@
 
     <form id="new_review" action="https://www.convus.org/api/v1/reviews" accept-charset="UTF-8" method="post">
       <input class="form-control" autocomplete="off" type="hidden" value="safari_extension" name="source" id="source" />
-      <div class="form-row hidden">
+      <div class="form-row form-row collapsible hidden" id="field-group-url">
+        <label for="submitted_url">URL</label>
         <input placeholder="URL" class="form-control" autocomplete="off" type="text" name="submitted_url" id="submitted_url" />
       </div>
       <div class="row grid-cols-2 divide-x">
         <div class="col py-1">
-          <label class="reviews-radio-button" for="agreement_agree">
+          <label class="form-control-radio" for="agreement_agree">
             <input type="radio" value="agree" name="agreement" id="agreement_agree" />
             Agree
           </label>
-          <label class="reviews-radio-button" for="agreement_neutral">
+          <label class="form-control-radio" for="agreement_neutral">
             <input type="radio" value="neutral" checked="checked" name="agreement" id="agreement_neutral" />
             Neutral
           </label>
-          <label class="reviews-radio-button" for="agreement_disagree">
+          <label class="form-control-radio" for="agreement_disagree">
             <input type="radio" value="disagree" name="agreement" id="agreement_disagree" />
             Disagree
           </label>
         </div>
         <div class="col py-1">
-          <label class="reviews-radio-button" for="quality_quality_high">
+          <label class="form-control-radio" for="quality_quality_high">
             <input type="radio" value="quality_high" name="quality" id="quality_quality_high" />
             High Quality
           </label>
-          <label class="reviews-radio-button" for="quality_quality_med">
+          <label class="form-control-radio" for="quality_quality_med">
             <input type="radio" value="quality_med" checked="checked" name="quality" id="quality_quality_med" />
             Neutral
           </label>
-          <label class="reviews-radio-button" for="quality_quality_low">
+          <label class="form-control-radio" for="quality_quality_low">
             <input type="radio" value="quality_low" name="quality" id="quality_quality_low" />
             Low Quality
           </label>
         </div>
       </div>
-      <div class="form-row ">
-        <label class="reviews-check" for="changed_my_opinion">
-          <input name="changed_my_opinion" type="hidden" value="0" autocomplete="off" /><input class="form-check-input" type="checkbox" value="1" name="changed_my_opinion" id="changed_my_opinion" />
+      <div class="form-row">
+        <label class="form-control-check" for="changed_my_opinion">
+          <input name="changed_my_opinion" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="changed_my_opinion" id="changed_my_opinion" />
           Changed my opinion
         </label>
       </div>
       <div class="form-row">
-        <label class="reviews-check" for="significant_factual_error">
-          <input name="significant_factual_error" type="hidden" value="0" autocomplete="off" /><input class="form-check-input" type="checkbox" value="1" name="significant_factual_error" id="significant_factual_error" />
+        <label class="form-control-check" for="significant_factual_error">
+          <input name="significant_factual_error" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="significant_factual_error" id="significant_factual_error" />
           Significant factual error(s)
         </label>
       </div>
-      <div class="form-row-btn mb-3">
-        <input type="submit" name="commit" value="save" class="btn btn-success" data-disable-with="save" />
+      <div class="row grid-cols-2">
+        <div class="col">
+          <div class="form-row-btn mb-3">
+            <input type="submit" name="commit" value="save" class="btn btn-success" data-disable-with="save" />
+          </div>
+        </div>
+        <div class="col mt-4 text-right">
+          <button type="button" aria-label="Menu" id="review-menu-btn" class="">
+            <span class="sr-only">Menu</span>
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
-      <div class="form-row hidden">
+      <div class="form-row collapsible hidden" id="field-group-title">
         <label for="citation_title">Title</label>
         <input class="form-control" type="text" name="citation_title" id="citation_title" />
       </div>
+      <div class="form-row mt-3 collapsible hidden" id="field-group-topics">
+        <label for="topics_text">
+          Topics
+          <small class="less-strong">new line delineated</small>
+        </label>
+        <textarea placeholder="optional" class="form-control" name="topics_text" id="topics_text"></textarea>
+      </div>
     </form>
+    <div id="review-menu"  class="collapsible hidden">
+      <hr>
+      <div class="form-row">
+        <label class="form-control-check" for="show_topics">
+          <input type="checkbox" name="show_topics" id="show_topics" value="1" data-target-id="field-group-topics">
+          Show Topics
+          <small class="less-strong">always</small>
+        </label>
+      </div>
+      <div class="form-row">
+        <label class="form-control-check" for="show_url">
+          <input type="checkbox" name="show_url" id="show_url" value="1" data-target-id="field-group-url">
+          Show URL
+          <small class="less-strong">only applies to current review</small>
+        </label>
+      </div>
+      <div class="form-row">
+        <label class="form-control-check" for="show_title">
+          <input type="checkbox" name="show_title" id="show_title" value="1" data-target-id="field-group-title">
+          Show Title
+          <small class="less-strong">only applies to current review</small>
+        </label>
+      </div>
+      <div class="mt-4 text-right">
+        <button class="gray-link text-sm" type="submit" id="logout-btn">logout</button>
+      </div>
+    </div>
   </body>
 </html>
