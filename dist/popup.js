@@ -253,7 +253,7 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  if (true) {
+  if (false) {
     import_loglevel.default.setLevel("warn");
   } else {
     import_loglevel.default.setLevel("debug");

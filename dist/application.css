@@ -886,6 +886,8 @@ turbo-frame {
   border-radius: 0.5rem;
 }
 #review-menu-btn:hover, #review-menu-btn:active, #review-menu-btn.active, #review-menu-btn:focus {
+  --tw-bg-opacity: 1;
+  background-color: rgb(233 236 239 / var(--tw-bg-opacity));
   opacity: 1;
 }
 #review-menu-btn:hover:focus, #review-menu-btn:active:focus, #review-menu-btn.active:focus, #review-menu-btn:focus:focus {
@@ -924,8 +926,8 @@ turbo-frame {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 .collapsible.hidden {
-  opacity: 0;
   visibility: collapse;
+  opacity: 0;
 }
 .alert {
   margin-bottom: 0.5rem;
@@ -983,6 +985,12 @@ a {
   color: rgb(33 37 41 / var(--tw-text-opacity));
   text-decoration-line: underline;
 }
+/* Done by tranzito_utils, but - may modify later */
+.gray-link {
+  color: #6c757d;
+  opacity: 0.65;
+  text-decoration: underline;
+}
 .btn {
   display: inline-flex;
   cursor: pointer;
@@ -1034,6 +1042,7 @@ a {
   display: none;
 }
 .collapsible#timeSelectionBtnGroup .d-none {
+  visibility: collapse;
   opacity: 0;
 }
 /* without the mr-1, there is no space between things */
@@ -1050,6 +1059,7 @@ a {
   display: none;
 }
 .collapsible#timeSelectionCustom {
+  visibility: collapse;
   opacity: 0;
 }
 #timeSelectionCustom.in {
@@ -1634,11 +1644,4 @@ h4 {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
   }
-}
-
-/* Done by tranzito_utils, but - may modify later */
-.gray-link {
-  color: #6c757d;
-  opacity: 0.65;
-  text-decoration: underline;
 }

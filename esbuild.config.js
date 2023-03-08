@@ -30,7 +30,7 @@ const watchOptions = {
       console.error('watch build failed:', error)
       fs.writeFileSync(errorFilePath, error.toString())
     } else if (fs.existsSync(errorFilePath)) {
-      console.log('watch build succeeded:', result)
+      console.log(`${target} - watch build succeeded:`, result)
       fs.truncate(errorFilePath, 0, () => {})
     }
   }
@@ -50,4 +50,4 @@ require('esbuild')
     watch: watch && watchOptions,
     plugins: []
   })
-  .then((result) => console.log('esbuild updated:', result))
+  .then((result) => console.log(`${target} - esbuild updated:`, result))
