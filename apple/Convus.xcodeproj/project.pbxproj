@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D55965229B82A1100BD5C1C /* application.css in Resources */ = {isa = PBXBuildFile; fileRef = 5D55965129B82A1100BD5C1C /* application.css */; };
+		5D55965329B82A1100BD5C1C /* application.css in Resources */ = {isa = PBXBuildFile; fileRef = 5D55965129B82A1100BD5C1C /* application.css */; };
 		5D8F00ED29B574AD003A1EE5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F00EC29B574AD003A1EE5 /* AppDelegate.swift */; };
 		5D8F00EF29B574AD003A1EE5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F00EE29B574AD003A1EE5 /* SceneDelegate.swift */; };
 		5D8F00F229B574AD003A1EE5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F00F029B574AD003A1EE5 /* LaunchScreen.storyboard */; };
@@ -32,12 +34,10 @@
 		5D8F013D29B574AD003A1EE5 /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F013829B574AD003A1EE5 /* popup.js */; };
 		5D8F013E29B574AD003A1EE5 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F013929B574AD003A1EE5 /* index.html */; };
 		5D8F013F29B574AD003A1EE5 /* images in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F013A29B574AD003A1EE5 /* images */; };
-		5D8F014029B574AD003A1EE5 /* application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F013B29B574AD003A1EE5 /* application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css */; };
 		5D8F014129B574AD003A1EE5 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F013C29B574AD003A1EE5 /* manifest.json */; };
 		5D8F014229B574AD003A1EE5 /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F013829B574AD003A1EE5 /* popup.js */; };
 		5D8F014329B574AD003A1EE5 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F013929B574AD003A1EE5 /* index.html */; };
 		5D8F014429B574AD003A1EE5 /* images in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F013A29B574AD003A1EE5 /* images */; };
-		5D8F014529B574AD003A1EE5 /* application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F013B29B574AD003A1EE5 /* application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css */; };
 		5D8F014629B574AD003A1EE5 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F013C29B574AD003A1EE5 /* manifest.json */; };
 /* End PBXBuildFile section */
 
@@ -84,6 +84,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5D55965129B82A1100BD5C1C /* application.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = application.css; path = ../../dist/application.css; sourceTree = "<group>"; };
 		5D8F00DD29B574AC003A1EE5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = ../Base.lproj/Main.html; sourceTree = "<group>"; };
 		5D8F00DE29B574AC003A1EE5 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		5D8F00DF29B574AC003A1EE5 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
@@ -110,7 +111,6 @@
 		5D8F013829B574AD003A1EE5 /* popup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = popup.js; path = ../../dist/popup.js; sourceTree = "<group>"; };
 		5D8F013929B574AD003A1EE5 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = index.html; path = ../../dist/index.html; sourceTree = "<group>"; };
 		5D8F013A29B574AD003A1EE5 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; name = images; path = ../../dist/images; sourceTree = "<group>"; };
-		5D8F013B29B574AD003A1EE5 /* application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = "application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css"; path = "../../dist/application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css"; sourceTree = "<group>"; };
 		5D8F013C29B574AD003A1EE5 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../dist/manifest.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -248,8 +248,8 @@
 				5D8F013829B574AD003A1EE5 /* popup.js */,
 				5D8F013929B574AD003A1EE5 /* index.html */,
 				5D8F013A29B574AD003A1EE5 /* images */,
-				5D8F013B29B574AD003A1EE5 /* application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css */,
 				5D8F013C29B574AD003A1EE5 /* manifest.json */,
+				5D55965129B82A1100BD5C1C /* application.css */,
 			);
 			name = Resources;
 			path = "Shared (Extension)";
@@ -408,9 +408,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D8F014429B574AD003A1EE5 /* images in Resources */,
+				5D55965229B82A1100BD5C1C /* application.css in Resources */,
 				5D8F014229B574AD003A1EE5 /* popup.js in Resources */,
 				5D8F014629B574AD003A1EE5 /* manifest.json in Resources */,
-				5D8F014529B574AD003A1EE5 /* application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css in Resources */,
 				5D8F014329B574AD003A1EE5 /* index.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -420,9 +420,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D8F013F29B574AD003A1EE5 /* images in Resources */,
+				5D55965329B82A1100BD5C1C /* application.css in Resources */,
 				5D8F013D29B574AD003A1EE5 /* popup.js in Resources */,
 				5D8F014129B574AD003A1EE5 /* manifest.json in Resources */,
-				5D8F014029B574AD003A1EE5 /* application-38b7ed76d7ef31e9866cb8b850d73932c4cd0cc4.css in Resources */,
 				5D8F013E29B574AD003A1EE5 /* index.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -864,7 +864,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 0.5.1;
+				MARKETING_VERSION = 0.6.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -902,7 +902,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MARKETING_VERSION = 0.5.1;
+				MARKETING_VERSION = 0.6.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,

@@ -341,7 +341,7 @@
     }
   });
   browser.storage.local.get("topicsVisible").then((data) => data.topicsVisible).then((topicsVisible) => {
-    toggleTopicsVisible(topicsVisible);
+    toggleTopicsVisible(topicsVisible, true);
   });
   browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     const activeTab = tabs[0];
@@ -350,7 +350,7 @@
   var checkReviewToken = async function(token) {
     const authUrl = formAuthUrl();
     if (typeof authUrl === "undefined" || authUrl === null) {
-      log_default.debug(`authUrl not present in DOM, trying later (${token})`);
+      log_default.debug("authUrl not present in DOM, trying again in 50ms");
       return setTimeout(checkReviewToken, 50, token);
     }
     const result = await api_default.isReviewTokenValid(authUrl, token);
@@ -364,7 +364,7 @@
   var updateReviewFields = (tabUrl, title) => {
     const reviewUrlField = document.getElementById("submitted_url");
     if (typeof reviewUrlField === "undefined" || reviewUrlField === null) {
-      log_default.debug("reviewUrlField not present in DOM, trying later");
+      log_default.debug("reviewUrlField not present in DOM, trying again in 50ms");
       return setTimeout(updateReviewFields, 50, tabUrl, title);
     }
     reviewUrlField.value = tabUrl;
@@ -375,7 +375,7 @@
   var loginTime = () => {
     const loginForm = document.getElementById("new_user");
     if (typeof loginForm === "undefined" || loginForm === null) {
-      log_default.debug("login form not present in DOM, trying later");
+      log_default.debug("login form not present in DOM, trying again in 50ms");
       return setTimeout(loginTime, 50);
     }
     loginForm.classList.remove("hidden");
@@ -385,7 +385,7 @@
   var reviewTime = () => {
     const reviewForm = document.getElementById("new_review");
     if (typeof reviewForm === "undefined" || reviewForm === null) {
-      log_default.debug("review form not present in DOM, trying later");
+      log_default.debug("review form not present in DOM, trying again in 50ms");
       return setTimeout(reviewTime, 50);
     }
     reviewForm.addEventListener("submit", handleReviewSubmit);
@@ -420,7 +420,7 @@
     renderAlerts(result.messages);
     if (result.success) {
       document.getElementById("new_review").classList.add("hidden");
-      return setTimeout(window.close, 3e3);
+      return setTimeout(window.close, 2e3);
     }
     return false;
   };
@@ -438,20 +438,30 @@
       body.prepend(alert);
     });
   };
-  var toggleTopicsVisible = (isVisible) => {
+  var toggleTopicsVisible = (isVisible, isOnLoad = false) => {
     window.topicsVisibile = isVisible;
-    if (window.topicsVisibile) {
-      document.getElementById("field-group-topics").classList.remove("hidden");
-    } else {
-      document.getElementById("field-group-topics").classList.add("hidden");
+    const topicsField = document.getElementById("field-group-topics");
+    if (typeof topicsField === "undefined" || topicsField === null) {
+      log_default.debug("topics field not present in DOM, trying again in 50ms");
+      return setTimeout(toggleTopicsVisible, 50, isVisible, isOnLoad);
     }
-    browser.storage.local.set({ topicsVisible: isVisible });
+    if (window.topicsVisibile) {
+      topicsField.classList.remove("hidden");
+    } else {
+      topicsField.classList.add("hidden");
+    }
+    if (isOnLoad) {
+      document.getElementById("show_topics").checked = isVisible;
+    } else {
+      browser.storage.local.set({ topicsVisible: isVisible });
+    }
   };
-  var toggleMenu = (e) => {
-    e.preventDefault();
+  var toggleMenu = (e = null, closeMenu = "toggle") => {
+    e?.preventDefault();
     const menuBtn = document.getElementById("review-menu-btn");
     const menu = document.getElementById("review-menu");
-    if (menu.classList.contains("active")) {
+    const action = closeMenu === "toggle" ? menu.classList.contains("active") : closeMenu;
+    if (action) {
       menu.classList.add("hidden");
       menu.classList.remove("active");
       menuBtn.classList.remove("active");
@@ -474,6 +484,7 @@
   };
   var logout = () => {
     browser.storage.local.remove("reviewToken");
+    toggleMenu(null, true);
     loginTime();
   };
 })();

@@ -925,6 +925,7 @@ turbo-frame {
 }
 .collapsible.hidden {
   opacity: 0;
+  visibility: collapse;
 }
 .alert {
   margin-bottom: 0.5rem;
@@ -1633,4 +1634,11 @@ h4 {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
   }
+}
+
+/* Done by tranzito_utils, but - may modify later */
+.gray-link {
+  color: #6c757d;
+  opacity: 0.65;
+  text-decoration: underline;
 }
