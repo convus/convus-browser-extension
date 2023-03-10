@@ -186,8 +186,8 @@ const toggleMenu = (event = false, closeMenu = 'toggle') => {
 }
 
 const shareDiv = (shareText) => {
-  const el = document.querySelector("#templates .shareTemplate")
-  let clone = el.cloneNode(true)
+  const el = document.querySelector('#templates .shareTemplate')
+  const clone = el.cloneNode(true)
   return clone
 }
 

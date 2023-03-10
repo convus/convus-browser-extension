@@ -486,7 +486,7 @@
   };
   var shareDiv = (shareText) => {
     const el = document.querySelector("#templates .shareTemplate");
-    let clone = el.cloneNode(true);
+    const clone = el.cloneNode(true);
     return clone;
   };
   var updateMenuCheck = (e) => {

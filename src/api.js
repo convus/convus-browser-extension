@@ -58,9 +58,11 @@ const submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((re
     .then(response => response.json()
       .then((json) => {
         if (response.status === 200) {
-          resolve({success: true,
-              message: ['success', json.message],
-            share: json.share})
+          resolve({
+            success: true,
+            message: ['success', json.message],
+            share: json.share
+          })
         } else {
           resolve({ success: false, message: ['error', json.message] })
         }
