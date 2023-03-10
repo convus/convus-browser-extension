@@ -296,9 +296,9 @@
       (response) => response.json().then((json) => {
         let result = {};
         if (response.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
-          result.messages = [["error", json.message]];
+          result.message = ["error", json.message];
         } else {
-          result = { reviewToken: json.review_token, messages: [["success", "authenticated"]] };
+          result = { reviewToken: json.review_token, message: ["success", "authenticated"] };
         }
         resolve(result);
       })
@@ -311,9 +311,13 @@
     return fetch(reviewUrl, rProps).then(
       (response) => response.json().then((json) => {
         if (response.status === 200) {
-          resolve({ success: true, messages: [["success", json.message]] });
+          resolve({
+            success: true,
+            message: ["success", json.message],
+            share: json.share
+          });
         } else {
-          resolve({ success: false, messages: [["error", json.message]] });
+          resolve({ success: false, message: ["error", json.message] });
         }
       })
     ).catch((e) => {
@@ -321,7 +325,7 @@
     });
   });
   var errorResponse = (e) => {
-    return { success: false, messages: [["error", `Error: ${e})`]] };
+    return { success: false, message: ["error", `Error: ${e})`] };
   };
   var api_default = {
     getReviewToken,
@@ -407,7 +411,7 @@
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
     const result = await api_default.getReviewToken(formAuthUrl(), jsonFormData);
     if (typeof result.reviewToken === "undefined" || result.reviewToken === null) {
-      renderAlerts(result.messages);
+      renderAlerts(result.message);
     } else {
       browser.storage.local.set(result);
       window.reviewToken = result.reviewToken;
@@ -421,7 +425,8 @@
     const formData = new FormData(document.getElementById("new_review"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
     const result = await api_default.submitReview(formNewReviewUrl(), window.reviewToken, jsonFormData);
-    renderAlerts(result.messages);
+    log_default.debug(result);
+    renderAlerts(result.message, result.share);
     if (result.success) {
       document.getElementById("new_review").classList.add("hidden");
       toggleMenu(false, true);
@@ -432,15 +437,19 @@
     const visibleAlerts = document.querySelectorAll(".alert");
     visibleAlerts.forEach((el) => el.classList.add("hidden"));
   };
-  var renderAlerts = (messages) => {
+  var renderAlerts = (message, shareText = null) => {
     hideAlerts();
-    messages.forEach((arr) => {
-      const body = document.getElementById("body-popup");
-      const alert = document.createElement("div");
-      alert.textContent = arr[1];
-      alert.classList.add(`alert-${arr[0]}`, "alert", "my-4");
-      body.prepend(alert);
-    });
+    const kind = message[0];
+    const text = message[1];
+    const body = document.getElementById("body-popup");
+    const alert = document.createElement("div");
+    alert.textContent = text;
+    alert.classList.add(`alert-${kind}`, "alert", "my-4");
+    body.prepend(alert);
+    log_default.debug(shareText, typeof shareText !== "undefined" && shareText !== null);
+    if (typeof shareText !== "undefined" && shareText !== null) {
+      alert.after(shareDiv(shareText));
+    }
   };
   var toggleTopicsVisible = (isVisible, isOnLoad = false) => {
     window.topicsVisibile = isVisible;
@@ -474,6 +483,11 @@
       menu.classList.add("active");
       menuBtn.classList.add("active");
     }
+  };
+  var shareDiv = (shareText) => {
+    const el = document.querySelector("#templates .shareTemplate");
+    let clone = el.cloneNode(true);
+    return clone;
   };
   var updateMenuCheck = (e) => {
     const el = e.target;

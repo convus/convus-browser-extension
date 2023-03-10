@@ -67,7 +67,7 @@ describe('getReviewToken', function () {
     const loginFormJson = { email: 'test@example.com', password: 'fakepass' }
 
     const res = await api.getReviewToken(authUrl, loginFormJson)
-    expect(res).toStrictEqual({ messages: [['error', 'Incorrect email or password']] })
+    expect(res).toStrictEqual({ message: ['error', 'Incorrect email or password'] })
   })
 
   test('returns reviewToken for authenticated', async () => {
@@ -75,7 +75,7 @@ describe('getReviewToken', function () {
     const loginFormJson = { email: 'test@example.com', password: 'fakepass' }
 
     const res = await api.getReviewToken(authUrl, loginFormJson)
-    expect(res).toStrictEqual({ reviewToken: 'zzzzz', messages: [['success', 'authenticated']] })
+    expect(res).toStrictEqual({ reviewToken: 'zzzzz', message: ['success', 'authenticated'] })
   })
 })
 
@@ -86,6 +86,6 @@ describe('submitReview', function () {
     const reviewJson = { source: 'chrome_extension', submitted_url: 'https://github.com/convus/convus-browser-extension/pull/4', agreement: 'neutral', quality: 'quality_med', changed_my_opinion: '1', significant_factual_error: '0', citation_title: 'Remove remote code loading by sethherr · Pull Request #4 · convus/convus-browser-extension' }
 
     const res = await api.submitReview(reviewUrl, 'xxxx', reviewJson)
-    expect(res).toStrictEqual({ success: true, messages: [['success', 'review added']] })
+    expect(res).toStrictEqual({ success: true, message: ['success', 'review added'] })
   })
 })

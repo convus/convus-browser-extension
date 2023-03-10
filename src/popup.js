@@ -99,7 +99,7 @@ const handleLoginSubmit = async function (e) {
   // log.debug(result)
 
   if (typeof (result.reviewToken) === 'undefined' || result.reviewToken === null) {
-    renderAlerts(result.messages)
+    renderAlerts(result.message)
   } else {
     browser.storage.local.set(result)
     window.reviewToken = result.reviewToken
@@ -115,9 +115,9 @@ const handleReviewSubmit = async function (e) {
   const formData = new FormData(document.getElementById('new_review'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
   const result = await api.submitReview(formNewReviewUrl(), window.reviewToken, jsonFormData)
-  // log.debug(result)
 
-  renderAlerts(result.messages)
+  log.debug(result)
+  renderAlerts(result.message, result.share)
   if (result.success) {
     document.getElementById('new_review').classList.add('hidden')
     toggleMenu(false, true)
@@ -131,16 +131,21 @@ const hideAlerts = () => {
   visibleAlerts.forEach(el => el.classList.add('hidden'))
 }
 
-const renderAlerts = (messages) => {
+// message is an array of: [kind, text]
+const renderAlerts = (message, shareText = null) => {
   hideAlerts()
-  // messages are arrays of: [kind, text]
-  messages.forEach(arr => {
-    const body = document.getElementById('body-popup')
-    const alert = document.createElement('div')
-    alert.textContent = arr[1]
-    alert.classList.add(`alert-${arr[0]}`, 'alert', 'my-4')
-    body.prepend(alert)
-  })
+  const kind = message[0]
+  const text = message[1]
+  const body = document.getElementById('body-popup')
+  const alert = document.createElement('div')
+  alert.textContent = text
+  alert.classList.add(`alert-${kind}`, 'alert', 'my-4')
+  body.prepend(alert)
+
+  log.debug(shareText, typeof (shareText) !== 'undefined' && shareText !== null)
+  if (typeof (shareText) !== 'undefined' && shareText !== null) {
+    alert.after(shareDiv(shareText))
+  }
 }
 
 const toggleTopicsVisible = (isVisible, isOnLoad = false) => {
@@ -178,6 +183,12 @@ const toggleMenu = (event = false, closeMenu = 'toggle') => {
     menu.classList.add('active')
     menuBtn.classList.add('active')
   }
+}
+
+const shareDiv = (shareText) => {
+  const el = document.querySelector("#templates .shareTemplate")
+  let clone = el.cloneNode(true)
+  return clone
 }
 
 const updateMenuCheck = (e) => {
