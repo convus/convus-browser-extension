@@ -17,8 +17,8 @@ const htmlContent = fs.readFileSync('src/index.html', 'utf8')
   .replace(/{{target}}/g, target)
 fs.writeFileSync('dist/index.html', htmlContent)
 // Generate manifest for the current env
-mansuffix = target === "firefox" ? "firefox" : "v3"
-const manifestContent = fs.readFileSync(`src/manifest_${mansuffix}.json`, 'utf8')
+const mSuffix = target === 'firefox' ? 'firefox' : 'v3'
+const manifestContent = fs.readFileSync(`src/manifest_${mSuffix}.json`, 'utf8')
   .replace(/{{baseUrl}}/g, baseUrl) // Not using host permissions, so this doesn't update anything now...
   .replace(/{{version}}/g, version)
 fs.writeFileSync('dist/manifest.json', manifestContent)

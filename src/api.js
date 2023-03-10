@@ -70,7 +70,7 @@ const submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((re
 
 // Just return an error message that includes the error
 const errorResponse = (e) => {
-  return {success: false, messages: [['error', `Error: ${e})`]]}
+  return { success: false, messages: [['error', `Error: ${e})`]] }
 }
 
 export default {
