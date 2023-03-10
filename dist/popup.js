@@ -436,6 +436,8 @@
   var hideAlerts = () => {
     const visibleAlerts = document.querySelectorAll(".alert");
     visibleAlerts.forEach((el) => el.classList.add("hidden"));
+    const visibleShares = document.querySelectorAll(".shareVisible");
+    visibleShares.forEach((el) => el.classList.add("hidden"));
   };
   var renderAlerts = (message, shareText = null) => {
     hideAlerts();
@@ -446,7 +448,6 @@
     alert.textContent = text;
     alert.classList.add(`alert-${kind}`, "alert", "my-4");
     body.prepend(alert);
-    log_default.debug(shareText, typeof shareText !== "undefined" && shareText !== null);
     if (typeof shareText !== "undefined" && shareText !== null) {
       alert.after(shareDiv(shareText));
     }
@@ -484,13 +485,23 @@
       menuBtn.classList.add("active");
     }
   };
-  var shareDiv = (shareText) => {
-    const el = document.querySelector("#templates .shareTemplate");
-    const clone = el.cloneNode(true);
-    return clone;
+  var copyShare = (event) => {
+    const el = event.target.closest(".shareVisible");
+    const shareText = el.getAttribute("data-sharetext");
+    log_default.debug(`copyShare: ${shareText}`);
+    navigator.clipboard.writeText(shareText);
   };
-  var updateMenuCheck = (e) => {
-    const el = e.target;
+  var shareDiv = (shareText) => {
+    const template = document.querySelector("#templates .shareTemplate");
+    let el = template.cloneNode(true);
+    el.classList.remove("shareTemplate");
+    el.classList.add("shareVisible");
+    el.setAttribute("data-sharetext", shareText);
+    el.querySelector(".btnShare").addEventListener("click", copyShare);
+    return el;
+  };
+  var updateMenuCheck = (event) => {
+    const el = event.target;
     const fieldId = el.getAttribute("data-target-id");
     if (fieldId === "field-group-topics") {
       toggleTopicsVisible(el.checked);

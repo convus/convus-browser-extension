@@ -129,6 +129,8 @@ const handleReviewSubmit = async function (e) {
 const hideAlerts = () => {
   const visibleAlerts = document.querySelectorAll('.alert')
   visibleAlerts.forEach(el => el.classList.add('hidden'))
+  const visibleShares = document.querySelectorAll('.shareVisible')
+  visibleShares.forEach(el => el.classList.add('hidden'))
 }
 
 // message is an array of: [kind, text]
@@ -142,7 +144,6 @@ const renderAlerts = (message, shareText = null) => {
   alert.classList.add(`alert-${kind}`, 'alert', 'my-4')
   body.prepend(alert)
 
-  log.debug(shareText, typeof (shareText) !== 'undefined' && shareText !== null)
   if (typeof (shareText) !== 'undefined' && shareText !== null) {
     alert.after(shareDiv(shareText))
   }
@@ -185,14 +186,26 @@ const toggleMenu = (event = false, closeMenu = 'toggle') => {
   }
 }
 
-const shareDiv = (shareText) => {
-  const el = document.querySelector('#templates .shareTemplate')
-  const clone = el.cloneNode(true)
-  return clone
+const copyShare = (event) => {
+  const el = event.target.closest(".shareVisible")
+  const shareText = el.getAttribute('data-sharetext')
+  log.debug(`copyShare: ${shareText}`)
+  navigator.clipboard.writeText(shareText)
+  // el.after() // Render COPIED!
 }
 
-const updateMenuCheck = (e) => {
-  const el = e.target
+const shareDiv = (shareText) => {
+  const template = document.querySelector('#templates .shareTemplate')
+  let el = template.cloneNode(true)
+  el.classList.remove("shareTemplate")
+  el.classList.add("shareVisible")
+  el.setAttribute("data-sharetext", shareText)
+  el.querySelector(".btnShare").addEventListener('click', copyShare)
+  return el
+}
+
+const updateMenuCheck = (event) => {
+  const el = event.target
   const fieldId = el.getAttribute('data-target-id')
 
   if (fieldId === 'field-group-topics') {
