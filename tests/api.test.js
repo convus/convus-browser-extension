@@ -81,11 +81,11 @@ describe('getReviewToken', function () {
 
 describe('submitReview', function () {
   test('submitReview succeeds', async () => {
-    fetch.mockResponseOnce(JSON.stringify({ message: 'review added' }), { status: 200 })
+    fetch.mockResponseOnce(JSON.stringify({ message: 'review added', share: "share message" }), { status: 200 })
 
-    const reviewJson = { source: 'chrome_extension', submitted_url: 'https://github.com/convus/convus-browser-extension/pull/4', agreement: 'neutral', quality: 'quality_med', changed_my_opinion: '1', significant_factual_error: '0', citation_title: 'Remove remote code loading by sethherr · Pull Request #4 · convus/convus-browser-extension' }
+    const reviewJson = {source: 'chrome_extension', submitted_url: 'https://github.com/convus/convus-browser-extension/pull/4', agreement: 'neutral', quality: 'quality_med', changed_my_opinion: '1', significant_factual_error: '0', citation_title: 'Remove remote code loading by sethherr · Pull Request #4 · convus/convus-browser-extension' }
 
     const res = await api.submitReview(reviewUrl, 'xxxx', reviewJson)
-    expect(res).toStrictEqual({ success: true, message: ['success', 'review added'] })
+    expect(res).toStrictEqual({ success: true, message: ['success', 'review added'], share: "share message" })
   })
 })
