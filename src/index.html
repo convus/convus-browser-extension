@@ -9,7 +9,7 @@
     <script src="popup.js"></script>
     <title>Convus</title>
   </head>
-  <body id="body-popup" class="pt-2">
+  <body id="body-popup" class="pt-2 target-{{target}}">
     <form class="hidden" id="new_user" action="{{baseUrl}}/api/v1/auth" accept-charset="UTF-8" method="post">
       <h2 class="mb-2 mt-3">Log in</h2>
       <div class="form-row">
@@ -28,7 +28,9 @@
     </form>
 
     <form id="new_review" action="{{baseUrl}}/api/v1/reviews" accept-charset="UTF-8" method="post">
-      <input class="form-control" autocomplete="off" type="hidden" value="{{target}}_extension" name="source" id="source" />
+      <input autocomplete="off" type="hidden" value="{{target}}_extension" name="source" id="source" />
+      <input class="hiddenFieldTimezone" autocomplete="off" type="hidden" name="timezone" id="timezone" />
+
       <div class="form-row form-row collapsible hidden" id="field-group-url">
         <label for="submitted_url">URL</label>
         <input placeholder="URL" class="form-control" autocomplete="off" type="text" name="submitted_url" id="submitted_url" />
@@ -82,7 +84,8 @@
           </div>
         </div>
         <div class="col mt-4 text-right">
-          <button type="button" aria-label="Menu" id="review-menu-btn" class="">
+          <button type="button" aria-label="Menu" id="review-menu-btn" class="" tabindex="0">
+            asdf80asdf89asdf908sdf8 - tab index
             <span class="sr-only">Menu</span>
             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"></path>

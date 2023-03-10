@@ -3,7 +3,7 @@ const fs = require('fs')
 
 const watch = process.argv.includes('--watch')
 
-// Current options: chrome, firefox, safari
+// Current options: chrome, firefox, safari, safari_ios
 const target = 'chrome'
 
 // NOTE: index.html and manifest.json are generated via this script
@@ -17,7 +17,8 @@ const htmlContent = fs.readFileSync('src/index.html', 'utf8')
   .replace(/{{target}}/g, target)
 fs.writeFileSync('dist/index.html', htmlContent)
 // Generate manifest for the current env
-const manifestContent = fs.readFileSync(`src/${target}_manifest.json`, 'utf8')
+mansuffix = target === "firefox" ? "firefox" : "v3"
+const manifestContent = fs.readFileSync(`src/manifest_${mansuffix}.json`, 'utf8')
   .replace(/{{baseUrl}}/g, baseUrl) // Not using host permissions, so this doesn't update anything now...
   .replace(/{{version}}/g, version)
 fs.writeFileSync('dist/manifest.json', manifestContent)

@@ -1,6 +1,12 @@
 import log from './log' // eslint-disable-line
 import api from './api' // eslint-disable-line
 
+
+document.getElementById('review_timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+
+
+
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
 if (process.env.browser_target == 'chrome') { browser = chrome } // eslint-disable-line
 

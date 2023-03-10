@@ -672,7 +672,41 @@ select {
     max-width: 1536px;
   }
 }
-.main-container {
+.btn {
+  display: inline-flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: rgb(173 181 189 / var(--tw-border-opacity));
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 249 250 / var(--tw-bg-opacity));
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  line-height: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(33 37 41 / var(--tw-text-opacity));
+}
+.btn:disabled {
+  cursor: not-allowed;
+  --tw-bg-opacity: 1;
+  background-color: rgb(233 236 239 / var(--tw-bg-opacity));
+}
+.btn:hover:disabled {
+  --tw-bg-opacity: 1;
+  background-color: rgb(233 236 239 / var(--tw-bg-opacity));
+}
+.btn:hover, .btn.active, .btn:active {
+  --tw-border-opacity: 1;
+  border-color: rgb(108 117 125 / var(--tw-border-opacity));
+  --tw-bg-opacity: 1;
+  background-color: rgb(233 236 239 / var(--tw-bg-opacity));
+}
+.padded-container {
   /* Add a little padding to the bottom */
   margin-left: auto;
   margin-right: auto;
@@ -683,7 +717,7 @@ select {
 .full-width-container {
   max-width: 1024px;
 }
-.full-width-main-container {
+.full-width-padded-container {
   /* Add a little padding to the bottom */
   margin-left: auto;
   margin-right: auto;
@@ -692,8 +726,15 @@ select {
   padding-bottom: 0.5rem;
   max-width: 1024px;
 }
-.small-width-main-container {
-  max-width: 36rem;
+@media not all and (min-width: 1024px) {
+
+  .full-width-padded-container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+.small-width-padded-container {
+  max-width: 580px;
   /* Add a little padding to the bottom */
   margin-left: auto;
   margin-right: auto;
@@ -702,6 +743,16 @@ select {
   padding-bottom: 0.5rem;
   /* might wanna use max-w-prose sometime - this is close*/
 }
+/* Have to manually update this to match `small-container + container-pad` because css is dumb */
+@media (max-width: 596px) {
+  .small-width-padded-container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+.standard-top-offset {
+  margin-top: 2rem;
+}
 turbo-frame {
   display: block;
 }
@@ -709,46 +760,44 @@ turbo-frame {
   Grid! Not positive this is the best way of handling (negative margins), but going for it
 */
 .row {
-  margin-left: -1rem;
-  margin-right: -1rem;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
   display: grid;
 }
 .col {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.main-navbar {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
-.main-navbar .navbar-container {
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom-width: 1px;
-  --tw-border-opacity: 1;
-  border-color: rgb(233 236 239 / var(--tw-border-opacity));
-  max-width: 1024px;
+a {
+  --tw-text-opacity: 1;
+  color: rgb(51 102 204 / var(--tw-text-opacity));
 }
-.main-navbar .root-link {
+.link-underline {
+  --tw-text-opacity: 1;
+  color: rgb(33 37 41 / var(--tw-text-opacity));
+  text-decoration-line: underline;
+}
+/* Done by tranzito_utils, but - may modify later */
+.gray-link {
+  color: #6c757d;
+  opacity: 0.65;
+  text-decoration: underline;
+}
+.main-nav-root-link {
   display: flex;
   align-items: center;
 }
-.main-navbar .root-link img {
+.main-nav-root-link img {
   margin-right: 0.5rem;
   height: 1.5rem;
 }
 @media (min-width: 640px) {
 
-  .main-navbar .root-link img {
+  .main-nav-root-link img {
     height: 1.5rem;
   }
 }
-.main-navbar .root-link span {
+.main-nav-root-link span {
   align-self: flex-end;
   white-space: nowrap;
   font-size: 1.125rem;
@@ -757,13 +806,14 @@ turbo-frame {
   --tw-text-opacity: 1;
   color: rgb(33 37 41 / var(--tw-text-opacity));
 }
-.main-navbar .nav-link {
+.main-nav-link {
   --tw-text-opacity: 1;
   color: rgb(33 37 41 / var(--tw-text-opacity));
 }
-.main-navbar .nav-link:hover, .main-navbar .nav-link:active, .main-navbar .nav-link.active {
+.main-nav-link:hover, .main-nav-link:active, .main-nav-link.active {
   text-decoration-line: underline;
 }
+.main-nav-link.active { cursor: default;  }
 .alert {
   margin-bottom: 0.5rem;
   border-width: 1px;
@@ -774,11 +824,10 @@ turbo-frame {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }
-.alert .alert-header {
+.alert .alert-message {
   z-index: 10;
   display: flex;
   width: 100%;
-  padding-bottom: 0.5rem;
 }
 .alert .alert-close {
   margin-left: -0.375rem;
@@ -836,8 +885,6 @@ turbo-frame {
 .form-control-radio, .form-control-check {
   display: block;
   cursor: pointer;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
 }
 .form-control-radio input, .form-control-check input {
     /* TODO: alignment still looks off */
@@ -875,12 +922,45 @@ turbo-frame {
   padding-left: 1.25rem;
   padding-right: 1.25rem;
 }
+.table td ul {
+    padding: 0 0 0 1.5rem;
+    margin: 0.5rem 0 0.5rem;
+  }
+.table.table-sm th, .table.table-sm td {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.full-screen-table-overflown {
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+  overflow-x: scroll;
+}
+.full-screen-table {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+@media not all and (min-width: 1024px) {
+
+  .full-screen-table {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+  }
+}
+.sortable .sortable-link {
+  --tw-text-opacity: 1;
+  color: rgb(33 37 41 / var(--tw-text-opacity));
+  text-decoration-line: underline;
+}
 /* extension popup ID - make sure it matches the extension! */
 #body-popup, #new_review.no-layout {
   min-width: 375px;
   padding-left: 1rem;
   padding-right: 1rem;
-  padding-bottom: 1rem;
+  padding-bottom: 0.5rem;
 }
 #review-menu-btn {
   border-radius: 0.5rem;
@@ -910,6 +990,19 @@ turbo-frame {
   margin: 0 auto;
   border: 1px solid #ccc;
 }
+.target-firefox .hidden-firefox,
+.target-chrome .hidden-chrome,
+.target-safari .hidden-safari,
+.target-safari_ios .hidden-safari_ios {
+  display: none;
+}
+.collapsible.target-firefox .hidden-firefox,.collapsible
+.target-chrome .hidden-chrome,.collapsible
+.target-safari .hidden-safari,.collapsible
+.target-safari_ios .hidden-safari_ios {
+  visibility: collapse;
+  opacity: 0;
+}
 /*
   Hide/reveal elements
 
@@ -929,102 +1022,6 @@ turbo-frame {
   visibility: collapse;
   opacity: 0;
 }
-.alert {
-  margin-bottom: 0.5rem;
-  border-width: 1px;
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-.alert .alert-header {
-  z-index: 10;
-  display: flex;
-  width: 100%;
-  padding-bottom: 0.5rem;
-}
-.alert .alert-close {
-  margin-left: -0.375rem;
-  margin-right: -0.375rem;
-  margin-top: -0.375rem;
-  margin-bottom: -0.375rem;
-  margin-left: auto;
-  display: inline-flex;
-  height: 2rem;
-  width: 2rem;
-  border-radius: 0.5rem;
-  padding: 0.375rem;
-  opacity: 0.7;
-}
-.alert .alert-close:focus {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-.alert-success {
-  --tw-border-opacity: 1;
-  border-color: rgb(117 183 152 / var(--tw-border-opacity));
-}
-.alert-error {
-  --tw-border-opacity: 1;
-  border-color: rgb(254 203 161 / var(--tw-border-opacity));
-}
-.flash-alerts {
-  margin-bottom: 1rem;
-  margin-top: -0.75rem;
-  width: 100%;
-}
-a {
-  --tw-text-opacity: 1;
-  color: rgb(51 102 204 / var(--tw-text-opacity));
-}
-.link-underline {
-  --tw-text-opacity: 1;
-  color: rgb(33 37 41 / var(--tw-text-opacity));
-  text-decoration-line: underline;
-}
-/* Done by tranzito_utils, but - may modify later */
-.gray-link {
-  color: #6c757d;
-  opacity: 0.65;
-  text-decoration: underline;
-}
-.btn {
-  display: inline-flex;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.5rem;
-  border-width: 1px;
-  --tw-border-opacity: 1;
-  border-color: rgb(173 181 189 / var(--tw-border-opacity));
-  --tw-bg-opacity: 1;
-  background-color: rgb(248 249 250 / var(--tw-bg-opacity));
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  line-height: 1.25rem;
-  --tw-text-opacity: 1;
-  color: rgb(33 37 41 / var(--tw-text-opacity));
-}
-.btn:disabled {
-  cursor: not-allowed;
-  --tw-bg-opacity: 1;
-  background-color: rgb(233 236 239 / var(--tw-bg-opacity));
-}
-.btn:hover:disabled {
-  --tw-bg-opacity: 1;
-  background-color: rgb(233 236 239 / var(--tw-bg-opacity));
-}
-.btn:hover, .btn.active, .btn:active {
-  --tw-border-opacity: 1;
-  border-color: rgb(108 117 125 / var(--tw-border-opacity));
-  --tw-bg-opacity: 1;
-  background-color: rgb(233 236 239 / var(--tw-bg-opacity));
-}
 #legal-info h1, #legal-info h2, #legal-info p {
     margin-bottom: 1rem;
   }
@@ -1034,6 +1031,8 @@ a {
 /* Overrides for utils */
 /*
   Override (or cover) things from tranzito_utils bootstrap functionality
+
+  NOTE: TranzitoUtils Table styles are overridden in tables
 */
 #timeSelectionBtnGroup {
   margin-bottom: 1.5rem;
@@ -1072,6 +1071,58 @@ a {
   /* Make this button the same size as the other buttons */
   margin-top: 2px;
   margin-bottom: 2px;
+}
+/*
+
+  This pagination stuff is gross
+
+*/
+.pagination-container .page-item {
+  display: inline-flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: rgb(173 181 189 / var(--tw-border-opacity));
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 249 250 / var(--tw-bg-opacity));
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  line-height: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(33 37 41 / var(--tw-text-opacity));
+}
+.pagination-container .page-item:disabled {
+  cursor: not-allowed;
+  --tw-bg-opacity: 1;
+  background-color: rgb(233 236 239 / var(--tw-bg-opacity));
+}
+.pagination-container .page-item:hover:disabled {
+  --tw-bg-opacity: 1;
+  background-color: rgb(233 236 239 / var(--tw-bg-opacity));
+}
+.pagination-container .page-item:hover, .pagination-container .page-item.active, .pagination-container .page-item:active {
+  --tw-border-opacity: 1;
+  border-color: rgb(108 117 125 / var(--tw-border-opacity));
+  --tw-bg-opacity: 1;
+  background-color: rgb(233 236 239 / var(--tw-bg-opacity));
+}
+.pagination-container .page-item a {
+  color: inherit;
+}
+.pagination-container .pagination-flex.justify-content-md-end {
+  min-width: 100%;
+}
+@media (min-width: 768px) {
+
+  .pagination-container .pagination-flex.justify-content-md-end {
+    margin-left: auto;
+    min-width: 0px;
+  }
 }
 .sr-only {
   position: absolute;
@@ -1160,6 +1211,9 @@ a {
 .mb-5 {
   margin-bottom: 1.25rem;
 }
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
 .mb-8 {
   margin-bottom: 2rem;
 }
@@ -1180,6 +1234,9 @@ a {
 }
 .mr-auto {
   margin-right: auto;
+}
+.mt-1 {
+  margin-top: 0.25rem;
 }
 .mt-10 {
   margin-top: 2.5rem;
@@ -1244,6 +1301,12 @@ a {
 .w-64 {
   width: 16rem;
 }
+.w-full {
+  width: 100%;
+}
+.max-w-xs {
+  max-width: 20rem;
+}
 .flex-1 {
   flex: 1 1 0%;
 }
@@ -1295,14 +1358,14 @@ a {
 .grid-cols-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-.grid-cols-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
 .grid-cols-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 .grid-cols-7 {
   grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.flex-wrap {
+  flex-wrap: wrap;
 }
 .items-start {
   align-items: flex-start;
@@ -1324,6 +1387,9 @@ a {
 }
 .justify-between {
   justify-content: space-between;
+}
+.justify-items-center {
+  justify-items: center;
 }
 .space-x-2 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 0;
@@ -1355,9 +1421,16 @@ a {
 .border-0 {
   border-width: 0px;
 }
+.border-b {
+  border-bottom-width: 1px;
+}
 .border-gray-100 {
   --tw-border-opacity: 1;
   border-color: rgb(248 249 250 / var(--tw-border-opacity));
+}
+.border-gray-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(233 236 239 / var(--tw-border-opacity));
 }
 .border-gray-300 {
   --tw-border-opacity: 1;
@@ -1454,10 +1527,6 @@ a {
 .leading-9 {
   line-height: 2.25rem;
 }
-.text-gray {
-  --tw-text-opacity: 1;
-  color: rgb(173 181 189 / var(--tw-text-opacity));
-}
 .text-gray-400 {
   --tw-text-opacity: 1;
   color: rgb(206 212 218 / var(--tw-text-opacity));
@@ -1538,6 +1607,20 @@ h3 {
 h4 {
   font-weight: 700;
 }
+.only-dev-visible, .only-dev-visible-small {
+  border: 1px solid #9400d3;
+  background: rgba(148,0,211,.1);
+}
+.only-dev-visible-small {
+  font-size: 60%;
+}
+/*  This is frequently used in display-tables, make it work */
+.table-list tr.only-dev-visible {
+    background: rgba(148,0,211,.1) !important;
+  }
+.table-list td .only-dev-visible {
+    padding: 2px 0.25rem;
+  }
 .hover\:border-gray-300:hover {
   --tw-border-opacity: 1;
   border-color: rgb(222 226 230 / var(--tw-border-opacity));
@@ -1643,5 +1726,29 @@ h4 {
   .dark\:hover\:text-white:hover {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
+  }
+}
+@media (min-width: 640px) {
+
+  .sm\:inline {
+    display: inline;
+  }
+
+  .sm\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 768px) {
+
+  .md\:inline {
+    display: inline;
+  }
+
+  .md\:table-cell {
+    display: table-cell;
+  }
+
+  .md\:hidden {
+    display: none;
   }
 }

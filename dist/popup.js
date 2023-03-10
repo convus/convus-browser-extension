@@ -328,6 +328,7 @@
   };
 
   // popup.js
+  document.getElementById("review_timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
   if (true) {
     browser = chrome;
   }
