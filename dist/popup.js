@@ -372,6 +372,7 @@
     }
     reviewUrlField.value = tabUrl;
     document.getElementById("citation_title").value = title;
+    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
   };
   var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
   var formNewReviewUrl = () => document.getElementById("new_review")?.getAttribute("action");
@@ -460,7 +461,7 @@
     }
   };
   var toggleMenu = (event = false, closeMenu = "toggle") => {
-    event?.preventDefault();
+    event && event.preventDefault();
     const menuBtn = document.getElementById("review-menu-btn");
     const menu = document.getElementById("review-menu");
     const action = closeMenu === "toggle" ? menu.classList.contains("active") : closeMenu;

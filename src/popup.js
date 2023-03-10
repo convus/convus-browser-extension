@@ -1,8 +1,6 @@
 import log from './log' // eslint-disable-line
 import api from './api' // eslint-disable-line
 
-// document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
-
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
 if (process.env.browser_target == 'chrome') { browser = chrome } // eslint-disable-line
 
@@ -55,6 +53,7 @@ const updateReviewFields = (tabUrl, title) => {
   }
   reviewUrlField.value = tabUrl
   document.getElementById('citation_title').value = title
+  document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
 }
 
 const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
@@ -166,7 +165,7 @@ const toggleTopicsVisible = (isVisible, isOnLoad = false) => {
 
 // closeMenu can be: ["toggle", true, false]
 const toggleMenu = (event = false, closeMenu = 'toggle') => {
-  event?.preventDefault()
+  event && event.preventDefault()
   const menuBtn = document.getElementById('review-menu-btn')
   const menu = document.getElementById('review-menu')
   const action = closeMenu === 'toggle' ? menu.classList.contains('active') : closeMenu
