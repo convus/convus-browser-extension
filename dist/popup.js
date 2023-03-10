@@ -490,6 +490,10 @@
     const shareText = el.getAttribute("data-sharetext");
     log_default.debug(`copyShare: ${shareText}`);
     navigator.clipboard.writeText(shareText);
+    const copiedAlert = document.createElement("p");
+    copiedAlert.textContent = "Copied results to clipboard";
+    copiedAlert.classList.add("text-center", "px-2", "py-2", "mt-4");
+    el.append(copiedAlert);
   };
   var shareDiv = (shareText) => {
     const template = document.querySelector("#templates .shareTemplate");

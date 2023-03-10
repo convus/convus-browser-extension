@@ -187,11 +187,15 @@ const toggleMenu = (event = false, closeMenu = 'toggle') => {
 }
 
 const copyShare = (event) => {
+  // Get the share wrapper
   const el = event.target.closest(".shareVisible")
   const shareText = el.getAttribute('data-sharetext')
   log.debug(`copyShare: ${shareText}`)
   navigator.clipboard.writeText(shareText)
-  // el.after() // Render COPIED!
+  const copiedAlert = document.createElement('p')
+  copiedAlert.textContent = "Copied results to clipboard"
+  copiedAlert.classList.add('text-center', 'px-2', 'py-2', 'mt-4')
+  el.append(copiedAlert)
 }
 
 const shareDiv = (shareText) => {
