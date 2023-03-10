@@ -885,6 +885,8 @@ a {
 .form-control-radio, .form-control-check {
   display: block;
   cursor: pointer;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 .form-control-radio input, .form-control-check input {
     /* TODO: alignment still looks off */
@@ -1253,11 +1255,11 @@ a {
 .mt-5 {
   margin-top: 1.25rem;
 }
-.mt-8 {
-  margin-top: 2rem;
-}
 .mt-6 {
   margin-top: 1.5rem;
+}
+.mt-8 {
+  margin-top: 2rem;
 }
 .block {
   display: block;
