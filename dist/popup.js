@@ -497,7 +497,7 @@
   };
   var shareDiv = (shareText) => {
     const template = document.querySelector("#templates .shareTemplate");
-    let el = template.cloneNode(true);
+    const el = template.cloneNode(true);
     el.classList.remove("shareTemplate");
     el.classList.add("shareVisible");
     el.setAttribute("data-sharetext", shareText);

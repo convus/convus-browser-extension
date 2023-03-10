@@ -188,23 +188,23 @@ const toggleMenu = (event = false, closeMenu = 'toggle') => {
 
 const copyShare = (event) => {
   // Get the share wrapper
-  const el = event.target.closest(".shareVisible")
+  const el = event.target.closest('.shareVisible')
   const shareText = el.getAttribute('data-sharetext')
   log.debug(`copyShare: ${shareText}`)
   navigator.clipboard.writeText(shareText)
   const copiedAlert = document.createElement('p')
-  copiedAlert.textContent = "Copied results to clipboard"
+  copiedAlert.textContent = 'Copied results to clipboard'
   copiedAlert.classList.add('text-center', 'px-2', 'py-2', 'mt-4')
   el.append(copiedAlert)
 }
 
 const shareDiv = (shareText) => {
   const template = document.querySelector('#templates .shareTemplate')
-  let el = template.cloneNode(true)
-  el.classList.remove("shareTemplate")
-  el.classList.add("shareVisible")
-  el.setAttribute("data-sharetext", shareText)
-  el.querySelector(".btnShare").addEventListener('click', copyShare)
+  const el = template.cloneNode(true)
+  el.classList.remove('shareTemplate')
+  el.classList.add('shareVisible')
+  el.setAttribute('data-sharetext', shareText)
+  el.querySelector('.btnShare').addEventListener('click', copyShare)
   return el
 }
 
