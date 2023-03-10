@@ -959,9 +959,9 @@ a {
 }
 /* extension popup ID - make sure it matches the extension! */
 #body-popup, #new_review.no-layout {
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
   padding-top: 0.5rem;
+  padding-left: 0.75rem; /* update review menu if changed */
+  padding-right: 0.75rem; /* update review menu if changed */
   min-width: 375px;
 }
 #review-menu-btn {
@@ -984,7 +984,7 @@ a {
   margin-top: 1rem;
 }
 #review-menu hr {
-    margin: 0 -1rem;
+    margin: 0 -0.75rem;
   }
 /* Special styles to mock up the extension for local testing */
 #new_review.no-layout {
