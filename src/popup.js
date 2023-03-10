@@ -1,4 +1,4 @@
-import log from './log' // eslint-disable-line
+// import log from './log' // eslint-disable-line
 import api from './api' // eslint-disable-line
 
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
@@ -32,7 +32,7 @@ browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 const checkReviewToken = async function (token) {
   const authUrl = formAuthUrl()
   if (typeof (authUrl) === 'undefined' || authUrl === null) {
-    log.debug('authUrl not present in DOM, trying again in 50ms')
+    // log.debug('authUrl not present in DOM, trying again in 50ms')
     return setTimeout(checkReviewToken, 50, token)
   }
   // log.debug('checking review token:', token)
@@ -48,7 +48,7 @@ const updateReviewFields = (tabUrl, title) => {
   // pause and rerun if DOM hasn't loaded
   const reviewUrlField = document.getElementById('submitted_url')
   if (typeof (reviewUrlField) === 'undefined' || reviewUrlField === null) {
-    log.debug('reviewUrlField not present in DOM, trying again in 50ms')
+    // log.debug('reviewUrlField not present in DOM, trying again in 50ms')
     return setTimeout(updateReviewFields, 50, tabUrl, title)
   }
   reviewUrlField.value = tabUrl
@@ -63,7 +63,7 @@ const loginTime = () => {
   // log.debug("it's login time")
   const loginForm = document.getElementById('new_user')
   if (typeof (loginForm) === 'undefined' || loginForm === null) {
-    log.debug('login form not present in DOM, trying again in 50ms')
+    // log.debug('login form not present in DOM, trying again in 50ms')
     return setTimeout(loginTime, 50)
   }
   loginForm.classList.remove('hidden')
@@ -74,7 +74,7 @@ const loginTime = () => {
 const reviewTime = () => {
   const reviewForm = document.getElementById('new_review')
   if (typeof (reviewForm) === 'undefined' || reviewForm === null) {
-    log.debug('review form not present in DOM, trying again in 50ms')
+    // log.debug('review form not present in DOM, trying again in 50ms')
     return setTimeout(reviewTime, 50)
   }
   // I think it's a good thing to attach the event listener to the review form
@@ -153,7 +153,7 @@ const toggleTopicsVisible = (isVisible, isOnLoad = false) => {
   window.topicsVisibile = isVisible
   const topicsField = document.getElementById('field-group-topics')
   if (typeof (topicsField) === 'undefined' || topicsField === null) {
-    log.debug('topics field not present in DOM, trying again in 50ms')
+    // log.debug('topics field not present in DOM, trying again in 50ms')
     return setTimeout(toggleTopicsVisible, 50, isVisible, isOnLoad)
   }
   if (window.topicsVisibile) {
