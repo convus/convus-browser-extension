@@ -423,6 +423,7 @@
     renderAlerts(result.messages);
     if (result.success) {
       document.getElementById("new_review").classList.add("hidden");
+      toggleMenu(false, true);
     }
     return false;
   };
@@ -458,8 +459,8 @@
       browser.storage.local.set({ topicsVisible: isVisible });
     }
   };
-  var toggleMenu = (e = null, closeMenu = "toggle") => {
-    e?.preventDefault();
+  var toggleMenu = (event = false, closeMenu = "toggle") => {
+    event?.preventDefault();
     const menuBtn = document.getElementById("review-menu-btn");
     const menu = document.getElementById("review-menu");
     const action = closeMenu === "toggle" ? menu.classList.contains("active") : closeMenu;
@@ -486,7 +487,7 @@
   };
   var logout = () => {
     browser.storage.local.remove("reviewToken");
-    toggleMenu(null, true);
+    toggleMenu(false, true);
     loginTime();
   };
 })();

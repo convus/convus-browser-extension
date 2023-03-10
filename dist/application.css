@@ -957,10 +957,10 @@ a {
 }
 /* extension popup ID - make sure it matches the extension! */
 #body-popup, #new_review.no-layout {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
   min-width: 375px;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-bottom: 0.5rem;
 }
 #review-menu-btn {
   border-radius: 0.5rem;
@@ -1498,8 +1498,14 @@ a {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
 .pt-2 {
   padding-top: 0.5rem;
+}
+.pt-4 {
+  padding-top: 1rem;
 }
 .text-center {
   text-align: center;

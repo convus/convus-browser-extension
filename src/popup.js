@@ -121,8 +121,7 @@ const handleReviewSubmit = async function (e) {
   renderAlerts(result.messages)
   if (result.success) {
     document.getElementById('new_review').classList.add('hidden')
-    // Close the popup after pause
-    // return setTimeout(window.close, 2000)
+    toggleMenu(false, true)
   }
 
   return false // fallback prevent submit
@@ -166,8 +165,8 @@ const toggleTopicsVisible = (isVisible, isOnLoad = false) => {
 }
 
 // closeMenu can be: ["toggle", true, false]
-const toggleMenu = (e = null, closeMenu = 'toggle') => {
-  e?.preventDefault()
+const toggleMenu = (event = false, closeMenu = 'toggle') => {
+  event?.preventDefault()
   const menuBtn = document.getElementById('review-menu-btn')
   const menu = document.getElementById('review-menu')
   const action = closeMenu === 'toggle' ? menu.classList.contains('active') : closeMenu
@@ -197,6 +196,9 @@ const updateMenuCheck = (e) => {
 
 const logout = () => {
   browser.storage.local.remove('reviewToken')
-  toggleMenu(null, true)
+  toggleMenu(false, true)
   loginTime()
 }
+
+// Not currently using - but want to remember how to do if necessary in the future
+// const closePopup = () { window.close }
