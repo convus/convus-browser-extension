@@ -124,7 +124,7 @@ const handleReviewSubmit = async function (e) {
   if (result.success) {
     document.getElementById('new_review').classList.add('hidden')
     // Close the popup after pause
-    return setTimeout(window.close, 2000)
+    // return setTimeout(window.close, 2000)
   }
 
   return false // fallback prevent submit
@@ -183,6 +183,7 @@ const toggleMenu = (e = null, closeMenu = 'toggle') => {
     menuBtn.classList.add('active')
   }
 }
+
 const updateMenuCheck = (e) => {
   const el = e.target
   const fieldId = el.getAttribute('data-target-id')

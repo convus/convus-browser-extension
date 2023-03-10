@@ -23,7 +23,7 @@ const isReviewTokenValid = (authUrl, reviewToken) => new Promise((resolve, rejec
         resolve(json.message !== 'missing user' && response.status === 200)
       })
     ).catch((e) => {
-      reject(e)
+      resolve(errorResponse(e))
     })
 })
 
@@ -47,7 +47,7 @@ const getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject)
         resolve(result)
       })
     ).catch((e) => {
-      reject(e)
+      resolve(errorResponse(e))
     })
 })
 
@@ -64,9 +64,14 @@ const submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((re
         }
       })
     ).catch((e) => {
-      reject(e)
+      resolve(errorResponse(e))
     })
 })
+
+// Just return an error message that includes the error
+const errorResponse = (e) => {
+  return {success: false, messages: [['error', `Error: ${e})`]]}
+}
 
 export default {
   getReviewToken,

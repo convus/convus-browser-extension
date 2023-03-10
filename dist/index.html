@@ -9,7 +9,7 @@
     <script src="popup.js"></script>
     <title>Convus</title>
   </head>
-  <body id="body-popup" class="pt-2 target-safari_ios">
+  <body id="body-popup" class="pt-2 target-chrome">
     <form class="hidden" id="new_user" action="http://localhost:3009/api/v1/auth" accept-charset="UTF-8" method="post">
       <h2 class="mb-2 mt-3">Log in</h2>
       <div class="form-row">
@@ -28,7 +28,7 @@
     </form>
 
     <form id="new_review" action="http://localhost:3009/api/v1/reviews" accept-charset="UTF-8" method="post">
-      <input autocomplete="off" type="hidden" value="safari_ios_extension" name="source" id="source" />
+      <input autocomplete="off" type="hidden" value="chrome_extension" name="source" id="source" />
       <input class="hiddenFieldTimezone" autocomplete="off" type="hidden" name="timezone" id="timezone" />
 
       <div class="form-row form-row collapsible hidden" id="field-group-url">
@@ -37,7 +37,7 @@
       </div>
       <div class="row grid-cols-2 divide-x">
         <div class="col py-1">
-          <label class="form-control-radio hidden-safari_ios" for="agreement_agree">
+          <label class="form-control-radio" for="agreement_agree">
             <input type="radio" value="agree" name="agreement" id="agreement_agree" />
             Agree
           </label>

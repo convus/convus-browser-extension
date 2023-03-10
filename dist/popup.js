@@ -281,7 +281,7 @@
         resolve(json.message !== "missing user" && response.status === 200);
       })
     ).catch((e) => {
-      reject(e);
+      resolve(errorResponse(e));
     });
   });
   var getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
@@ -303,7 +303,7 @@
         resolve(result);
       })
     ).catch((e) => {
-      reject(e);
+      resolve(errorResponse(e));
     });
   });
   var submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((resolve, reject) => {
@@ -317,9 +317,12 @@
         }
       })
     ).catch((e) => {
-      reject(e);
+      resolve(errorResponse(e));
     });
   });
+  var errorResponse = (e) => {
+    return { success: false, messages: [["error", `Error: ${e})`]] };
+  };
   var api_default = {
     getReviewToken,
     isReviewTokenValid,
@@ -328,7 +331,7 @@
   };
 
   // popup.js
-  if (false) {
+  if (true) {
     browser = chrome;
   }
   browser.storage.local.get("reviewToken").then((data) => data.reviewToken).then((reviewToken) => {
@@ -420,7 +423,6 @@
     renderAlerts(result.messages);
     if (result.success) {
       document.getElementById("new_review").classList.add("hidden");
-      return setTimeout(window.close, 2e3);
     }
     return false;
   };
