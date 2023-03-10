@@ -3,9 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <link rel="stylesheet" href="application.css">
-
     <script src="popup.js"></script>
     <title>Convus</title>
   </head>
@@ -34,11 +32,9 @@
       <p class="mt-2"><a href="{{baseUrl}}/users/password/new" target="_blank">Forgot your password?</a></p>
       <p class="mt-2"><a href="{{baseUrl}}/users/sign_up" target="_blank">Sign up</a></p>
     </form>
-
     <form id="new_review" action="{{baseUrl}}/api/v1/reviews" accept-charset="UTF-8" method="post" class="pb-2">
       <input autocomplete="off" type="hidden" value="{{target}}_extension" name="source" id="source" />
       <input class="hiddenFieldTimezone" autocomplete="off" type="hidden" name="timezone" id="timezone" />
-
       <div class="form-row form-row collapsible hidden" id="field-group-url">
         <label for="submitted_url">URL</label>
         <input placeholder="URL" class="form-control" autocomplete="off" type="text" name="submitted_url" id="submitted_url" />
