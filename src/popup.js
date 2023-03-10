@@ -2,9 +2,7 @@ import log from './log' // eslint-disable-line
 import api from './api' // eslint-disable-line
 
 
-document.getElementById('review_timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
-
-
+// document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`

@@ -328,8 +328,7 @@
   };
 
   // popup.js
-  document.getElementById("review_timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  if (true) {
+  if (false) {
     browser = chrome;
   }
   browser.storage.local.get("reviewToken").then((data) => data.reviewToken).then((reviewToken) => {
