@@ -34,8 +34,9 @@
     </form>
     <form id="new_review" action="{{baseUrl}}/api/v1/reviews" accept-charset="UTF-8" method="post" class="pb-2">
       <input autocomplete="off" type="hidden" value="{{target}}_extension" name="source" id="source" />
+      <!-- Replace below here with the Rails form -->
       <input class="hiddenFieldTimezone" autocomplete="off" type="hidden" name="timezone" id="timezone" />
-      <div class="form-row form-row collapsible hidden" id="field-group-url">
+      <div class="form-row collapsible hidden" id="field-group-url">
         <label for="submitted_url">URL</label>
         <input placeholder="URL" class="form-control" autocomplete="off" type="text" name="submitted_url" id="submitted_url" />
       </div>
@@ -69,10 +70,22 @@
           </label>
         </div>
       </div>
-      <div class="form-row">
+      <div class="form-row mt-2">
+        <label class="form-control-check" for="learned_something">
+          <input name="learned_something" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="learned_something" id="learned_something" />
+          Learned something new
+        </label>
+      </div>
+      <div class="form-row ">
         <label class="form-control-check" for="changed_my_opinion">
           <input name="changed_my_opinion" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="changed_my_opinion" id="changed_my_opinion" />
           Changed my opinion
+        </label>
+      </div>
+      <div class="form-row ">
+        <label class="form-control-check" for="did_not_understand">
+          <input name="did_not_understand" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="did_not_understand" id="did_not_understand" />
+          Did not understand
         </label>
       </div>
       <div class="form-row">
@@ -81,14 +94,14 @@
           Significant factual error(s)
         </label>
       </div>
-      <div class="row grid-cols-2">
+      <div class="row grid-cols-2 mt-2">
         <div class="col">
-          <div class="form-row-btn mb-3">
+          <div class="form-row-btn">
             <input type="submit" name="commit" value="save" class="btn btn-success" data-disable-with="save" />
           </div>
         </div>
         <div class="col mt-4 text-right">
-          <button type="button" aria-label="Menu" id="review-menu-btn" class="" tabindex="0">
+          <button type="button" aria-label="Menu" id="review-menu-btn" tabindex="-1">
             <span class="sr-only">Menu</span>
             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"></path>
@@ -98,7 +111,7 @@
       </div>
       <div class="form-row collapsible hidden" id="field-group-title">
         <label for="citation_title">Title</label>
-        <input class="form-control" type="text" name="citation_title" id="citation_title" />
+        <input placeholder="optional" class="form-control" type="text" name="citation_title" id="citation_title" />
       </div>
       <div class="form-row mt-3 collapsible hidden" id="field-group-topics">
         <label for="topics_text">
@@ -131,10 +144,7 @@
           <small class="less-strong">only applies to current review</small>
         </label>
       </div>
-      <p class="text-sm mt-4">Open review dialog with <code>control</code> + <code>shift</code> + <code>R</code></p>
-      <div class="mt-4 text-right">
-        <button class="gray-link text-sm" type="submit" id="logout-btn">logout</button>
-      </div>
+      <p class="text-sm mt-4 hidden-safari_ios">Open review dialog with <code>control</code> + <code>shift</code> + <code>R</code></p>
     </div>
   </body>
 </html>
