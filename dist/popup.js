@@ -335,7 +335,7 @@
   };
 
   // popup.js
-  if (false) {
+  if (true) {
     browser = chrome;
   }
   browser.storage.local.get("reviewToken").then((data) => data.reviewToken).then((reviewToken) => {
