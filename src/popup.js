@@ -1,4 +1,4 @@
-// import log from './log' // eslint-disable-line
+import log from './log' // eslint-disable-line
 import api from './api' // eslint-disable-line
 
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
@@ -48,7 +48,7 @@ const updateReviewFields = (tabUrl, title) => {
   // pause and rerun if DOM hasn't loaded
   const reviewUrlField = document.getElementById('submitted_url')
   if (typeof (reviewUrlField) === 'undefined' || reviewUrlField === null) {
-    // log.debug('reviewUrlField not present in DOM, trying again in 50ms')
+    log.debug('reviewUrlField not present in DOM, trying again in 50ms')
     return setTimeout(updateReviewFields, 50, tabUrl, title)
   }
   reviewUrlField.value = tabUrl
@@ -63,7 +63,7 @@ const loginTime = () => {
   // log.debug("it's login time")
   const loginForm = document.getElementById('new_user')
   if (typeof (loginForm) === 'undefined' || loginForm === null) {
-    // log.debug('login form not present in DOM, trying again in 50ms')
+    log.debug('login form not present in DOM, trying again in 50ms')
     return setTimeout(loginTime, 50)
   }
   loginForm.classList.remove('hidden')
@@ -74,7 +74,7 @@ const loginTime = () => {
 const reviewTime = () => {
   const reviewForm = document.getElementById('new_review')
   if (typeof (reviewForm) === 'undefined' || reviewForm === null) {
-    // log.debug('review form not present in DOM, trying again in 50ms')
+    log.debug('review form not present in DOM, trying again in 50ms')
     return setTimeout(reviewTime, 50)
   }
   // I think it's a good thing to attach the event listener to the review form
@@ -190,7 +190,7 @@ const copyShare = (event) => {
   // Get the share wrapper
   const el = event.target.closest('.shareVisible')
   const shareText = el.getAttribute('data-sharetext')
-  log.debug(`copyShare: ${shareText}`)
+  // log.debug(`copyShare: ${shareText}`)
   navigator.clipboard.writeText(shareText)
   const copiedAlert = document.createElement('p')
   copiedAlert.textContent = 'Copied results to clipboard'

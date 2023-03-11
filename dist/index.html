@@ -7,7 +7,7 @@
     <script src="popup.js"></script>
     <title>Convus</title>
   </head>
-  <body id="body-popup" class="target-firefox">
+  <body id="body-popup" class="target-chrome">
     <form class="hidden pb-2" id="new_user" action="https://www.convus.org/api/v1/auth" accept-charset="UTF-8" method="post">
       <h2 class="mb-2 mt-3">Log in</h2>
       <div class="form-row">
@@ -25,7 +25,7 @@
       <p class="mt-2"><a href="https://www.convus.org/users/sign_up" target="_blank">Sign up</a></p>
     </form>
     <form id="new_review" action="https://www.convus.org/api/v1/reviews" accept-charset="UTF-8" method="post" class="pb-2">
-      <input autocomplete="off" type="hidden" value="firefox_extension" name="source" id="source" />
+      <input autocomplete="off" type="hidden" value="chrome_extension" name="source" id="source" />
       <!--
         Replace below here with the Rails HTML
         (remove 'review_' and 'review[' first)
