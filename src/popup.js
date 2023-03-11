@@ -32,7 +32,7 @@ browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 const checkReviewToken = async function (token) {
   const authUrl = formAuthUrl()
   if (typeof (authUrl) === 'undefined' || authUrl === null) {
-    log.debug('authUrl not present in DOM, trying again in 50ms')
+    // log.debug('authUrl not present in DOM, trying again in 50ms')
     return setTimeout(checkReviewToken, 50, token)
   }
   // log.debug('checking review token:', token)
@@ -53,6 +53,7 @@ const updateReviewFields = (tabUrl, title) => {
   }
   reviewUrlField.value = tabUrl
   document.getElementById('citation_title').value = title
+  document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
 }
 
 const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
@@ -98,7 +99,7 @@ const handleLoginSubmit = async function (e) {
   // log.debug(result)
 
   if (typeof (result.reviewToken) === 'undefined' || result.reviewToken === null) {
-    renderAlerts(result.messages)
+    renderAlerts(result.message)
   } else {
     browser.storage.local.set(result)
     window.reviewToken = result.reviewToken
@@ -114,13 +115,12 @@ const handleReviewSubmit = async function (e) {
   const formData = new FormData(document.getElementById('new_review'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
   const result = await api.submitReview(formNewReviewUrl(), window.reviewToken, jsonFormData)
-  // log.debug(result)
 
-  renderAlerts(result.messages)
+  log.debug(result)
+  renderAlerts(result.message, result.share)
   if (result.success) {
     document.getElementById('new_review').classList.add('hidden')
-    // Close the popup after pause
-    return setTimeout(window.close, 2000)
+    toggleMenu(false, true)
   }
 
   return false // fallback prevent submit
@@ -129,25 +129,31 @@ const handleReviewSubmit = async function (e) {
 const hideAlerts = () => {
   const visibleAlerts = document.querySelectorAll('.alert')
   visibleAlerts.forEach(el => el.classList.add('hidden'))
+  const visibleShares = document.querySelectorAll('.shareVisible')
+  visibleShares.forEach(el => el.classList.add('hidden'))
 }
 
-const renderAlerts = (messages) => {
+// message is an array of: [kind, text]
+const renderAlerts = (message, shareText = null) => {
   hideAlerts()
-  // messages are arrays of: [kind, text]
-  messages.forEach(arr => {
-    const body = document.getElementById('body-popup')
-    const alert = document.createElement('div')
-    alert.textContent = arr[1]
-    alert.classList.add(`alert-${arr[0]}`, 'alert', 'my-4')
-    body.prepend(alert)
-  })
+  const kind = message[0]
+  const text = message[1]
+  const body = document.getElementById('body-popup')
+  const alert = document.createElement('div')
+  alert.textContent = text
+  alert.classList.add(`alert-${kind}`, 'alert', 'my-4')
+  body.prepend(alert)
+
+  if (typeof (shareText) !== 'undefined' && shareText !== null) {
+    alert.after(shareDiv(shareText))
+  }
 }
 
 const toggleTopicsVisible = (isVisible, isOnLoad = false) => {
   window.topicsVisibile = isVisible
   const topicsField = document.getElementById('field-group-topics')
   if (typeof (topicsField) === 'undefined' || topicsField === null) {
-    log.debug('topics field not present in DOM, trying again in 50ms')
+    // log.debug('topics field not present in DOM, trying again in 50ms')
     return setTimeout(toggleTopicsVisible, 50, isVisible, isOnLoad)
   }
   if (window.topicsVisibile) {
@@ -164,8 +170,8 @@ const toggleTopicsVisible = (isVisible, isOnLoad = false) => {
 }
 
 // closeMenu can be: ["toggle", true, false]
-const toggleMenu = (e = null, closeMenu = 'toggle') => {
-  e?.preventDefault()
+const toggleMenu = (event = false, closeMenu = 'toggle') => {
+  event && event.preventDefault()
   const menuBtn = document.getElementById('review-menu-btn')
   const menu = document.getElementById('review-menu')
   const action = closeMenu === 'toggle' ? menu.classList.contains('active') : closeMenu
@@ -179,8 +185,31 @@ const toggleMenu = (e = null, closeMenu = 'toggle') => {
     menuBtn.classList.add('active')
   }
 }
-const updateMenuCheck = (e) => {
-  const el = e.target
+
+const copyShare = (event) => {
+  // Get the share wrapper
+  const el = event.target.closest('.shareVisible')
+  const shareText = el.getAttribute('data-sharetext')
+  // log.debug(`copyShare: ${shareText}`)
+  navigator.clipboard.writeText(shareText)
+  const copiedAlert = document.createElement('p')
+  copiedAlert.textContent = 'Copied results to clipboard'
+  copiedAlert.classList.add('text-center', 'px-2', 'py-2', 'mt-4')
+  el.append(copiedAlert)
+}
+
+const shareDiv = (shareText) => {
+  const template = document.querySelector('#templates .shareTemplate')
+  const el = template.cloneNode(true)
+  el.classList.remove('shareTemplate')
+  el.classList.add('shareVisible')
+  el.setAttribute('data-sharetext', shareText)
+  el.querySelector('.btnShare').addEventListener('click', copyShare)
+  return el
+}
+
+const updateMenuCheck = (event) => {
+  const el = event.target
   const fieldId = el.getAttribute('data-target-id')
 
   if (fieldId === 'field-group-topics') {
@@ -194,6 +223,9 @@ const updateMenuCheck = (e) => {
 
 const logout = () => {
   browser.storage.local.remove('reviewToken')
-  toggleMenu(null, true)
+  toggleMenu(false, true)
   loginTime()
 }
+
+// Not currently using - but want to remember how to do if necessary in the future
+// const closePopup = () { window.close }

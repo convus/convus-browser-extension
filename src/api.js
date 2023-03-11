@@ -23,7 +23,7 @@ const isReviewTokenValid = (authUrl, reviewToken) => new Promise((resolve, rejec
         resolve(json.message !== 'missing user' && response.status === 200)
       })
     ).catch((e) => {
-      reject(e)
+      resolve(errorResponse(e))
     })
 })
 
@@ -40,14 +40,14 @@ const getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject)
       .then((json) => {
         let result = {}
         if (response.status !== 200 || typeof (json.review_token) === 'undefined' || json.review_token === null) {
-          result.messages = [['error', json.message]]
+          result.message = ['error', json.message]
         } else {
-          result = { reviewToken: json.review_token, messages: [['success', 'authenticated']] }
+          result = { reviewToken: json.review_token, message: ['success', 'authenticated'] }
         }
         resolve(result)
       })
     ).catch((e) => {
-      reject(e)
+      resolve(errorResponse(e))
     })
 })
 
@@ -58,15 +58,24 @@ const submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((re
     .then(response => response.json()
       .then((json) => {
         if (response.status === 200) {
-          resolve({ success: true, messages: [['success', json.message]] })
+          resolve({
+            success: true,
+            message: ['success', json.message],
+            share: json.share
+          })
         } else {
-          resolve({ success: false, messages: [['error', json.message]] })
+          resolve({ success: false, message: ['error', json.message] })
         }
       })
     ).catch((e) => {
-      reject(e)
+      resolve(errorResponse(e))
     })
 })
+
+// Just return an error message that includes the error
+const errorResponse = (e) => {
+  return { success: false, message: ['error', `Error: ${e})`] }
+}
 
 export default {
   getReviewToken,

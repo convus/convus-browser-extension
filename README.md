@@ -39,3 +39,10 @@ To build the publishable version, use `NODE_ENV=production yarn build` - which w
 Create a zip of the built extension for submission with:
 
     ./makezip
+
+Lint with `yarn lint`
+
+Lint HTML with `htmlbeautifier src/index.html`
+
+_NOTE: 👆 isn't great - it requires Ruby and [htmlbeautifier](https://github.com/threedaymonk/htmlbeautifier/), which isn't actually bundled/packaged here_
+
