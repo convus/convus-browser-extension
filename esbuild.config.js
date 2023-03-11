@@ -4,7 +4,7 @@ const fs = require('fs')
 const watch = process.argv.includes('--watch')
 
 // Current options: chrome, firefox, safari, safari_ios
-const target = 'safari'
+const target = 'safari_ios'
 
 // NOTE: index.html and manifest.json are generated via this script
 // THEY DO NOT UPDATE ON SAVE when watching (the JS does)
