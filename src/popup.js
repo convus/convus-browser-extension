@@ -22,7 +22,7 @@ browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   const activeTab = tabs[0]
   // window.storedTabUrl = activeTab.url // this is available in updateRatingFields
   // log.debug(tabs[0])
-  log.debug(activeTab)
+  // log.debug(activeTab)
   updateRatingFields(activeTab.url, activeTab.title)
 })
 
@@ -64,13 +64,10 @@ const loginTime = () => {
     log.debug('login form not present in DOM, trying again in 50ms')
     return setTimeout(loginTime, 50)
   }
-  // Piggybacking on above login form dom loading code
-  // chrome.tabs.create({'url': `${baseUrl()}/browser_extension_auth`});
-  // return
   loginForm.classList.remove('hidden')
   document.getElementById('new_rating')?.classList?.add('hidden')
   loginForm.addEventListener('submit', handleLoginSubmit)
-  renderLocalAlert()
+  pageLoadedFunctions()
 }
 
 const ratingTime = () => {
@@ -94,7 +91,11 @@ const ratingTime = () => {
   if (window.currentName) {
     document.getElementById('username').textContent = window.currentName
   }
-  renderLocalAlert()
+  pageLoadedFunctions()
+}
+
+const pageLoadedFunctions = () => {
+  renderLocalAlert() // Render local alert if it's warranted
 }
 
 const handleLoginSubmit = async function (e) {

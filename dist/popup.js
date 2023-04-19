@@ -350,7 +350,6 @@
   });
   browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     const activeTab = tabs[0];
-    log_default.debug(activeTab);
     updateRatingFields(activeTab.url, activeTab.title);
   });
   var checkRatingToken = async function(token) {
@@ -388,7 +387,7 @@
     loginForm.classList.remove("hidden");
     document.getElementById("new_rating")?.classList?.add("hidden");
     loginForm.addEventListener("submit", handleLoginSubmit);
-    renderLocalAlert();
+    pageLoadedFunctions();
   };
   var ratingTime = () => {
     const ratingForm = document.getElementById("new_rating");
@@ -407,6 +406,9 @@
     if (window.currentName) {
       document.getElementById("username").textContent = window.currentName;
     }
+    pageLoadedFunctions();
+  };
+  var pageLoadedFunctions = () => {
     renderLocalAlert();
   };
   var handleLoginSubmit = async function(e) {
