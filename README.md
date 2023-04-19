@@ -1,26 +1,26 @@
 # Convus Browser extension
 
-Browser extension to add reviews to [convus.org](https://www.convus.org)
+Browser extension to add ratings to [convus.org](https://www.convus.org)
 
 ### Extension description
 
-Convus.org lets you review the websites you read so you can track articles that are useful, informative and high quality.
+Convus.org lets you rate the websites you read so you can track articles that are useful, informative and high quality.
 
-This browser extension makes the process of submitting reviews easy.
+This browser extension makes the process of submitting ratings easy.
 
-Use `control` + `shift` + `R` to open the review dialog.
+Use `control` + `shift` + `R` to open the rating dialog.
 
 ### Single purpose description
 
-Submit a review of the website you are reading to Convus.org
+Submit a rating of the website you are reading to Convus.org
 
 ### activeTab justification
 
-Required to get the url and title of the website you are reading, for your review.
+Required to get the url and title of the website you are reading, for your rating.
 
 ### storage justification
 
-Required to store a key to authenticate your review.
+Required to store a key to authenticate your rating.
 
 ---
 
