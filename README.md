@@ -26,6 +26,10 @@ Required to store a key to authenticate your rating.
 
 ## Development
 
+This extension uses [yarn](https://yarnpkg.com/) for package management. Install the dependencies with `yarn install`
+
+Build the extension with `NODE_ENV=production yarn build`
+
 There are configuration options in [esbuild.config.js](esbuild.config.js) (for example - specify whether you're building for Firefox or Chrome)
 
 In your terminal, run:
