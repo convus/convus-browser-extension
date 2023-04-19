@@ -4,8 +4,6 @@ const requestProps = (ratingToken = false, extraProps = {}) => {
   const headers = { 'Content-Type': 'application/json' }
   if (ratingToken) {
     headers.Authorization = `Bearer ${ratingToken}`
-  } else {
-    log.debug("faillllll")
   }
 
   const defaultProps = {
@@ -46,7 +44,7 @@ const getRatingToken = (authUrl, loginFormData) => new Promise((resolve, reject)
         if (response.status !== 200 || typeof (json.review_token) === 'undefined' || json.review_token === null) {
           result.message = ['error', json.message]
         } else {
-          result = { ratingToken: json.review_token, name: json.name, message: ['success', 'authenticated'] }
+          result = { ratingToken: json.review_token, currentName: json.name, message: ['success', 'authenticated'] }
         }
         resolve(result)
       })

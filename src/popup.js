@@ -4,15 +4,15 @@ import api from './api' // eslint-disable-line
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
 if (process.env.browser_target == 'chrome') { browser = chrome } // eslint-disable-line
 
-browser.storage.local.get('ratingToken')
-  .then(data => data.ratingToken)
-  .then(ratingToken => {
-    if (typeof (ratingToken) === 'undefined' || ratingToken === null) {
+browser.storage.local.get(['ratingToken', 'currentName'])
+  .then(data => {
+    if (typeof (data.ratingToken) === 'undefined' || data.ratingToken === null) {
       loginTime()
     } else {
-      window.ratingToken = ratingToken
+      window.ratingToken = data.ratingToken
+      window.currentName = data.currentName
       ratingTime()
-      checkRatingToken(ratingToken)
+      checkRatingToken(data.ratingToken)
     }
   })
 
@@ -36,6 +36,7 @@ const checkRatingToken = async function (token) {
   if (result) { return }
   // Remove the existing data that is incorrect - maybe actually do in form submit?
   browser.storage.local.remove('ratingToken')
+  browser.storage.local.remove('name')
   window.ratingToken = undefined
   loginTime()
 }
@@ -65,6 +66,7 @@ const loginTime = () => {
   loginForm.classList.remove('hidden')
   document.getElementById('new_rating')?.classList?.add('hidden')
   loginForm.addEventListener('submit', handleLoginSubmit)
+  renderLocalAlert()
 }
 
 const ratingTime = () => {
@@ -84,6 +86,11 @@ const ratingTime = () => {
     document.getElementById('new_user').classList.add('hidden')
     ratingForm.classList.remove('hidden')
   }
+  // not required, just nice to have username to keep track of what's going on
+  if (window.currentName) {
+    document.getElementById('username').textContent = window.currentName
+  }
+  renderLocalAlert()
 }
 
 const handleLoginSubmit = async function (e) {
@@ -92,13 +99,14 @@ const handleLoginSubmit = async function (e) {
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
 
   const result = await api.getRatingToken(formAuthUrl(), jsonFormData)
-  // log.debug(result)
+  log.debug(result)
 
   if (typeof (result.ratingToken) === 'undefined' || result.ratingToken === null) {
     renderAlerts(result.message)
   } else {
     browser.storage.local.set(result)
     window.ratingToken = result.ratingToken
+    window.currentName = result.currentName
     hideAlerts()
     ratingTime()
   }
@@ -199,6 +207,20 @@ const logout = () => {
   browser.storage.local.remove('ratingToken')
   toggleMenu(false, true)
   loginTime()
+}
+
+// Add a visual cue to show that you're attached to local
+const renderLocalAlert = () => {
+  // If alert is already rendered, skip
+  if (document.getElementById('local-alert')) { return }
+  baseUrl = document.getElementById('body-popup').getAttribute("data-baseurl")
+  if (baseUrl.match(/http:\/\/localhost/i)) {
+    const localAlert = document.createElement('div')
+    localAlert.textContent = "local convus"
+    localAlert.classList.add(`text-gray-400`, 'mt-2', 'text-center')
+    localAlert.setAttribute("id", 'local-alert')
+    document.getElementById('body-popup').append(localAlert)
+  }
 }
 
 // Not currently using - but want to remember how to do if necessary in the future

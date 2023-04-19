@@ -265,8 +265,6 @@
     const headers = { "Content-Type": "application/json" };
     if (ratingToken) {
       headers.Authorization = `Bearer ${ratingToken}`;
-    } else {
-      log_default.debug("faillllll");
     }
     const defaultProps = {
       method: "POST",
@@ -300,7 +298,7 @@
         if (response.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
           result.message = ["error", json.message];
         } else {
-          result = { ratingToken: json.review_token, name: json.name, message: ["success", "authenticated"] };
+          result = { ratingToken: json.review_token, currentName: json.name, message: ["success", "authenticated"] };
         }
         resolve(result);
       })
@@ -340,13 +338,14 @@
   if (true) {
     browser = chrome;
   }
-  browser.storage.local.get("ratingToken").then((data) => data.ratingToken).then((ratingToken) => {
-    if (typeof ratingToken === "undefined" || ratingToken === null) {
+  browser.storage.local.get(["ratingToken", "currentName"]).then((data) => {
+    if (typeof data.ratingToken === "undefined" || data.ratingToken === null) {
       loginTime();
     } else {
-      window.ratingToken = ratingToken;
+      window.ratingToken = data.ratingToken;
+      window.currentName = data.currentName;
       ratingTime();
-      checkRatingToken(ratingToken);
+      checkRatingToken(data.ratingToken);
     }
   });
   browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
@@ -363,6 +362,7 @@
       return;
     }
     browser.storage.local.remove("ratingToken");
+    browser.storage.local.remove("name");
     window.ratingToken = void 0;
     loginTime();
   };
@@ -387,6 +387,7 @@
     loginForm.classList.remove("hidden");
     document.getElementById("new_rating")?.classList?.add("hidden");
     loginForm.addEventListener("submit", handleLoginSubmit);
+    renderLocalAlert();
   };
   var ratingTime = () => {
     const ratingForm = document.getElementById("new_rating");
@@ -402,17 +403,23 @@
       document.getElementById("new_user").classList.add("hidden");
       ratingForm.classList.remove("hidden");
     }
+    if (window.currentName) {
+      document.getElementById("username").textContent = window.currentName;
+    }
+    renderLocalAlert();
   };
   var handleLoginSubmit = async function(e) {
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_user"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
     const result = await api_default.getRatingToken(formAuthUrl(), jsonFormData);
+    log_default.debug(result);
     if (typeof result.ratingToken === "undefined" || result.ratingToken === null) {
       renderAlerts(result.message);
     } else {
       browser.storage.local.set(result);
       window.ratingToken = result.ratingToken;
+      window.currentName = result.currentName;
       hideAlerts();
       ratingTime();
     }
@@ -496,6 +503,19 @@
     browser.storage.local.remove("ratingToken");
     toggleMenu(false, true);
     loginTime();
+  };
+  var renderLocalAlert = () => {
+    if (document.getElementById("local-alert")) {
+      return;
+    }
+    baseUrl = document.getElementById("body-popup").getAttribute("data-baseurl");
+    if (baseUrl.match(/http:\/\/localhost/i)) {
+      const localAlert = document.createElement("div");
+      localAlert.textContent = "local convus";
+      localAlert.classList.add(`text-gray-400`, "mt-2", "text-center");
+      localAlert.setAttribute("id", "local-alert");
+      document.getElementById("body-popup").append(localAlert);
+    }
   };
 })();
 //# sourceMappingURL=popup.js.map
