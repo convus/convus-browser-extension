@@ -32,7 +32,7 @@ In your terminal, run:
 
     ./start
 
-To build and watch - which will build using `http://localhost:3009`
+To build and watch - which will build using the configuration options `esbuild.config.js`
 
 To build the publishable version, use `NODE_ENV=production yarn build` - which will build with `https://www.convus.org` as the source.
 
