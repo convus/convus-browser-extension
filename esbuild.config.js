@@ -4,11 +4,11 @@ const fs = require('fs')
 const watch = process.argv.includes('--watch')
 
 // Current options: chrome, firefox, safari, safari_ios
-const target = 'firefox'
+const target = 'chrome'
 
 // NOTE: index.html and manifest.json are generated via this script
 // THEY DO NOT UPDATE ON SAVE when watching (the JS does)
-process.env.NODE_ENV ||= 'production'
+process.env.NODE_ENV ||= 'development'
 const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.convus.org' : 'http://localhost:3009'
 const version = process.env.npm_package_version
 // Generate relevant index.html file via this hack
@@ -53,7 +53,3 @@ require('esbuild')
     plugins: []
   })
   .then((result) => console.log(`${target} - esbuild updated:`, result))
-
-// function countWords(str) {
-//   return str.trim().split(/\s+/).length;
-// }
