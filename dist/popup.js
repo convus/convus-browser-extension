@@ -261,10 +261,10 @@
   var log_default = import_loglevel.default;
 
   // api.js
-  var requestProps = (reviewToken = false, extraProps = {}) => {
+  var requestProps = (ratingToken = false, extraProps = {}) => {
     const headers = { "Content-Type": "application/json" };
-    if (reviewToken) {
-      headers.Authorization = `Bearer ${reviewToken}`;
+    if (ratingToken) {
+      headers.Authorization = `Bearer ${ratingToken}`;
     }
     const defaultProps = {
       method: "POST",
@@ -274,9 +274,9 @@
     };
     return { ...defaultProps, ...extraProps };
   };
-  var isReviewTokenValid = (authUrl, reviewToken) => new Promise((resolve, reject) => {
+  var isRatingTokenValid = (authUrl, ratingToken) => new Promise((resolve, reject) => {
     const authStatusUrl = `${authUrl}/status`;
-    return fetch(authStatusUrl, requestProps(reviewToken, { method: "GET" })).then(
+    return fetch(authStatusUrl, requestProps(ratingToken, { method: "GET" })).then(
       (response) => response.json().then((json) => {
         resolve(json.message !== "missing user" && response.status === 200);
       })
@@ -284,7 +284,7 @@
       resolve(errorResponse(e));
     });
   });
-  var getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
+  var getRatingToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
     const rProps = {
       method: "POST",
       async: true,
@@ -298,7 +298,7 @@
         if (response.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
           result.message = ["error", json.message];
         } else {
-          result = { reviewToken: json.review_token, message: ["success", "authenticated"] };
+          result = { ratingToken: json.review_token, currentName: json.name, message: ["success", "authenticated"] };
         }
         resolve(result);
       })
@@ -306,9 +306,9 @@
       resolve(errorResponse(e));
     });
   });
-  var submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((resolve, reject) => {
-    const rProps = requestProps(reviewToken, { body: reviewFormData });
-    return fetch(reviewUrl, rProps).then(
+  var submitRating = (ratingUrl, ratingToken, ratingFormData) => new Promise((resolve, reject) => {
+    const rProps = requestProps(ratingToken, { body: ratingFormData });
+    return fetch(ratingUrl, rProps).then(
       (response) => response.json().then((json) => {
         if (response.status === 200) {
           resolve({
@@ -328,57 +328,56 @@
     return { success: false, message: ["error", `Error: ${e})`] };
   };
   var api_default = {
-    getReviewToken,
-    isReviewTokenValid,
+    getRatingToken,
+    isRatingTokenValid,
     requestProps,
-    submitReview
+    submitRating
   };
 
   // popup.js
   if (true) {
     browser = chrome;
   }
-  browser.storage.local.get("reviewToken").then((data) => data.reviewToken).then((reviewToken) => {
-    if (typeof reviewToken === "undefined" || reviewToken === null) {
+  browser.storage.local.get(["ratingToken", "currentName"]).then((data) => {
+    if (typeof data.ratingToken === "undefined" || data.ratingToken === null) {
       loginTime();
     } else {
-      window.reviewToken = reviewToken;
-      reviewTime();
-      checkReviewToken(reviewToken);
+      window.ratingToken = data.ratingToken;
+      window.currentName = data.currentName;
+      ratingTime();
+      checkRatingToken(data.ratingToken);
     }
-  });
-  browser.storage.local.get("topicsVisible").then((data) => data.topicsVisible).then((topicsVisible) => {
-    toggleTopicsVisible(topicsVisible, true);
   });
   browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     const activeTab = tabs[0];
-    updateReviewFields(activeTab.url, activeTab.title);
+    updateRatingFields(activeTab.url, activeTab.title);
   });
-  var checkReviewToken = async function(token) {
+  var checkRatingToken = async function(token) {
     const authUrl = formAuthUrl();
     if (typeof authUrl === "undefined" || authUrl === null) {
-      return setTimeout(checkReviewToken, 50, token);
+      return setTimeout(checkRatingToken, 50, token);
     }
-    const result = await api_default.isReviewTokenValid(authUrl, token);
+    const result = await api_default.isRatingTokenValid(authUrl, token);
     if (result) {
       return;
     }
-    browser.storage.local.remove("reviewToken");
-    window.reviewToken = void 0;
+    browser.storage.local.remove("ratingToken");
+    browser.storage.local.remove("name");
+    window.ratingToken = void 0;
     loginTime();
   };
-  var updateReviewFields = (tabUrl, title) => {
-    const reviewUrlField = document.getElementById("submitted_url");
-    if (typeof reviewUrlField === "undefined" || reviewUrlField === null) {
-      log_default.debug("reviewUrlField not present in DOM, trying again in 50ms");
-      return setTimeout(updateReviewFields, 50, tabUrl, title);
+  var updateRatingFields = (tabUrl, title) => {
+    const ratingUrlField = document.getElementById("submitted_url");
+    if (typeof ratingUrlField === "undefined" || ratingUrlField === null) {
+      log_default.debug("ratingUrlField not present in DOM, trying again in 50ms");
+      return setTimeout(updateRatingFields, 50, tabUrl, title);
     }
-    reviewUrlField.value = tabUrl;
+    ratingUrlField.value = tabUrl;
     document.getElementById("citation_title").value = title;
     document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
   };
   var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
-  var formNewReviewUrl = () => document.getElementById("new_review")?.getAttribute("action");
+  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
   var loginTime = () => {
     const loginForm = document.getElementById("new_user");
     if (typeof loginForm === "undefined" || loginForm === null) {
@@ -386,48 +385,58 @@
       return setTimeout(loginTime, 50);
     }
     loginForm.classList.remove("hidden");
-    document.getElementById("new_review")?.classList?.add("hidden");
+    document.getElementById("new_rating")?.classList?.add("hidden");
     loginForm.addEventListener("submit", handleLoginSubmit);
+    pageLoadedFunctions();
   };
-  var reviewTime = () => {
-    const reviewForm = document.getElementById("new_review");
-    if (typeof reviewForm === "undefined" || reviewForm === null) {
-      log_default.debug("review form not present in DOM, trying again in 50ms");
-      return setTimeout(reviewTime, 50);
+  var ratingTime = () => {
+    const ratingForm = document.getElementById("new_rating");
+    if (typeof ratingForm === "undefined" || ratingForm === null) {
+      log_default.debug("rating form not present in DOM, trying again in 50ms");
+      return setTimeout(ratingTime, 50);
     }
-    reviewForm.addEventListener("submit", handleReviewSubmit);
-    document.getElementById("review-menu-btn").addEventListener("click", toggleMenu);
-    document.querySelectorAll("#review-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
+    ratingForm.addEventListener("submit", handleRatingSubmit);
+    document.getElementById("rating-menu-btn").addEventListener("click", toggleMenu);
+    document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
     document.getElementById("logout-btn").addEventListener("click", logout);
-    if (window.reviewToken) {
+    if (window.ratingToken) {
       document.getElementById("new_user").classList.add("hidden");
-      reviewForm.classList.remove("hidden");
+      ratingForm.classList.remove("hidden");
     }
+    if (window.currentName) {
+      document.getElementById("username").textContent = window.currentName;
+    }
+    pageLoadedFunctions();
+  };
+  var pageLoadedFunctions = () => {
+    renderLocalAlert();
   };
   var handleLoginSubmit = async function(e) {
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_user"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.getReviewToken(formAuthUrl(), jsonFormData);
-    if (typeof result.reviewToken === "undefined" || result.reviewToken === null) {
+    const result = await api_default.getRatingToken(formAuthUrl(), jsonFormData);
+    log_default.debug(result);
+    if (typeof result.ratingToken === "undefined" || result.ratingToken === null) {
       renderAlerts(result.message);
     } else {
       browser.storage.local.set(result);
-      window.reviewToken = result.reviewToken;
+      window.ratingToken = result.ratingToken;
+      window.currentName = result.currentName;
       hideAlerts();
-      reviewTime();
+      ratingTime();
     }
     return false;
   };
-  var handleReviewSubmit = async function(e) {
+  var handleRatingSubmit = async function(e) {
     e.preventDefault();
-    const formData = new FormData(document.getElementById("new_review"));
+    const formData = new FormData(document.getElementById("new_rating"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.submitReview(formNewReviewUrl(), window.reviewToken, jsonFormData);
+    const result = await api_default.submitRating(formNewRatingUrl(), window.ratingToken, jsonFormData);
     log_default.debug(result);
     renderAlerts(result.message, result.share);
     if (result.success) {
-      document.getElementById("new_review").classList.add("hidden");
+      document.getElementById("new_rating").classList.add("hidden");
       toggleMenu(false, true);
     }
     return false;
@@ -451,27 +460,10 @@
       alert.after(shareDiv(shareText));
     }
   };
-  var toggleTopicsVisible = (isVisible, isOnLoad = false) => {
-    window.topicsVisibile = isVisible;
-    const topicsField = document.getElementById("field-group-topics");
-    if (typeof topicsField === "undefined" || topicsField === null) {
-      return setTimeout(toggleTopicsVisible, 50, isVisible, isOnLoad);
-    }
-    if (window.topicsVisibile) {
-      topicsField.classList.remove("hidden");
-    } else {
-      topicsField.classList.add("hidden");
-    }
-    if (isOnLoad) {
-      document.getElementById("show_topics").checked = isVisible;
-    } else {
-      browser.storage.local.set({ topicsVisible: isVisible });
-    }
-  };
   var toggleMenu = (event = false, closeMenu = "toggle") => {
     event && event.preventDefault();
-    const menuBtn = document.getElementById("review-menu-btn");
-    const menu = document.getElementById("review-menu");
+    const menuBtn = document.getElementById("rating-menu-btn");
+    const menu = document.getElementById("rating-menu");
     const action = closeMenu === "toggle" ? menu.classList.contains("active") : closeMenu;
     if (action) {
       menu.classList.add("hidden");
@@ -504,18 +496,31 @@
   var updateMenuCheck = (event) => {
     const el = event.target;
     const fieldId = el.getAttribute("data-target-id");
-    if (fieldId === "field-group-topics") {
-      toggleTopicsVisible(el.checked);
-    } else if (el.checked) {
+    if (el.checked) {
       document.getElementById(fieldId).classList.remove("hidden");
     } else {
       document.getElementById(fieldId).classList.add("hidden");
     }
   };
   var logout = () => {
-    browser.storage.local.remove("reviewToken");
+    browser.storage.local.remove("ratingToken");
     toggleMenu(false, true);
     loginTime();
+  };
+  var baseUrl = () => {
+    return document.getElementById("body-popup").getAttribute("data-baseurl");
+  };
+  var renderLocalAlert = () => {
+    if (document.getElementById("local-alert")) {
+      return;
+    }
+    if (baseUrl().match(/http:\/\/localhost/i)) {
+      const localAlert = document.createElement("div");
+      localAlert.textContent = "local convus";
+      localAlert.classList.add("text-gray-400", "mt-2", "text-center");
+      localAlert.setAttribute("id", "local-alert");
+      document.getElementById("body-popup").append(localAlert);
+    }
   };
 })();
 //# sourceMappingURL=popup.js.map

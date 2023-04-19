@@ -4,60 +4,58 @@ import api from './api' // eslint-disable-line
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
 if (process.env.browser_target == 'chrome') { browser = chrome } // eslint-disable-line
 
-browser.storage.local.get('reviewToken')
-  .then(data => data.reviewToken)
-  .then(reviewToken => {
-    if (typeof (reviewToken) === 'undefined' || reviewToken === null) {
+browser.storage.local.get(['ratingToken', 'currentName'])
+  .then(data => {
+    if (typeof (data.ratingToken) === 'undefined' || data.ratingToken === null) {
       loginTime()
     } else {
-      window.reviewToken = reviewToken
-      reviewTime()
-      checkReviewToken(reviewToken)
+      window.ratingToken = data.ratingToken
+      window.currentName = data.currentName
+      ratingTime()
+      checkRatingToken(data.ratingToken)
     }
   })
-
-browser.storage.local.get('topicsVisible')
-  .then(data => data.topicsVisible)
-  .then(topicsVisible => { toggleTopicsVisible(topicsVisible, true) })
 
 browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   // since only one tab should be active and in the current window at once
   // the return variable should only have one entry
   const activeTab = tabs[0]
-  // window.storedTabUrl = activeTab.url // this is available in updateReviewFields
+  // window.storedTabUrl = activeTab.url // this is available in updateRatingFields
   // log.debug(tabs[0])
-  updateReviewFields(activeTab.url, activeTab.title)
+  // log.debug(activeTab)
+  updateRatingFields(activeTab.url, activeTab.title)
 })
 
-const checkReviewToken = async function (token) {
+const checkRatingToken = async function (token) {
   const authUrl = formAuthUrl()
   if (typeof (authUrl) === 'undefined' || authUrl === null) {
     // log.debug('authUrl not present in DOM, trying again in 50ms')
-    return setTimeout(checkReviewToken, 50, token)
+    return setTimeout(checkRatingToken, 50, token)
   }
-  // log.debug('checking review token:', token)
-  const result = await api.isReviewTokenValid(authUrl, token)
+  // log.debug('checking rating token:', token)
+  const result = await api.isRatingTokenValid(authUrl, token)
   if (result) { return }
   // Remove the existing data that is incorrect - maybe actually do in form submit?
-  browser.storage.local.remove('reviewToken')
-  window.reviewToken = undefined
+  browser.storage.local.remove('ratingToken')
+  browser.storage.local.remove('name')
+  window.ratingToken = undefined
   loginTime()
 }
 
-const updateReviewFields = (tabUrl, title) => {
+const updateRatingFields = (tabUrl, title) => {
   // pause and rerun if DOM hasn't loaded
-  const reviewUrlField = document.getElementById('submitted_url')
-  if (typeof (reviewUrlField) === 'undefined' || reviewUrlField === null) {
-    log.debug('reviewUrlField not present in DOM, trying again in 50ms')
-    return setTimeout(updateReviewFields, 50, tabUrl, title)
+  const ratingUrlField = document.getElementById('submitted_url')
+  if (typeof (ratingUrlField) === 'undefined' || ratingUrlField === null) {
+    log.debug('ratingUrlField not present in DOM, trying again in 50ms')
+    return setTimeout(updateRatingFields, 50, tabUrl, title)
   }
-  reviewUrlField.value = tabUrl
+  ratingUrlField.value = tabUrl
   document.getElementById('citation_title').value = title
   document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
 }
 
 const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
-const formNewReviewUrl = () => document.getElementById('new_review')?.getAttribute('action')
+const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribute('action')
 
 const loginTime = () => {
   // log.debug("it's login time")
@@ -67,27 +65,37 @@ const loginTime = () => {
     return setTimeout(loginTime, 50)
   }
   loginForm.classList.remove('hidden')
-  document.getElementById('new_review')?.classList?.add('hidden')
+  document.getElementById('new_rating')?.classList?.add('hidden')
   loginForm.addEventListener('submit', handleLoginSubmit)
+  pageLoadedFunctions()
 }
 
-const reviewTime = () => {
-  const reviewForm = document.getElementById('new_review')
-  if (typeof (reviewForm) === 'undefined' || reviewForm === null) {
-    log.debug('review form not present in DOM, trying again in 50ms')
-    return setTimeout(reviewTime, 50)
+const ratingTime = () => {
+  const ratingForm = document.getElementById('new_rating')
+  if (typeof (ratingForm) === 'undefined' || ratingForm === null) {
+    log.debug('rating form not present in DOM, trying again in 50ms')
+    return setTimeout(ratingTime, 50)
   }
-  // I think it's a good thing to attach the event listener to the review form
-  reviewForm.addEventListener('submit', handleReviewSubmit)
+  // I think it's a good thing to attach the event listener to the rating form
+  ratingForm.addEventListener('submit', handleRatingSubmit)
   // Attach the menu functionality
-  document.getElementById('review-menu-btn').addEventListener('click', toggleMenu)
-  document.querySelectorAll('#review-menu .form-control-check input').forEach(el => el.addEventListener('change', updateMenuCheck))
+  document.getElementById('rating-menu-btn').addEventListener('click', toggleMenu)
+  document.querySelectorAll('#rating-menu .form-control-check input').forEach(el => el.addEventListener('change', updateMenuCheck))
   document.getElementById('logout-btn').addEventListener('click', logout)
-  // ... but only show or hide the form if reviewToken is set, in case of weird callback stuff
-  if (window.reviewToken) {
+  // ... but only show or hide the form if ratingToken is set, in case of weird callback stuff
+  if (window.ratingToken) {
     document.getElementById('new_user').classList.add('hidden')
-    reviewForm.classList.remove('hidden')
+    ratingForm.classList.remove('hidden')
   }
+  // not required, just nice to have username to keep track of what's going on
+  if (window.currentName) {
+    document.getElementById('username').textContent = window.currentName
+  }
+  pageLoadedFunctions()
+}
+
+const pageLoadedFunctions = () => {
+  renderLocalAlert() // Render local alert if it's warranted
 }
 
 const handleLoginSubmit = async function (e) {
@@ -95,31 +103,32 @@ const handleLoginSubmit = async function (e) {
   const formData = new FormData(document.getElementById('new_user'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
 
-  const result = await api.getReviewToken(formAuthUrl(), jsonFormData)
-  // log.debug(result)
+  const result = await api.getRatingToken(formAuthUrl(), jsonFormData)
+  log.debug(result)
 
-  if (typeof (result.reviewToken) === 'undefined' || result.reviewToken === null) {
+  if (typeof (result.ratingToken) === 'undefined' || result.ratingToken === null) {
     renderAlerts(result.message)
   } else {
     browser.storage.local.set(result)
-    window.reviewToken = result.reviewToken
+    window.ratingToken = result.ratingToken
+    window.currentName = result.currentName
     hideAlerts()
-    reviewTime()
+    ratingTime()
   }
 
   return false // fallback prevent submit
 }
 
-const handleReviewSubmit = async function (e) {
+const handleRatingSubmit = async function (e) {
   e.preventDefault()
-  const formData = new FormData(document.getElementById('new_review'))
+  const formData = new FormData(document.getElementById('new_rating'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
-  const result = await api.submitReview(formNewReviewUrl(), window.reviewToken, jsonFormData)
+  const result = await api.submitRating(formNewRatingUrl(), window.ratingToken, jsonFormData)
 
   log.debug(result)
   renderAlerts(result.message, result.share)
   if (result.success) {
-    document.getElementById('new_review').classList.add('hidden')
+    document.getElementById('new_rating').classList.add('hidden')
     toggleMenu(false, true)
   }
 
@@ -149,31 +158,11 @@ const renderAlerts = (message, shareText = null) => {
   }
 }
 
-const toggleTopicsVisible = (isVisible, isOnLoad = false) => {
-  window.topicsVisibile = isVisible
-  const topicsField = document.getElementById('field-group-topics')
-  if (typeof (topicsField) === 'undefined' || topicsField === null) {
-    // log.debug('topics field not present in DOM, trying again in 50ms')
-    return setTimeout(toggleTopicsVisible, 50, isVisible, isOnLoad)
-  }
-  if (window.topicsVisibile) {
-    topicsField.classList.remove('hidden')
-  } else {
-    topicsField.classList.add('hidden')
-  }
-  // If it's on load, set the checkbox - otherwise, set the local storage
-  if (isOnLoad) {
-    document.getElementById('show_topics').checked = isVisible
-  } else {
-    browser.storage.local.set({ topicsVisible: isVisible })
-  }
-}
-
 // closeMenu can be: ["toggle", true, false]
 const toggleMenu = (event = false, closeMenu = 'toggle') => {
   event && event.preventDefault()
-  const menuBtn = document.getElementById('review-menu-btn')
-  const menu = document.getElementById('review-menu')
+  const menuBtn = document.getElementById('rating-menu-btn')
+  const menu = document.getElementById('rating-menu')
   const action = closeMenu === 'toggle' ? menu.classList.contains('active') : closeMenu
   if (action) {
     menu.classList.add('hidden')
@@ -212,9 +201,7 @@ const updateMenuCheck = (event) => {
   const el = event.target
   const fieldId = el.getAttribute('data-target-id')
 
-  if (fieldId === 'field-group-topics') {
-    toggleTopicsVisible(el.checked)
-  } else if (el.checked) {
+  if (el.checked) {
     document.getElementById(fieldId).classList.remove('hidden')
   } else {
     document.getElementById(fieldId).classList.add('hidden')
@@ -222,9 +209,26 @@ const updateMenuCheck = (event) => {
 }
 
 const logout = () => {
-  browser.storage.local.remove('reviewToken')
+  browser.storage.local.remove('ratingToken')
   toggleMenu(false, true)
   loginTime()
+}
+
+const baseUrl = () => {
+  return document.getElementById('body-popup').getAttribute('data-baseurl')
+}
+
+// Add a visual cue to show that you're attached to local
+const renderLocalAlert = () => {
+  // If alert is already rendered, skip
+  if (document.getElementById('local-alert')) { return }
+  if (baseUrl().match(/http:\/\/localhost/i)) {
+    const localAlert = document.createElement('div')
+    localAlert.textContent = 'local convus'
+    localAlert.classList.add('text-gray-400', 'mt-2', 'text-center')
+    localAlert.setAttribute('id', 'local-alert')
+    document.getElementById('body-popup').append(localAlert)
+  }
 }
 
 // Not currently using - but want to remember how to do if necessary in the future

@@ -7,7 +7,7 @@
     <script src="popup.js"></script>
     <title>Convus</title>
   </head>
-  <body id="body-popup" class="target-{{target}}">
+  <body id="body-popup" class="target-{{target}}" data-baseurl="{{baseUrl}}">
     <form class="hidden pb-2" id="new_user" action="{{baseUrl}}/api/v1/auth" accept-charset="UTF-8" method="post">
       <h2 class="mb-2 mt-3">Log in</h2>
       <div class="form-row">
@@ -24,11 +24,12 @@
       <p class="mt-2"><a href="{{baseUrl}}/users/password/new" target="_blank">Forgot your password?</a></p>
       <p class="mt-2"><a href="{{baseUrl}}/users/sign_up" target="_blank">Sign up</a></p>
     </form>
-    <form id="new_review" action="{{baseUrl}}/api/v1/reviews" accept-charset="UTF-8" method="post" class="pb-2">
-      <input autocomplete="off" type="hidden" value="{{target}}_extension" name="source" id="source" />
+    <form id="new_rating" action="{{baseUrl}}/api/v1/ratings" accept-charset="UTF-8" method="post" class="pb-2">
+      <input autocomplete="off" type="hidden" value="{{target}}_extension-{{version}}" name="source" id="source" />
+      <input autocomplete="off" type="hidden" value="" name="citation_metadata" id="citation_metadata" />
       <!--
         Replace below here with the Rails HTML
-        (remove 'review_' and 'review[' first)
+        (remove 'rating_' and 'rating[' first)
       -->
       <input class="hiddenFieldTimezone" autocomplete="off" type="hidden" name="timezone" id="timezone" />
       <div class="form-row collapsible hidden" id="field-group-url">
@@ -72,14 +73,14 @@
         </label>
       </div>
       <div class="form-row ">
-        <label class="form-control-check" for="changed_my_opinion">
-          <input name="changed_my_opinion" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="changed_my_opinion" id="changed_my_opinion" />
+        <label class="form-control-check" for="changed_opinion">
+          <input name="changed_opinion" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="changed_opinion" id="changed_opinion" />
           Changed my opinion
         </label>
       </div>
       <div class="form-row ">
-        <label class="form-control-check" for="did_not_understand">
-          <input name="did_not_understand" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="did_not_understand" id="did_not_understand" />
+        <label class="form-control-check" for="not_understood">
+          <input name="not_understood" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="not_understood" id="not_understood" />
           Did not understand
         </label>
       </div>
@@ -96,7 +97,7 @@
           </div>
         </div>
         <div class="col mt-4 text-right">
-          <button type="button" aria-label="Menu" id="review-menu-btn" tabindex="-1">
+          <button type="button" aria-label="Menu" id="rating-menu-btn" tabindex="-1">
             <span class="sr-only">Menu</span>
             <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"></path>
@@ -116,32 +117,35 @@
         <textarea placeholder="optional" class="form-control" name="topics_text" id="topics_text"></textarea>
       </div>
     </form>
-    <div id="review-menu"  class="collapsible hidden">
+    <div id="rating-menu"  class="collapsible hidden">
       <hr>
       <div class="form-row">
         <label class="form-control-check" for="show_topics">
           <input type="checkbox" name="show_topics" id="show_topics" value="1" data-target-id="field-group-topics">
           Show Topics
-          <small class="less-strong">always</small>
+          <small class="less-strong">for diagnostics</small>
         </label>
       </div>
       <div class="form-row">
         <label class="form-control-check" for="show_url">
           <input type="checkbox" name="show_url" id="show_url" value="1" data-target-id="field-group-url">
           Show URL
-          <small class="less-strong">only applies to current review</small>
+          <small class="less-strong">for diagnostics</small>
         </label>
       </div>
       <div class="form-row">
         <label class="form-control-check" for="show_title">
           <input type="checkbox" name="show_title" id="show_title" value="1" data-target-id="field-group-title">
           Show Title
-          <small class="less-strong">only applies to current review</small>
+          <small class="less-strong">for diagnostics</small>
         </label>
       </div>
-      <p class="text-sm mt-4 hidden-safari_ios">Open review dialog with <code>control</code> + <code>shift</code> + <code>R</code></p>
-      <div class="mt-4 text-right">
-        <button class="gray-link text-sm" type="submit" id="logout-btn">logout</button>
+      <p class="text-sm mt-4 hidden-safari_ios">Open rating dialog with <code>control</code> + <code>shift</code> + <code>R</code></p>
+      <div class="mt-4 text-right" id="logout-wrapper">
+        <button class="gray-link text-sm" type="submit" id="logout-btn">
+          logout
+          <span id="username"></span>
+        </button>
       </div>
     </div>
     <div class="hidden" id="templates">

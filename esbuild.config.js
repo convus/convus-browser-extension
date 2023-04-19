@@ -8,13 +8,14 @@ const target = 'chrome'
 
 // NOTE: index.html and manifest.json are generated via this script
 // THEY DO NOT UPDATE ON SAVE when watching (the JS does)
-process.env.NODE_ENV ||= 'development'
+process.env.NODE_ENV ||= 'production'
 const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.convus.org' : 'http://localhost:3009'
 const version = process.env.npm_package_version
 // Generate relevant index.html file via this hack
 const htmlContent = fs.readFileSync('src/index.html', 'utf8')
   .replace(/{{baseUrl}}/g, baseUrl)
   .replace(/{{target}}/g, target)
+  .replace(/{{version}}/g, version)
 fs.writeFileSync('dist/index.html', htmlContent)
 // Generate manifest for the current env
 const mSuffix = target === 'firefox' ? 'firefox' : 'v3'

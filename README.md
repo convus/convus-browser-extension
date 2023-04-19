@@ -1,30 +1,34 @@
 # Convus Browser extension
 
-Browser extension to add reviews to [convus.org](https://www.convus.org)
+Browser extension to add ratings to [convus.org](https://www.convus.org)
 
 ### Extension description
 
-Convus.org lets you review the websites you read so you can track articles that are useful, informative and high quality.
+Convus.org lets you rate the websites you read so you can track articles that are useful, informative and high quality.
 
-This browser extension makes the process of submitting reviews easy.
+This browser extension makes the process of submitting ratings easy.
 
-Use `control` + `shift` + `R` to open the review dialog.
+Use `control` + `shift` + `R` to open the rating dialog.
 
 ### Single purpose description
 
-Submit a review of the website you are reading to Convus.org
+Submit a rating of the website you are reading to Convus.org
 
 ### activeTab justification
 
-Required to get the url and title of the website you are reading, for your review.
+Required to get the url and title of the website you are reading, for your rating.
 
 ### storage justification
 
-Required to store a key to authenticate your review.
+Required to store a key to authenticate your rating.
 
 ---
 
 ## Development
+
+This extension uses [yarn](https://yarnpkg.com/) for package management. Install the dependencies with `yarn install`
+
+Build the extension with `NODE_ENV=production yarn build`
 
 There are configuration options in [esbuild.config.js](esbuild.config.js) (for example - specify whether you're building for Firefox or Chrome)
 
@@ -32,7 +36,7 @@ In your terminal, run:
 
     ./start
 
-To build and watch - which will build using `http://localhost:3009`
+To build and watch - which will build using the configuration options `esbuild.config.js`
 
 To build the publishable version, use `NODE_ENV=production yarn build` - which will build with `https://www.convus.org` as the source.
 

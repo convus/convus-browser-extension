@@ -9,7 +9,7 @@ beforeEach(() => {
 })
 
 const authUrl = 'http://localhost:3009/api/v1/auth'
-const reviewUrl = 'http://localhost:3009/api/v1/reviews'
+const ratingUrl = 'http://localhost:3009/api/v1/ratings'
 
 describe('requestProps', function () {
   test('returns target', () => {
@@ -45,47 +45,47 @@ describe('requestProps', function () {
   })
 })
 
-describe('isReviewTokenValid', function () {
+describe('isRatingTokenValid', function () {
   test('returns false for missing', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'missing users' }), { status: 401 })
 
-    const res = await api.isReviewTokenValid('xxxx', authUrl)
+    const res = await api.isRatingTokenValid('xxxx', authUrl)
     expect(res).toBe(false)
   })
 
   test('returns true for authenticated', async () => {
     fetch.mockResponseOnce(JSON.stringify({ success: 'authenticated' }), { status: 200 })
 
-    const res = await api.isReviewTokenValid(authUrl, 'xxxx')
+    const res = await api.isRatingTokenValid(authUrl, 'xxxx')
     expect(res).toBe(true)
   })
 })
 
-describe('getReviewToken', function () {
+describe('getRatingToken', function () {
   test('returns message for not-authenticated', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'Incorrect email or password' }), { status: 401 })
     const loginFormJson = { email: 'test@example.com', password: 'fakepass' }
 
-    const res = await api.getReviewToken(authUrl, loginFormJson)
+    const res = await api.getRatingToken(authUrl, loginFormJson)
     expect(res).toStrictEqual({ message: ['error', 'Incorrect email or password'] })
   })
 
-  test('returns reviewToken for authenticated', async () => {
-    fetch.mockResponseOnce(JSON.stringify({ review_token: 'zzzzz' }), { status: 200 })
+  test('returns ratingToken for authenticated', async () => {
+    fetch.mockResponseOnce(JSON.stringify({ review_token: 'zzzzz', name: 'party' }), { status: 200 })
     const loginFormJson = { email: 'test@example.com', password: 'fakepass' }
 
-    const res = await api.getReviewToken(authUrl, loginFormJson)
-    expect(res).toStrictEqual({ reviewToken: 'zzzzz', message: ['success', 'authenticated'] })
+    const res = await api.getRatingToken(authUrl, loginFormJson)
+    expect(res).toStrictEqual({ ratingToken: 'zzzzz', currentName: 'party', message: ['success', 'authenticated'] })
   })
 })
 
-describe('submitReview', function () {
-  test('submitReview succeeds', async () => {
-    fetch.mockResponseOnce(JSON.stringify({ message: 'review added', share: 'share message' }), { status: 200 })
+describe('submitRating', function () {
+  test('submitRating succeeds', async () => {
+    fetch.mockResponseOnce(JSON.stringify({ message: 'rating added', share: 'share message' }), { status: 200 })
 
-    const reviewJson = { source: 'chrome_extension', submitted_url: 'https://github.com/convus/convus-browser-extension/pull/4', agreement: 'neutral', quality: 'quality_med', changed_my_opinion: '1', significant_factual_error: '0', citation_title: 'Remove remote code loading by sethherr · Pull Request #4 · convus/convus-browser-extension' }
+    const ratingJson = { source: 'chrome_extension', submitted_url: 'https://github.com/convus/convus-browser-extension/pull/4', agreement: 'neutral', quality: 'quality_med', changed_my_opinion: '1', significant_factual_error: '0', citation_title: 'Remove remote code loading by sethherr · Pull Request #4 · convus/convus-browser-extension' }
 
-    const res = await api.submitReview(reviewUrl, 'xxxx', reviewJson)
-    expect(res).toStrictEqual({ success: true, message: ['success', 'review added'], share: 'share message' })
+    const res = await api.submitRating(ratingUrl, 'xxxx', ratingJson)
+    expect(res).toStrictEqual({ success: true, message: ['success', 'rating added'], share: 'share message' })
   })
 })
