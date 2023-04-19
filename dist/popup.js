@@ -335,7 +335,7 @@
   };
 
   // popup.js
-  if (true) {
+  if (false) {
     browser = chrome;
   }
   browser.storage.local.get(["ratingToken", "currentName"]).then((data) => {
