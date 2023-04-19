@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Convus",
-  "version": "0.7.0",
-  "description": "Add a review to Convus for the page you're viewing in your browser",
+  "version": "0.8.0",
+  "description": "Add a rating to Convus for the page you're viewing in your browser",
 
   "icons": {
     "48": "images/icon-48.png",
@@ -28,7 +28,7 @@
       "512": "images/icon-512.png"
     },
     "default_popup": "index.html",
-    "default_title": "Convus: review current page"
+    "default_title": "Convus: rate current page"
   },
 
   "commands": {

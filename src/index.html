@@ -24,8 +24,8 @@
       <p class="mt-2"><a href="{{baseUrl}}/users/password/new" target="_blank">Forgot your password?</a></p>
       <p class="mt-2"><a href="{{baseUrl}}/users/sign_up" target="_blank">Sign up</a></p>
     </form>
-    <form id="new_review" action="{{baseUrl}}/api/v1/reviews" accept-charset="UTF-8" method="post" class="pb-2">
-      <input autocomplete="off" type="hidden" value="{{target}}_extension" name="source" id="source" />
+    <form id="new_review" action="{{baseUrl}}/api/v1/ratins" accept-charset="UTF-8" method="post" class="pb-2">
+      <input autocomplete="off" type="hidden" value="{{target}}_extension-{{version}}" name="source" id="source" />
       <!--
         Replace below here with the Rails HTML
         (remove 'review_' and 'review[' first)
@@ -72,14 +72,14 @@
         </label>
       </div>
       <div class="form-row ">
-        <label class="form-control-check" for="changed_my_opinion">
-          <input name="changed_my_opinion" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="changed_my_opinion" id="changed_my_opinion" />
+        <label class="form-control-check" for="changed_opinion">
+          <input name="changed_opinion" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="changed_opinion" id="changed_opinion" />
           Changed my opinion
         </label>
       </div>
       <div class="form-row ">
-        <label class="form-control-check" for="did_not_understand">
-          <input name="did_not_understand" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="did_not_understand" id="did_not_understand" />
+        <label class="form-control-check" for="not_understood">
+          <input name="not_understood" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="not_understood" id="not_understood" />
           Did not understand
         </label>
       </div>
@@ -122,26 +122,28 @@
         <label class="form-control-check" for="show_topics">
           <input type="checkbox" name="show_topics" id="show_topics" value="1" data-target-id="field-group-topics">
           Show Topics
-          <small class="less-strong">always</small>
+          <small class="less-strong">for diagnostics</small>
         </label>
       </div>
       <div class="form-row">
         <label class="form-control-check" for="show_url">
           <input type="checkbox" name="show_url" id="show_url" value="1" data-target-id="field-group-url">
           Show URL
-          <small class="less-strong">only applies to current review</small>
+          <small class="less-strong">for diagnostics</small>
         </label>
       </div>
       <div class="form-row">
         <label class="form-control-check" for="show_title">
           <input type="checkbox" name="show_title" id="show_title" value="1" data-target-id="field-group-title">
           Show Title
-          <small class="less-strong">only applies to current review</small>
         </label>
       </div>
       <p class="text-sm mt-4 hidden-safari_ios">Open review dialog with <code>control</code> + <code>shift</code> + <code>R</code></p>
       <div class="mt-4 text-right">
-        <button class="gray-link text-sm" type="submit" id="logout-btn">logout</button>
+        <button class="gray-link text-sm" type="submit" id="logout-btn">
+          logout
+          <span id="username"></span>
+        </button>
       </div>
     </div>
     <div class="hidden" id="templates">

@@ -1,7 +1,7 @@
-const requestProps = (reviewToken = false, extraProps = {}) => {
+const requestProps = (ratingToken = false, extraProps = {}) => {
   const headers = { 'Content-Type': 'application/json' }
-  if (reviewToken) {
-    headers.Authorization = `Bearer ${reviewToken}`
+  if (ratingToken) {
+    headers.Authorization = `Bearer ${ratingToken}`
   }
 
   const defaultProps = {
@@ -14,10 +14,10 @@ const requestProps = (reviewToken = false, extraProps = {}) => {
 }
 
 // Returns true/false
-const isReviewTokenValid = (authUrl, reviewToken) => new Promise((resolve, reject) => {
+const isRatingTokenValid = (authUrl, ratingToken) => new Promise((resolve, reject) => {
   const authStatusUrl = `${authUrl}/status`
 
-  return fetch(authStatusUrl, requestProps(reviewToken, { method: 'GET' }))
+  return fetch(authStatusUrl, requestProps(ratingToken, { method: 'GET' }))
     .then(response => response.json()
       .then((json) => {
         resolve(json.message !== 'missing user' && response.status === 200)
@@ -27,7 +27,7 @@ const isReviewTokenValid = (authUrl, reviewToken) => new Promise((resolve, rejec
     })
 })
 
-const getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
+const getRatingToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
   const rProps = {
     method: 'POST',
     async: true,
@@ -42,7 +42,7 @@ const getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject)
         if (response.status !== 200 || typeof (json.review_token) === 'undefined' || json.review_token === null) {
           result.message = ['error', json.message]
         } else {
-          result = { reviewToken: json.review_token, message: ['success', 'authenticated'] }
+          result = { ratingToken: json.review_token, name: json.name, message: ['success', 'authenticated'] }
         }
         resolve(result)
       })
@@ -51,10 +51,10 @@ const getReviewToken = (authUrl, loginFormData) => new Promise((resolve, reject)
     })
 })
 
-const submitReview = (reviewUrl, reviewToken, reviewFormData) => new Promise((resolve, reject) => {
-  const rProps = requestProps(reviewToken, { body: reviewFormData })
+const submitRating = (ratingUrl, ratingToken, ratingFormData) => new Promise((resolve, reject) => {
+  const rProps = requestProps(ratingToken, { body: ratingFormData })
 
-  return fetch(reviewUrl, rProps)
+  return fetch(ratingUrl, rProps)
     .then(response => response.json()
       .then((json) => {
         if (response.status === 200) {
@@ -78,8 +78,8 @@ const errorResponse = (e) => {
 }
 
 export default {
-  getReviewToken,
-  isReviewTokenValid,
+  getRatingToken,
+  isRatingTokenValid,
   requestProps,
-  submitReview
+  submitRating
 }
