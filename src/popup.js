@@ -10,15 +10,11 @@ browser.storage.local.get('ratingToken')
     if (typeof (ratingToken) === 'undefined' || ratingToken === null) {
       loginTime()
     } else {
-      window.apiToken = apiToken
+      window.ratingToken = ratingToken
       ratingTime()
       checkRatingToken(ratingToken)
     }
   })
-
-browser.storage.local.get('topicsVisible')
-  .then(data => data.topicsVisible)
-  .then(topicsVisible => { toggleTopicsVisible(topicsVisible, true) })
 
 browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   // since only one tab should be active and in the current window at once
@@ -149,26 +145,6 @@ const renderAlerts = (message, shareText = null) => {
   }
 }
 
-const toggleTopicsVisible = (isVisible, isOnLoad = false) => {
-  window.topicsVisibile = isVisible
-  const topicsField = document.getElementById('field-group-topics')
-  if (typeof (topicsField) === 'undefined' || topicsField === null) {
-    // log.debug('topics field not present in DOM, trying again in 50ms')
-    return setTimeout(toggleTopicsVisible, 50, isVisible, isOnLoad)
-  }
-  if (window.topicsVisibile) {
-    topicsField.classList.remove('hidden')
-  } else {
-    topicsField.classList.add('hidden')
-  }
-  // If it's on load, set the checkbox - otherwise, set the local storage
-  if (isOnLoad) {
-    document.getElementById('show_topics').checked = isVisible
-  } else {
-    browser.storage.local.set({ topicsVisible: isVisible })
-  }
-}
-
 // closeMenu can be: ["toggle", true, false]
 const toggleMenu = (event = false, closeMenu = 'toggle') => {
   event && event.preventDefault()
@@ -212,9 +188,7 @@ const updateMenuCheck = (event) => {
   const el = event.target
   const fieldId = el.getAttribute('data-target-id')
 
-  if (fieldId === 'field-group-topics') {
-    toggleTopicsVisible(el.checked)
-  } else if (el.checked) {
+  if (el.checked) {
     document.getElementById(fieldId).classList.remove('hidden')
   } else {
     document.getElementById(fieldId).classList.add('hidden')

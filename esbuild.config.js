@@ -15,6 +15,7 @@ const version = process.env.npm_package_version
 const htmlContent = fs.readFileSync('src/index.html', 'utf8')
   .replace(/{{baseUrl}}/g, baseUrl)
   .replace(/{{target}}/g, target)
+  .replace(/{{version}}/g, version)
 fs.writeFileSync('dist/index.html', htmlContent)
 // Generate manifest for the current env
 const mSuffix = target === 'firefox' ? 'firefox' : 'v3'
@@ -52,3 +53,7 @@ require('esbuild')
     plugins: []
   })
   .then((result) => console.log(`${target} - esbuild updated:`, result))
+
+// function countWords(str) {
+//   return str.trim().split(/\s+/).length;
+// }

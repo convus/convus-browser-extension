@@ -1,7 +1,11 @@
+import log from './log' // eslint-disable-line
+
 const requestProps = (ratingToken = false, extraProps = {}) => {
   const headers = { 'Content-Type': 'application/json' }
   if (ratingToken) {
     headers.Authorization = `Bearer ${ratingToken}`
+  } else {
+    log.debug("faillllll")
   }
 
   const defaultProps = {

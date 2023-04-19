@@ -265,6 +265,8 @@
     const headers = { "Content-Type": "application/json" };
     if (ratingToken) {
       headers.Authorization = `Bearer ${ratingToken}`;
+    } else {
+      log_default.debug("faillllll");
     }
     const defaultProps = {
       method: "POST",
@@ -342,13 +344,10 @@
     if (typeof ratingToken === "undefined" || ratingToken === null) {
       loginTime();
     } else {
-      window.apiToken = apiToken;
+      window.ratingToken = ratingToken;
       ratingTime();
       checkRatingToken(ratingToken);
     }
-  });
-  browser.storage.local.get("topicsVisible").then((data) => data.topicsVisible).then((topicsVisible) => {
-    toggleTopicsVisible(topicsVisible, true);
   });
   browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     const activeTab = tabs[0];
@@ -451,23 +450,6 @@
       alert.after(shareDiv(shareText));
     }
   };
-  var toggleTopicsVisible = (isVisible, isOnLoad = false) => {
-    window.topicsVisibile = isVisible;
-    const topicsField = document.getElementById("field-group-topics");
-    if (typeof topicsField === "undefined" || topicsField === null) {
-      return setTimeout(toggleTopicsVisible, 50, isVisible, isOnLoad);
-    }
-    if (window.topicsVisibile) {
-      topicsField.classList.remove("hidden");
-    } else {
-      topicsField.classList.add("hidden");
-    }
-    if (isOnLoad) {
-      document.getElementById("show_topics").checked = isVisible;
-    } else {
-      browser.storage.local.set({ topicsVisible: isVisible });
-    }
-  };
   var toggleMenu = (event = false, closeMenu = "toggle") => {
     event && event.preventDefault();
     const menuBtn = document.getElementById("rating-menu-btn");
@@ -504,9 +486,7 @@
   var updateMenuCheck = (event) => {
     const el = event.target;
     const fieldId = el.getAttribute("data-target-id");
-    if (fieldId === "field-group-topics") {
-      toggleTopicsVisible(el.checked);
-    } else if (el.checked) {
+    if (el.checked) {
       document.getElementById(fieldId).classList.remove("hidden");
     } else {
       document.getElementById(fieldId).classList.add("hidden");
