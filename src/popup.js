@@ -22,6 +22,7 @@ browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
   const activeTab = tabs[0]
   // window.storedTabUrl = activeTab.url // this is available in updateRatingFields
   // log.debug(tabs[0])
+  log.debug(activeTab)
   updateRatingFields(activeTab.url, activeTab.title)
 })
 
@@ -63,6 +64,9 @@ const loginTime = () => {
     log.debug('login form not present in DOM, trying again in 50ms')
     return setTimeout(loginTime, 50)
   }
+  // Piggybacking on above login form dom loading code
+  // chrome.tabs.create({'url': `${baseUrl()}/browser_extension_auth`});
+  // return
   loginForm.classList.remove('hidden')
   document.getElementById('new_rating')?.classList?.add('hidden')
   loginForm.addEventListener('submit', handleLoginSubmit)
@@ -209,16 +213,19 @@ const logout = () => {
   loginTime()
 }
 
+const baseUrl = () => {
+  return document.getElementById('body-popup').getAttribute('data-baseurl')
+}
+
 // Add a visual cue to show that you're attached to local
 const renderLocalAlert = () => {
   // If alert is already rendered, skip
   if (document.getElementById('local-alert')) { return }
-  baseUrl = document.getElementById('body-popup').getAttribute("data-baseurl")
-  if (baseUrl.match(/http:\/\/localhost/i)) {
+  if (baseUrl().match(/http:\/\/localhost/i)) {
     const localAlert = document.createElement('div')
-    localAlert.textContent = "local convus"
-    localAlert.classList.add(`text-gray-400`, 'mt-2', 'text-center')
-    localAlert.setAttribute("id", 'local-alert')
+    localAlert.textContent = 'local convus'
+    localAlert.classList.add('text-gray-400', 'mt-2', 'text-center')
+    localAlert.setAttribute('id', 'local-alert')
     document.getElementById('body-popup').append(localAlert)
   }
 }

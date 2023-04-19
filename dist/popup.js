@@ -350,6 +350,7 @@
   });
   browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     const activeTab = tabs[0];
+    log_default.debug(activeTab);
     updateRatingFields(activeTab.url, activeTab.title);
   });
   var checkRatingToken = async function(token) {
@@ -504,15 +505,17 @@
     toggleMenu(false, true);
     loginTime();
   };
+  var baseUrl = () => {
+    return document.getElementById("body-popup").getAttribute("data-baseurl");
+  };
   var renderLocalAlert = () => {
     if (document.getElementById("local-alert")) {
       return;
     }
-    baseUrl = document.getElementById("body-popup").getAttribute("data-baseurl");
-    if (baseUrl.match(/http:\/\/localhost/i)) {
+    if (baseUrl().match(/http:\/\/localhost/i)) {
       const localAlert = document.createElement("div");
       localAlert.textContent = "local convus";
-      localAlert.classList.add(`text-gray-400`, "mt-2", "text-center");
+      localAlert.classList.add("text-gray-400", "mt-2", "text-center");
       localAlert.setAttribute("id", "local-alert");
       document.getElementById("body-popup").append(localAlert);
     }

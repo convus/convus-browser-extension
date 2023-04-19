@@ -71,11 +71,11 @@ describe('getRatingToken', function () {
   })
 
   test('returns ratingToken for authenticated', async () => {
-    fetch.mockResponseOnce(JSON.stringify({ review_token: 'zzzzz', name: "party" }), { status: 200 })
+    fetch.mockResponseOnce(JSON.stringify({ review_token: 'zzzzz', name: 'party' }), { status: 200 })
     const loginFormJson = { email: 'test@example.com', password: 'fakepass' }
 
     const res = await api.getRatingToken(authUrl, loginFormJson)
-    expect(res).toStrictEqual({ ratingToken: 'zzzzz', currentName: "party", message: ['success', 'authenticated'] })
+    expect(res).toStrictEqual({ ratingToken: 'zzzzz', currentName: 'party', message: ['success', 'authenticated'] })
   })
 })
 
