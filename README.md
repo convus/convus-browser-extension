@@ -10,43 +10,53 @@ This browser extension makes the process of submitting ratings easy.
 
 Use `control` + `shift` + `R` to open the rating dialog.
 
-### Single purpose description
+#### Single purpose description
 
 Submit a rating of the website you are reading to Convus.org
 
-### activeTab justification
+#### activeTab justification
 
 Required to get the url and title of the website you are reading, for your rating.
 
-### storage justification
+#### storage justification
 
 Required to store a key to authenticate your rating.
 
----
-
-## Development
+## Building for distribution
 
 This extension uses [yarn](https://yarnpkg.com/) for package management. Install the dependencies with `yarn install`
 
-Build the extension with `NODE_ENV=production yarn build`
+There are configuration options in [esbuild.config.js](esbuild.config.js) (for example - specify whether you're building for Firefox, Chrome or Safari)
 
-There are configuration options in [esbuild.config.js](esbuild.config.js) (for example - specify whether you're building for Firefox or Chrome)
+Build the extension and create a zip file for submission with:
 
-In your terminal, run:
+```sh
+./makezip.sh
+```
 
-    ./start
+This runs `NODE_ENV=production yarn build` - which builds the extension with `https://www.convus.org` as the source (rather than localhost).
 
-To build and watch - which will build using the configuration options `esbuild.config.js`
+The created zipped file is submitted for Chrome and Firefox. Safari requires XCode.
 
-To build the publishable version, use `NODE_ENV=production yarn build` - which will build with `https://www.convus.org` as the source.
+## Development
 
-Create a zip of the built extension for submission with:
+Build the extension for development with `yarn build`
 
-    ./makezip
+To run the build process with watch, run:
+
+```sh
+./start.sh
+```
+
+It always builds using the configuration options from `esbuild.config.js`
+
+---
+
+Run the tests with `yarn test`
 
 Lint with `yarn lint`
 
 Lint HTML with `htmlbeautifier src/index.html`
 
-_NOTE: 👆 isn't great - it requires Ruby and [htmlbeautifier](https://github.com/threedaymonk/htmlbeautifier/), which isn't actually bundled/packaged here_
+_NOTE: 👆 is a lazy hack - it requires Ruby and [htmlbeautifier](https://github.com/threedaymonk/htmlbeautifier/), which isn't actually bundled/packaged here_
 
