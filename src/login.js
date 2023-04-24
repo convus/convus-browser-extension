@@ -10,14 +10,14 @@ const handleLoginSubmit = async function (e) {
   const formData = new FormData(document.getElementById('new_user'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
 
-  const result = await api.getRatingToken(formAuthUrl(), jsonFormData)
+  const result = await api.getAuthToken(formAuthUrl(), jsonFormData)
   log.debug(result)
 
-  if (typeof (result.ratingToken) === 'undefined' || result.ratingToken === null) {
+  if (typeof (result.authToken) === 'undefined' || result.authToken === null) {
     utilities.renderAlerts(result.message)
   } else {
     browser.storage.local.set(result)
-    window.ratingToken = result.ratingToken
+    window.authToken = result.authToken
     window.currentName = result.currentName
     utilities.hideAlerts()
     rating.ratingTime()
@@ -39,9 +39,9 @@ const checkAuthToken = async function (token) {
   const result = await api.isAuthTokenValid(authUrl, token)
   if (result) { return }
   // Remove the existing data that is incorrect - maybe actually do in form submit?
-  browser.storage.local.remove('ratingToken')
+  browser.storage.local.remove('authToken')
   browser.storage.local.remove('name')
-  window.ratingToken = undefined
+  window.authToken = undefined
   loginTime()
 }
 
@@ -59,7 +59,7 @@ const loginTime = () => {
 }
 
 const logout = () => {
-  browser.storage.local.remove('ratingToken')
+  browser.storage.local.remove('authToken')
   utilities.toggleMenu(false, true)
   loginTime()
 }
