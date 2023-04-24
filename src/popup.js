@@ -1,5 +1,4 @@
 import log from './log' // eslint-disable-line
-import api from './api'
 import login from './login'
 import rating from './rating'
 
