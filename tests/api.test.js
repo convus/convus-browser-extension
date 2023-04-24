@@ -45,18 +45,18 @@ describe('requestProps', function () {
   })
 })
 
-describe('isRatingTokenValid', function () {
+describe('isAuthTokenValid', function () {
   test('returns false for missing', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'missing users' }), { status: 401 })
 
-    const res = await api.isRatingTokenValid('xxxx', authUrl)
+    const res = await api.isAuthTokenValid('xxxx', authUrl)
     expect(res).toBe(false)
   })
 
   test('returns true for authenticated', async () => {
     fetch.mockResponseOnce(JSON.stringify({ success: 'authenticated' }), { status: 200 })
 
-    const res = await api.isRatingTokenValid(authUrl, 'xxxx')
+    const res = await api.isAuthTokenValid(authUrl, 'xxxx')
     expect(res).toBe(true)
   })
 })
