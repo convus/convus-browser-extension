@@ -335,6 +335,13 @@
   };
 
   // utilities.js
+  var retryIfMissing = (obj, func, ...args) => {
+    if (typeof obj === "undefined" || obj === null) {
+      log_default.debug(`${func.name} requires an element not present in DOM, trying again in 50ms`);
+      setTimeout(func, 5e3, ...args);
+      return true;
+    }
+  };
   var baseUrl = () => {
     return document.getElementById("body-popup").getAttribute("data-baseurl");
   };
@@ -409,26 +416,22 @@
     hideAlerts,
     pageLoadedFunctions,
     renderAlerts,
-    toggleMenu
+    toggleMenu,
+    retryIfMissing
   };
 
   // rating.js
   var updateRatingFields = (tabUrl, title) => {
     const ratingUrlField = document.getElementById("submitted_url");
-    if (typeof ratingUrlField === "undefined" || ratingUrlField === null) {
-      log_default.debug("ratingUrlField not present in DOM, trying again in 50ms");
-      return setTimeout(updateRatingFields, 50, tabUrl, title);
-    }
+    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
     ratingUrlField.value = tabUrl;
     document.getElementById("citation_title").value = title;
     document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
   };
-  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
   var ratingTime = () => {
     const ratingForm = document.getElementById("new_rating");
-    if (typeof ratingForm === "undefined" || ratingForm === null) {
-      log_default.debug("rating form not present in DOM, trying again in 50ms");
-      return setTimeout(ratingTime, 50);
+    if (utilities_default.retryIfMissing(ratingForm, ratingTime)) {
+      return;
     }
     ratingForm.addEventListener("submit", handleRatingSubmit);
     document.getElementById("rating-menu-btn").addEventListener("click", utilities_default.toggleMenu);
@@ -443,6 +446,7 @@
     }
     utilities_default.pageLoadedFunctions();
   };
+  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
   var handleRatingSubmit = async function(e) {
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_rating"));
@@ -471,6 +475,7 @@
   };
 
   // login.js
+  var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
   var handleLoginSubmit = async function(e) {
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_user"));
@@ -488,12 +493,10 @@
     }
     return false;
   };
-  var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
   var checkAuthToken = async function(token) {
     const authUrl = formAuthUrl();
-    if (typeof authUrl === "undefined" || authUrl === null) {
-      log_default.debug("authUrl not present in DOM, trying again in 50ms");
-      return setTimeout(checkAuthToken, 50, token);
+    if (utilities_default.retryIfMissing(authUrl, checkAuthToken, token)) {
+      return;
     }
     const result = await api_default.isAuthTokenValid(authUrl, token);
     if (result) {
@@ -506,9 +509,8 @@
   };
   var loginTime = () => {
     const loginForm = document.getElementById("new_user");
-    if (typeof loginForm === "undefined" || loginForm === null) {
-      log_default.debug("login form not present in DOM, trying again in 50ms");
-      return setTimeout(loginTime, 50);
+    if (utilities_default.retryIfMissing(loginForm, loginTime)) {
+      return;
     }
     loginForm.classList.remove("hidden");
     document.getElementById("new_rating")?.classList?.add("hidden");

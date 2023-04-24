@@ -5,26 +5,19 @@ import utilities from './utilities'
 import login from './login'
 
 const updateRatingFields = (tabUrl, title) => {
-  // pause and rerun if DOM hasn't loaded
   const ratingUrlField = document.getElementById('submitted_url')
-  if (typeof (ratingUrlField) === 'undefined' || ratingUrlField === null) {
-    log.debug('ratingUrlField not present in DOM, trying again in 50ms')
-    return setTimeout(updateRatingFields, 50, tabUrl, title)
-  }
+  utilities.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title)
+
   ratingUrlField.value = tabUrl
   document.getElementById('citation_title').value = title
   document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
 }
 
-// Internal
-const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribute('action')
-
 const ratingTime = () => {
   const ratingForm = document.getElementById('new_rating')
-  if (typeof (ratingForm) === 'undefined' || ratingForm === null) {
-    log.debug('rating form not present in DOM, trying again in 50ms')
-    return setTimeout(ratingTime, 50)
-  }
+
+  if (utilities.retryIfMissing(ratingForm, ratingTime)) { return }
+
   // I think it's a good thing to attach the event listener to the rating form
   ratingForm.addEventListener('submit', handleRatingSubmit)
   // Attach the menu functionality
@@ -42,6 +35,9 @@ const ratingTime = () => {
   }
   utilities.pageLoadedFunctions()
 }
+
+// Internal
+const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribute('action')
 
 // Internal
 const handleRatingSubmit = async function (e) {
