@@ -16,7 +16,7 @@ const requestProps = (ratingToken = false, extraProps = {}) => {
 }
 
 // Returns true/false
-const isRatingTokenValid = (authUrl, ratingToken) => new Promise((resolve, reject) => {
+const isAuthTokenValid = (authUrl, ratingToken) => new Promise((resolve, reject) => {
   const authStatusUrl = `${authUrl}/status`
 
   return fetch(authStatusUrl, requestProps(ratingToken, { method: 'GET' }))
@@ -81,7 +81,7 @@ const errorResponse = (e) => {
 
 export default {
   getRatingToken,
-  isRatingTokenValid,
-  requestProps,
+  isAuthTokenValid,
+  requestProps, // Only exported for testing
   submitRating
 }

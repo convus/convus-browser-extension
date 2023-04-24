@@ -253,7 +253,7 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  if (true) {
+  if (false) {
     import_loglevel.default.setLevel("warn");
   } else {
     import_loglevel.default.setLevel("debug");
@@ -274,7 +274,7 @@
     };
     return { ...defaultProps, ...extraProps };
   };
-  var isRatingTokenValid = (authUrl, ratingToken) => new Promise((resolve, reject) => {
+  var isAuthTokenValid = (authUrl, ratingToken) => new Promise((resolve, reject) => {
     const authStatusUrl = `${authUrl}/status`;
     return fetch(authStatusUrl, requestProps(ratingToken, { method: "GET" })).then(
       (response) => response.json().then((json) => {
@@ -329,123 +329,53 @@
   };
   var api_default = {
     getRatingToken,
-    isRatingTokenValid,
+    isAuthTokenValid,
     requestProps,
     submitRating
   };
 
-  // popup.js
-  if (true) {
-    browser = chrome;
-  }
-  browser.storage.local.get(["ratingToken", "currentName"]).then((data) => {
-    if (typeof data.ratingToken === "undefined" || data.ratingToken === null) {
-      loginTime();
-    } else {
-      window.ratingToken = data.ratingToken;
-      window.currentName = data.currentName;
-      ratingTime();
-      checkRatingToken(data.ratingToken);
-    }
-  });
-  browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    const activeTab = tabs[0];
-    updateRatingFields(activeTab.url, activeTab.title);
-  });
-  var checkRatingToken = async function(token) {
-    const authUrl = formAuthUrl();
-    if (typeof authUrl === "undefined" || authUrl === null) {
-      return setTimeout(checkRatingToken, 50, token);
-    }
-    const result = await api_default.isRatingTokenValid(authUrl, token);
-    if (result) {
+  // utilities.js
+  var baseUrl = () => {
+    return document.getElementById("body-popup").getAttribute("data-baseurl");
+  };
+  var renderLocalAlert = () => {
+    if (document.getElementById("local-alert")) {
       return;
     }
-    browser.storage.local.remove("ratingToken");
-    browser.storage.local.remove("name");
-    window.ratingToken = void 0;
-    loginTime();
-  };
-  var updateRatingFields = (tabUrl, title) => {
-    const ratingUrlField = document.getElementById("submitted_url");
-    if (typeof ratingUrlField === "undefined" || ratingUrlField === null) {
-      log_default.debug("ratingUrlField not present in DOM, trying again in 50ms");
-      return setTimeout(updateRatingFields, 50, tabUrl, title);
+    if (baseUrl().match(/http:\/\/localhost/i)) {
+      const localAlert = document.createElement("div");
+      localAlert.textContent = "local convus";
+      localAlert.classList.add("text-gray-400", "mt-2", "text-center");
+      localAlert.setAttribute("id", "local-alert");
+      document.getElementById("body-popup").append(localAlert);
     }
-    ratingUrlField.value = tabUrl;
-    document.getElementById("citation_title").value = title;
-    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  };
-  var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
-  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
-  var loginTime = () => {
-    const loginForm = document.getElementById("new_user");
-    if (typeof loginForm === "undefined" || loginForm === null) {
-      log_default.debug("login form not present in DOM, trying again in 50ms");
-      return setTimeout(loginTime, 50);
-    }
-    loginForm.classList.remove("hidden");
-    document.getElementById("new_rating")?.classList?.add("hidden");
-    loginForm.addEventListener("submit", handleLoginSubmit);
-    pageLoadedFunctions();
-  };
-  var ratingTime = () => {
-    const ratingForm = document.getElementById("new_rating");
-    if (typeof ratingForm === "undefined" || ratingForm === null) {
-      log_default.debug("rating form not present in DOM, trying again in 50ms");
-      return setTimeout(ratingTime, 50);
-    }
-    ratingForm.addEventListener("submit", handleRatingSubmit);
-    document.getElementById("rating-menu-btn").addEventListener("click", toggleMenu);
-    document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
-    document.getElementById("logout-btn").addEventListener("click", logout);
-    if (window.ratingToken) {
-      document.getElementById("new_user").classList.add("hidden");
-      ratingForm.classList.remove("hidden");
-    }
-    if (window.currentName) {
-      document.getElementById("username").textContent = window.currentName;
-    }
-    pageLoadedFunctions();
   };
   var pageLoadedFunctions = () => {
     renderLocalAlert();
-  };
-  var handleLoginSubmit = async function(e) {
-    e.preventDefault();
-    const formData = new FormData(document.getElementById("new_user"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.getRatingToken(formAuthUrl(), jsonFormData);
-    log_default.debug(result);
-    if (typeof result.ratingToken === "undefined" || result.ratingToken === null) {
-      renderAlerts(result.message);
-    } else {
-      browser.storage.local.set(result);
-      window.ratingToken = result.ratingToken;
-      window.currentName = result.currentName;
-      hideAlerts();
-      ratingTime();
-    }
-    return false;
-  };
-  var handleRatingSubmit = async function(e) {
-    e.preventDefault();
-    const formData = new FormData(document.getElementById("new_rating"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.submitRating(formNewRatingUrl(), window.ratingToken, jsonFormData);
-    log_default.debug(result);
-    renderAlerts(result.message, result.share);
-    if (result.success) {
-      document.getElementById("new_rating").classList.add("hidden");
-      toggleMenu(false, true);
-    }
-    return false;
   };
   var hideAlerts = () => {
     const visibleAlerts = document.querySelectorAll(".alert");
     visibleAlerts.forEach((el) => el.classList.add("hidden"));
     const visibleShares = document.querySelectorAll(".shareVisible");
     visibleShares.forEach((el) => el.classList.add("hidden"));
+  };
+  var copyShare = (event) => {
+    const el = event.target.closest(".shareVisible");
+    const shareText = el.getAttribute("data-sharetext");
+    navigator.clipboard.writeText(shareText);
+    const copiedAlert = document.createElement("p");
+    copiedAlert.textContent = "Copied results to clipboard";
+    copiedAlert.classList.add("text-center", "px-2", "py-2", "mt-4");
+    el.append(copiedAlert);
+  };
+  var shareDiv = (shareText) => {
+    const template = document.querySelector("#templates .shareTemplate");
+    const el = template.cloneNode(true);
+    el.classList.remove("shareTemplate");
+    el.classList.add("shareVisible");
+    el.setAttribute("data-sharetext", shareText);
+    el.querySelector(".btnShare").addEventListener("click", copyShare);
+    return el;
   };
   var renderAlerts = (message, shareText = null) => {
     hideAlerts();
@@ -475,23 +405,56 @@
       menuBtn.classList.add("active");
     }
   };
-  var copyShare = (event) => {
-    const el = event.target.closest(".shareVisible");
-    const shareText = el.getAttribute("data-sharetext");
-    navigator.clipboard.writeText(shareText);
-    const copiedAlert = document.createElement("p");
-    copiedAlert.textContent = "Copied results to clipboard";
-    copiedAlert.classList.add("text-center", "px-2", "py-2", "mt-4");
-    el.append(copiedAlert);
+  var utilities_default = {
+    hideAlerts,
+    pageLoadedFunctions,
+    renderAlerts,
+    toggleMenu
   };
-  var shareDiv = (shareText) => {
-    const template = document.querySelector("#templates .shareTemplate");
-    const el = template.cloneNode(true);
-    el.classList.remove("shareTemplate");
-    el.classList.add("shareVisible");
-    el.setAttribute("data-sharetext", shareText);
-    el.querySelector(".btnShare").addEventListener("click", copyShare);
-    return el;
+
+  // rating.js
+  var updateRatingFields = (tabUrl, title) => {
+    const ratingUrlField = document.getElementById("submitted_url");
+    if (typeof ratingUrlField === "undefined" || ratingUrlField === null) {
+      log_default.debug("ratingUrlField not present in DOM, trying again in 50ms");
+      return setTimeout(updateRatingFields, 50, tabUrl, title);
+    }
+    ratingUrlField.value = tabUrl;
+    document.getElementById("citation_title").value = title;
+    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  };
+  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
+  var ratingTime = () => {
+    const ratingForm = document.getElementById("new_rating");
+    if (typeof ratingForm === "undefined" || ratingForm === null) {
+      log_default.debug("rating form not present in DOM, trying again in 50ms");
+      return setTimeout(ratingTime, 50);
+    }
+    ratingForm.addEventListener("submit", handleRatingSubmit);
+    document.getElementById("rating-menu-btn").addEventListener("click", utilities_default.toggleMenu);
+    document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
+    document.getElementById("logout-btn").addEventListener("click", login_default.logout);
+    if (window.ratingToken) {
+      document.getElementById("new_user").classList.add("hidden");
+      ratingForm.classList.remove("hidden");
+    }
+    if (window.currentName) {
+      document.getElementById("username").textContent = window.currentName;
+    }
+    utilities_default.pageLoadedFunctions();
+  };
+  var handleRatingSubmit = async function(e) {
+    e.preventDefault();
+    const formData = new FormData(document.getElementById("new_rating"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    const result = await api_default.submitRating(formNewRatingUrl(), window.ratingToken, jsonFormData);
+    log_default.debug(result);
+    utilities_default.renderAlerts(result.message, result.share);
+    if (result.success) {
+      document.getElementById("new_rating").classList.add("hidden");
+      utilities_default.toggleMenu(false, true);
+    }
+    return false;
   };
   var updateMenuCheck = (event) => {
     const el = event.target;
@@ -502,25 +465,84 @@
       document.getElementById(fieldId).classList.add("hidden");
     }
   };
-  var logout = () => {
-    browser.storage.local.remove("ratingToken");
-    toggleMenu(false, true);
-    loginTime();
+  var rating_default = {
+    ratingTime,
+    updateRatingFields
   };
-  var baseUrl = () => {
-    return document.getElementById("body-popup").getAttribute("data-baseurl");
+
+  // login.js
+  var handleLoginSubmit = async function(e) {
+    e.preventDefault();
+    const formData = new FormData(document.getElementById("new_user"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    const result = await api_default.getRatingToken(formAuthUrl(), jsonFormData);
+    log_default.debug(result);
+    if (typeof result.ratingToken === "undefined" || result.ratingToken === null) {
+      utilities_default.renderAlerts(result.message);
+    } else {
+      browser.storage.local.set(result);
+      window.ratingToken = result.ratingToken;
+      window.currentName = result.currentName;
+      utilities_default.hideAlerts();
+      rating_default.ratingTime();
+    }
+    return false;
   };
-  var renderLocalAlert = () => {
-    if (document.getElementById("local-alert")) {
+  var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
+  var checkAuthToken = async function(token) {
+    const authUrl = formAuthUrl();
+    if (typeof authUrl === "undefined" || authUrl === null) {
+      log_default.debug("authUrl not present in DOM, trying again in 50ms");
+      return setTimeout(checkAuthToken, 50, token);
+    }
+    const result = await api_default.isAuthTokenValid(authUrl, token);
+    if (result) {
       return;
     }
-    if (baseUrl().match(/http:\/\/localhost/i)) {
-      const localAlert = document.createElement("div");
-      localAlert.textContent = "local convus";
-      localAlert.classList.add("text-gray-400", "mt-2", "text-center");
-      localAlert.setAttribute("id", "local-alert");
-      document.getElementById("body-popup").append(localAlert);
-    }
+    browser.storage.local.remove("ratingToken");
+    browser.storage.local.remove("name");
+    window.ratingToken = void 0;
+    loginTime();
   };
+  var loginTime = () => {
+    const loginForm = document.getElementById("new_user");
+    if (typeof loginForm === "undefined" || loginForm === null) {
+      log_default.debug("login form not present in DOM, trying again in 50ms");
+      return setTimeout(loginTime, 50);
+    }
+    loginForm.classList.remove("hidden");
+    document.getElementById("new_rating")?.classList?.add("hidden");
+    loginForm.addEventListener("submit", handleLoginSubmit);
+    utilities_default.pageLoadedFunctions();
+  };
+  var logout = () => {
+    browser.storage.local.remove("ratingToken");
+    utilities_default.toggleMenu(false, true);
+    loginTime();
+  };
+  var login_default = {
+    checkAuthToken,
+    loginTime,
+    logout
+  };
+
+  // popup.js
+  if (true) {
+    browser = chrome;
+  }
+  browser.storage.local.get(["ratingToken", "currentName"]).then((data) => {
+    if (typeof data.ratingToken === "undefined" || data.ratingToken === null) {
+      login_default.loginTime();
+    } else {
+      window.ratingToken = data.ratingToken;
+      window.currentName = data.currentName;
+      rating_default.ratingTime();
+      login_default.checkAuthToken(data.ratingToken);
+    }
+  });
+  browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    const activeTab = tabs[0];
+    rating_default.updateRatingFields(activeTab.url, activeTab.title);
+  });
 })();
 //# sourceMappingURL=popup.js.map
