@@ -10,7 +10,7 @@ const renderLocalAlert = () => {
   if (baseUrl().match(/http:\/\/localhost/i)) {
     const localAlert = document.createElement('div')
     localAlert.textContent = 'local convus'
-    localAlert.classList.add('text-gray-400', 'mt-2', 'text-center')
+    localAlert.classList.add('text-gray-400', 'text-center')
     localAlert.setAttribute('id', 'local-alert')
     document.getElementById('body-popup').append(localAlert)
   }

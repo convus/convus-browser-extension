@@ -5,15 +5,15 @@ import rating from './rating'
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
 if (process.env.browser_target == 'chrome') { browser = chrome } // eslint-disable-line
 
-browser.storage.local.get(['ratingToken', 'currentName'])
+browser.storage.local.get(['authToken', 'currentName'])
   .then(data => {
-    if (typeof (data.ratingToken) === 'undefined' || data.ratingToken === null) {
+    if (typeof (data.authToken) === 'undefined' || data.authToken === null) {
       login.loginTime()
     } else {
-      window.ratingToken = data.ratingToken
+      window.authToken = data.authToken
       window.currentName = data.currentName
       rating.ratingTime()
-      login.checkAuthToken(data.ratingToken)
+      login.checkAuthToken(data.authToken)
     }
   })
 

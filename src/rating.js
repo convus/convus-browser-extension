@@ -31,8 +31,8 @@ const ratingTime = () => {
   document.getElementById('rating-menu-btn').addEventListener('click', utilities.toggleMenu)
   document.querySelectorAll('#rating-menu .form-control-check input').forEach(el => el.addEventListener('change', updateMenuCheck))
   document.getElementById('logout-btn').addEventListener('click', login.logout)
-  // ... but only show or hide the form if ratingToken is set, in case of weird callback stuff
-  if (window.ratingToken) {
+  // ... but only show or hide the form if authToken is set, in case of weird callback stuff
+  if (window.authToken) {
     document.getElementById('new_user').classList.add('hidden')
     ratingForm.classList.remove('hidden')
   }
@@ -48,7 +48,7 @@ const handleRatingSubmit = async function (e) {
   e.preventDefault()
   const formData = new FormData(document.getElementById('new_rating'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
-  const result = await api.submitRating(formNewRatingUrl(), window.ratingToken, jsonFormData)
+  const result = await api.submitRating(formNewRatingUrl(), window.authToken, jsonFormData)
 
   log.debug(result)
   utilities.renderAlerts(result.message, result.share)
