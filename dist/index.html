@@ -19,13 +19,13 @@
         <input autocomplete="current-password" class="form-control" type="password" name="password" id="password" />
       </div>
       <div class="form-row-btn">
-        <input type="submit" name="commit" value="Log in" class="btn btn-success" data-disable-with="Log in" />
+        <input type="submit" name="commit" value="Log in" id="loginBtn" class="btn btn-success" data-disable-with="Log in" />
       </div>
       <p class="mt-2"><a href="http://localhost:3009/users/password/new" target="_blank">Forgot your password?</a></p>
       <p class="mt-2"><a href="http://localhost:3009/users/sign_up" target="_blank">Sign up</a></p>
     </form>
     <form id="new_rating" action="http://localhost:3009/api/v1/ratings" accept-charset="UTF-8" method="post" class="pb-2">
-      <input autocomplete="off" type="hidden" value="chrome_extension-0.8.0" name="source" id="source" />
+      <input autocomplete="off" type="hidden" value="chrome_extension-0.9.0" name="source" id="source" />
       <input autocomplete="off" type="hidden" value="" name="citation_metadata" id="citation_metadata" />
       <!--
         Replace below here with the Rails HTML

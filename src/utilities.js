@@ -1,3 +1,14 @@
+import log from './log' // eslint-disable-line
+
+// pause and rerun if DOM hasn't loaded
+const retryIfMissing = (obj, func, ...args) => {
+  if (typeof (obj) === 'undefined' || obj === null) {
+    log.debug(`${func.name} requires an element not present in DOM, trying again in 50ms`)
+    setTimeout(func, 5000, ...args)
+    return true
+  }
+}
+
 // Internal
 const baseUrl = () => {
   return document.getElementById('body-popup').getAttribute('data-baseurl')
@@ -91,5 +102,6 @@ export default {
   hideAlerts,
   pageLoadedFunctions,
   renderAlerts,
-  toggleMenu
+  toggleMenu,
+  retryIfMissing
 }

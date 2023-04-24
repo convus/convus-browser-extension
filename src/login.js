@@ -5,6 +5,9 @@ import utilities from './utilities'
 import rating from './rating'
 
 // Internal
+const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
+
+// Internal
 const handleLoginSubmit = async function (e) {
   e.preventDefault()
   const formData = new FormData(document.getElementById('new_user'))
@@ -26,15 +29,10 @@ const handleLoginSubmit = async function (e) {
   return false // fallback prevent submit
 }
 
-// Internal
-const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
-
 const checkAuthToken = async function (token) {
   const authUrl = formAuthUrl()
-  if (typeof (authUrl) === 'undefined' || authUrl === null) {
-    log.debug('authUrl not present in DOM, trying again in 50ms')
-    return setTimeout(checkAuthToken, 50, token)
-  }
+  if (utilities.retryIfMissing(authUrl, checkAuthToken, token)) { return }
+
   // log.debug('checking rating token:', token)
   const result = await api.isAuthTokenValid(authUrl, token)
   if (result) { return }
@@ -46,12 +44,9 @@ const checkAuthToken = async function (token) {
 }
 
 const loginTime = () => {
-  // log.debug("it's login time")
   const loginForm = document.getElementById('new_user')
-  if (typeof (loginForm) === 'undefined' || loginForm === null) {
-    log.debug('login form not present in DOM, trying again in 50ms')
-    return setTimeout(loginTime, 50)
-  }
+  if (utilities.retryIfMissing(loginForm, loginTime)) { return }
+
   loginForm.classList.remove('hidden')
   document.getElementById('new_rating')?.classList?.add('hidden')
   loginForm.addEventListener('submit', handleLoginSubmit)
