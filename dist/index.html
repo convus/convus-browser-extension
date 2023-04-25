@@ -110,36 +110,36 @@
       <div class="form-row mt-3 collapsible hidden" id="field-group-topics">
         <label for="topics_text">
           Topics
-          <small class="less-strong">new line delineated</small>
+          <small class="opacity-50">new line delineated</small>
         </label>
         <textarea placeholder="optional" class="form-control" name="topics_text" id="topics_text"></textarea>
       </div>
     </form>
     <div id="rating-menu"  class="collapsible hidden">
       <hr>
-      <div class="form-row">
-        <label class="form-control-check" for="show_topics">
-          <input type="checkbox" name="show_topics" id="show_topics" value="1" data-target-id="field-group-topics">
-          Show Topics
-          <small class="less-strong">for diagnostics</small>
-        </label>
+      <p class="text-sm mt-2 hidden-safari_ios">Open rating dialog with <code>control</code> + <code>shift</code> + <code>R</code></p>
+      <p class="text-sm mt-5 opacity-50">Diagnostic display options</p>
+      <div class="row mt-1 grid-cols-2 opacity-50">
+        <div class="col py-1">
+          <label class="form-control-check" for="show_topics">
+            <input type="checkbox" name="show_topics" id="show_topics" value="1" data-target-id="field-group-topics">
+            Show Topics
+          </label>
+        </div>
+        <div class="col py-1">
+          <label class="form-control-check" for="show_url">
+            <input type="checkbox" name="show_url" id="show_url" value="1" data-target-id="field-group-url">
+            Show URL
+          </label>
+        </div>
+        <div class="col py-1">
+          <label class="form-control-check" for="show_title">
+            <input type="checkbox" name="show_title" id="show_title" value="1" data-target-id="field-group-title">
+            Show Title
+          </label>
+        </div>
       </div>
-      <div class="form-row">
-        <label class="form-control-check" for="show_url">
-          <input type="checkbox" name="show_url" id="show_url" value="1" data-target-id="field-group-url">
-          Show URL
-          <small class="less-strong">for diagnostics</small>
-        </label>
-      </div>
-      <div class="form-row">
-        <label class="form-control-check" for="show_title">
-          <input type="checkbox" name="show_title" id="show_title" value="1" data-target-id="field-group-title">
-          Show Title
-          <small class="less-strong">for diagnostics</small>
-        </label>
-      </div>
-      <p class="text-sm mt-4 hidden-safari_ios">Open rating dialog with <code>control</code> + <code>shift</code> + <code>R</code></p>
-      <div class="mt-4 text-right" id="logout-wrapper">
+      <div class="mt-2 text-right" id="logout-wrapper">
         <button class="gray-link text-sm" type="submit" id="logout-btn">
           logout
           <span id="username"></span>
