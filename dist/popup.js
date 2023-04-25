@@ -277,8 +277,8 @@
   var isAuthTokenValid = (authUrl, authToken) => new Promise((resolve, reject) => {
     const authStatusUrl = `${authUrl}/status`;
     return fetch(authStatusUrl, requestProps(authToken, { method: "GET" })).then(
-      (response) => response.json().then((json) => {
-        resolve(json.message !== "missing user" && response.status === 200);
+      (response2) => response2.json().then((json) => {
+        resolve(json.message !== "missing user" && response2.status === 200);
       })
     ).catch((e) => {
       resolve(errorResponse(e));
@@ -293,14 +293,14 @@
       body: loginFormData
     };
     return fetch(authUrl, rProps).then(
-      (response) => response.json().then((json) => {
-        let result = {};
-        if (response.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
-          result.message = ["error", json.message];
+      (response2) => response2.json().then((json) => {
+        let result2 = {};
+        if (response2.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
+          result2.message = ["error", json.message];
         } else {
-          result = { authToken: json.review_token, currentName: json.name, message: ["success", "authenticated"] };
+          result2 = { authToken: json.review_token, currentName: json.name, message: ["success", "authenticated"] };
         }
-        resolve(result);
+        resolve(result2);
       })
     ).catch((e) => {
       resolve(errorResponse(e));
@@ -309,8 +309,8 @@
   var submitRating = (ratingUrl, authToken, ratingFormData) => new Promise((resolve, reject) => {
     const rProps = requestProps(authToken, { body: ratingFormData });
     return fetch(ratingUrl, rProps).then(
-      (response) => response.json().then((json) => {
-        if (response.status === 200) {
+      (response2) => response2.json().then((json) => {
+        if (response2.status === 200) {
           resolve({
             success: true,
             message: ["success", json.message],
@@ -451,10 +451,10 @@
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_rating"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
-    log_default.debug(result);
-    utilities_default.renderAlerts(result.message, result.share);
-    if (result.success) {
+    const result2 = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
+    log_default.debug(result2);
+    utilities_default.renderAlerts(result2.message, result2.share);
+    if (result2.success) {
       document.getElementById("new_rating").classList.add("hidden");
       utilities_default.toggleMenu(false, true);
     }
@@ -480,14 +480,14 @@
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_user"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.getAuthToken(formAuthUrl(), jsonFormData);
-    log_default.debug(result);
-    if (typeof result.authToken === "undefined" || result.authToken === null) {
-      utilities_default.renderAlerts(result.message);
+    const result2 = await api_default.getAuthToken(formAuthUrl(), jsonFormData);
+    log_default.debug(result2);
+    if (typeof result2.authToken === "undefined" || result2.authToken === null) {
+      utilities_default.renderAlerts(result2.message);
     } else {
-      browser.storage.local.set(result);
-      window.authToken = result.authToken;
-      window.currentName = result.currentName;
+      browser.storage.local.set(result2);
+      window.authToken = result2.authToken;
+      window.currentName = result2.currentName;
       utilities_default.hideAlerts();
       rating_default.ratingTime();
     }
@@ -498,8 +498,8 @@
     if (utilities_default.retryIfMissing(authUrl, checkAuthToken, token)) {
       return;
     }
-    const result = await api_default.isAuthTokenValid(authUrl, token);
-    if (result) {
+    const result2 = await api_default.isAuthTokenValid(authUrl, token);
+    if (result2) {
       return;
     }
     browser.storage.local.remove("authToken");
@@ -542,9 +542,26 @@
       login_default.checkAuthToken(data.authToken);
     }
   });
-  browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    const activeTab = tabs[0];
-    rating_default.updateRatingFields(activeTab.url, activeTab.title);
-  });
+  function coolPageScript(pageUrl) {
+    if (pageUrl === "http://localhost:3009/browser_extension_auth") {
+      const authInfo = { apiToken: window.apiToken, username: window.username };
+      return JSON.stringify(authInfo);
+    } else {
+      return JSON.stringify({ metadata: "asdfasd" });
+    }
+  }
+  var getCurrentTab = async function() {
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    rating_default.updateRatingFields(tab.url, tab.title);
+    response = await browser.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: coolPageScript,
+      args: [tab.url]
+    });
+    log_default.debug(response);
+    result = JSON.parse(response[0].result);
+    log_default.debug(result);
+  };
+  getCurrentTab();
 })();
 //# sourceMappingURL=popup.js.map

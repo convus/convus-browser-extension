@@ -14,7 +14,16 @@
 
  "permissions": [
     "activeTab",
+    "scripting",
     "storage"
+  ],
+
+ // "background": {
+ //    "service_worker": "background.js"
+ //  },
+
+  "host_permissions": [
+      "*://*/*"
   ],
 
   "action": {

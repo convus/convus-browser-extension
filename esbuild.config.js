@@ -47,7 +47,7 @@ require('esbuild')
     entryPoints: ['popup.js'],
     bundle: true,
     sourcemap: true,
-    outfile: path.join(process.cwd(), 'dist', 'popup.js'),
+    outdir: path.join(process.cwd(), 'dist'),
     absWorkingDir: path.join(process.cwd(), 'src'),
     watch: watch && watchOptions,
     plugins: []

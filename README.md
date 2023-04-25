@@ -18,6 +18,10 @@ Submit a rating of the website you are reading to Convus.org
 
 Required to get the url and title of the website you are reading, for your rating.
 
+#### scripting justification
+
+Required to get the metadata on the page for the rating and to get the API key to authenticate on Convus.org
+
 #### storage justification
 
 Required to store a key to authenticate your rating.
