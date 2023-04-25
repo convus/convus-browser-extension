@@ -28,10 +28,37 @@ const renderLocalAlert = () => {
 }
 
 const pageLoadedFunctions = () => {
+  elementsHide('#waiting-spinner')
   renderLocalAlert() // Render local alert if it's warranted
 }
 
+// Internal
+const elementsFromSelectorOrElements = (selOrEl) => {
+  if (typeof (selOrEl) === 'string') {
+    return document.querySelectorAll(selOrEl)
+  } else {
+    [selOrEl].flat()
+  }
+}
+
+const elementsHide = (selOrEl) => {
+  elementsFromSelectorOrElements(selOrEl)
+    .forEach(el => el.classList.add('hidden'))
+}
+
+const elementsShow = (selOrEl) => {
+  elementsFromSelectorOrElements(selOrEl)
+    .forEach(el => el.classList.remove('hidden'))
+}
+
+// Including to make it easier to switch to animation in the future
+const elementsExpand = (selOrEl) => { elementsShow(selOrEl) }
+// Including to make it easier to switch to animation in the future
+const elementsCollapse = (selOrEl) => { elementsHide(selOrEl) }
+
 const hideAlerts = () => {
+  // TODO: switch to (and test):
+  // elementsHide('.alert, .shareVisible')
   const visibleAlerts = document.querySelectorAll('.alert')
   visibleAlerts.forEach(el => el.classList.add('hidden'))
   const visibleShares = document.querySelectorAll('.shareVisible')
@@ -95,11 +122,19 @@ const toggleMenu = (event = false, closeMenu = 'toggle') => {
   }
 }
 
+const renderSpinner = () => {
+  elementsShow('#waiting-spinner')
+}
+
 // Not currently using - but want to remember how to do if necessary in the future
 // const closePopup = () { window.close }
 
 export default {
   hideAlerts,
+  elementsCollapse,
+  elementsExpand,
+  elementsHide,
+  elementsShow,
   pageLoadedFunctions,
   renderAlerts,
   toggleMenu,

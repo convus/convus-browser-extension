@@ -358,7 +358,27 @@
     }
   };
   var pageLoadedFunctions = () => {
+    elementsHide("#waiting-spinner");
     renderLocalAlert();
+  };
+  var elementsFromSelectorOrElements = (selOrEl) => {
+    if (typeof selOrEl === "string") {
+      return document.querySelectorAll(selOrEl);
+    } else {
+      [selOrEl].flat();
+    }
+  };
+  var elementsHide = (selOrEl) => {
+    elementsFromSelectorOrElements(selOrEl).forEach((el) => el.classList.add("hidden"));
+  };
+  var elementsShow = (selOrEl) => {
+    elementsFromSelectorOrElements(selOrEl).forEach((el) => el.classList.remove("hidden"));
+  };
+  var elementsExpand = (selOrEl) => {
+    elementsShow(selOrEl);
+  };
+  var elementsCollapse = (selOrEl) => {
+    elementsHide(selOrEl);
   };
   var hideAlerts = () => {
     const visibleAlerts = document.querySelectorAll(".alert");
@@ -414,6 +434,10 @@
   };
   var utilities_default = {
     hideAlerts,
+    elementsCollapse,
+    elementsExpand,
+    elementsHide,
+    elementsShow,
     pageLoadedFunctions,
     renderAlerts,
     toggleMenu,
@@ -427,15 +451,19 @@
     window.authToken = authToken;
     window.currentName = currentName;
   };
+  var removeAuthData = () => {
+    browser.storage.local.remove("authToken");
+    browser.storage.local.remove("name");
+    window.authToken = void 0;
+  };
   var renderAuthMessage = (message) => {
     const authMessage = document.getElementById("auth_message");
     if (utilities_default.retryIfMissing(authMessage, renderAuthMessage, message)) {
       return;
     }
     document.getElementById("authMessageEl").textContent = message;
-    authMessage.classList.remove("hidden");
-    document.getElementById("new_rating")?.classList?.add("hidden");
-    document.getElementById("new_user")?.classList?.add("hidden");
+    utilities_default.elementsShow(authMessage);
+    utilities_default.elementsHide("#new_rating, #new_user");
   };
   var checkAuthToken = async function(token) {
     const authUrl = formAuthUrl();
@@ -446,9 +474,7 @@
     if (result) {
       return;
     }
-    browser.storage.local.remove("authToken");
-    browser.storage.local.remove("name");
-    window.authToken = void 0;
+    removeAuthData();
     loginTime();
   };
   var authPageSuccess = ({ authToken, currentName }) => {
@@ -461,12 +487,12 @@
     if (utilities_default.retryIfMissing(loginMessage, loginTime)) {
       return;
     }
-    loginMessage.classList.remove("hidden");
-    document.getElementById("new_rating")?.classList?.add("hidden");
+    utilities_default.elementsShow(loginMessage);
+    utilities_default.elementsHide("#new_rating");
     utilities_default.pageLoadedFunctions();
   };
   var logout = () => {
-    browser.storage.local.remove("authToken");
+    removeAuthData();
     utilities_default.toggleMenu(false, true);
     renderAuthMessage("logged out from the Convus browser extension");
   };
@@ -484,12 +510,15 @@
     ratingUrlField.value = tabUrl;
     document.getElementById("citation_title").value = title;
     document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    ratingTime();
   };
   var ratingTime = () => {
     const ratingForm = document.getElementById("new_rating");
     if (utilities_default.retryIfMissing(ratingForm, ratingTime)) {
       return;
     }
+    utilities_default.elementsHide("#waiting-spinner, #rating-submit-spinner");
+    utilities_default.elementsShow("#rating-save-row");
     ratingForm.addEventListener("submit", handleRatingSubmit);
     document.getElementById("rating-menu-btn").addEventListener("click", utilities_default.toggleMenu);
     document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
@@ -506,6 +535,9 @@
   var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
   var handleRatingSubmit = async function(e) {
     e.preventDefault();
+    const submitBtn = document.getElementById("ratingSubmitButton");
+    submitBtn.classList.add("disabled");
+    utilities_default.elementsShow("#rating-submit-spinner");
     const formData = new FormData(document.getElementById("new_rating"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
     const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
@@ -515,6 +547,8 @@
       document.getElementById("new_rating").classList.add("hidden");
       utilities_default.toggleMenu(false, true);
     }
+    utilities_default.elementsHide("#rating-submit-spinner");
+    submitBtn.classList.remove("disabled");
     return false;
   };
   var updateMenuCheck = (event) => {
@@ -531,27 +565,7 @@
     updateRatingFields
   };
 
-  // popup.js
-  var browserTarget = "chrome";
-  var baseUrl2 = "http://localhost:3009";
-  if (browserTarget == "chrome") {
-    browser = chrome;
-  }
-  browser.storage.local.get(["authToken", "currentName"]).then((data) => {
-    log_default.debug(`got authToken: ${data.authToken} and currentName: ${data.currentName}`);
-    if (typeof data.authToken === "undefined" || data.authToken === null) {
-      log_default.debug("in localstorage get authtoken > undefined");
-      login_default.loginTime();
-    } else {
-      window.authToken = data.authToken;
-      window.currentName = data.currentName;
-      rating_default.ratingTime();
-      login_default.checkAuthToken(data.authToken);
-    }
-  });
-  var checkAuthUrl = (url) => {
-    return `${baseUrl2}/browser_extension_auth` === url;
-  };
+  // injected_scripts.js
   var metaAttributes = (isAuthUrl = false) => {
     const attrToPair = (attr) => [attr.name, attr.value];
     const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
@@ -564,18 +578,45 @@
     const keypairs = arr.map((el) => [metaKey(el.name), el.content]);
     return Object.fromEntries(keypairs);
   };
+  var injected_scripts_default = {
+    metaAttributes,
+    resultToAuthData
+  };
+
+  // popup.js
+  var browserTarget = "chrome";
+  var baseUrl2 = "http://localhost:3009";
+  if (browserTarget == "chrome") {
+    browser = chrome;
+  }
+  browser.storage.local.get(["authToken", "currentName"]).then((data) => {
+    log_default.debug(`got authToken: ${data.authToken} and currentName: ${data.currentName}`);
+    if (typeof data.authToken === "undefined" || data.authToken === null) {
+      login_default.loginTime();
+    } else {
+      window.authToken = data.authToken;
+      window.currentName = data.currentName;
+      login_default.checkAuthToken(data.authToken);
+    }
+  });
+  var checkAuthUrl = (url) => {
+    return `${baseUrl2}/browser_extension_auth` === url;
+  };
   var getCurrentTab = async function() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-    rating_default.updateRatingFields(tab.url, tab.title);
     const isAuthUrl = checkAuthUrl(tab.url);
+    if (!isAuthUrl) {
+      rating_default.updateRatingFields(tab.url, tab.title);
+    }
     const response = await browser.scripting.executeScript({
       target: { tabId: tab.id },
-      function: metaAttributes,
+      function: injected_scripts_default.metaAttributes,
       args: [isAuthUrl]
     });
     const result = response[0].result;
     if (isAuthUrl) {
-      login_default.authPageSuccess(resultToAuthData(result));
+      login_default.authPageSuccess(injected_scripts_default.resultToAuthData(result));
+    } else {
     }
   };
   getCurrentTab();

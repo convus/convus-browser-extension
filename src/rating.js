@@ -11,12 +11,17 @@ const updateRatingFields = (tabUrl, title) => {
   ratingUrlField.value = tabUrl
   document.getElementById('citation_title').value = title
   document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
+  ratingTime()
 }
 
 const ratingTime = () => {
   const ratingForm = document.getElementById('new_rating')
 
   if (utilities.retryIfMissing(ratingForm, ratingTime)) { return }
+  // Hide the spinners
+  utilities.elementsHide("#waiting-spinner, #rating-submit-spinner")
+  // Render save and menu
+  utilities.elementsShow("#rating-save-row")
 
   // I think it's a good thing to attach the event listener to the rating form
   ratingForm.addEventListener('submit', handleRatingSubmit)
@@ -42,6 +47,9 @@ const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribu
 // Internal
 const handleRatingSubmit = async function (e) {
   e.preventDefault()
+  const submitBtn = document.getElementById('ratingSubmitButton')
+  submitBtn.classList.add('disabled')
+  utilities.elementsShow('#rating-submit-spinner')
   const formData = new FormData(document.getElementById('new_rating'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
   const result = await api.submitRating(formNewRatingUrl(), window.authToken, jsonFormData)
@@ -52,6 +60,8 @@ const handleRatingSubmit = async function (e) {
     document.getElementById('new_rating').classList.add('hidden')
     utilities.toggleMenu(false, true)
   }
+  utilities.elementsHide('#rating-submit-spinner')
+  submitBtn.classList.remove('disabled')
 
   return false // fallback prevent submit
 }
