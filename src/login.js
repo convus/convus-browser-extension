@@ -19,14 +19,32 @@ const handleLoginSubmit = async function (e) {
   if (typeof (result.authToken) === 'undefined' || result.authToken === null) {
     utilities.renderAlerts(result.message)
   } else {
-    browser.storage.local.set(result)
-    window.authToken = result.authToken
-    window.currentName = result.currentName
+    storeAuthData(result)
     utilities.hideAlerts()
     rating.ratingTime()
   }
 
   return false // fallback prevent submit
+}
+
+// Internal
+const storeAuthData = ({authToken, currentName}) => {
+  // TODO, there has to be a better way to handle passing the arguments
+  browser.storage.local.set({authToken: authToken, currentName: currentName})
+  window.authToken = authToken
+  window.currentName = currentName
+}
+
+// Internal
+const renderAuthMessage = (message) => {
+  const authMessage = document.getElementById('auth_message')
+  if (utilities.retryIfMissing(authMessage, renderAuthMessage, message)) { return }
+
+  document.getElementById('authMessageEl').textContent = message
+  authMessage.classList.remove('hidden')
+  // Hide other forms
+  document.getElementById('new_rating')?.classList?.add('hidden')
+  document.getElementById('new_user')?.classList?.add('hidden')
 }
 
 const checkAuthToken = async function (token) {
@@ -43,23 +61,29 @@ const checkAuthToken = async function (token) {
   loginTime()
 }
 
-const loginTime = () => {
-  const loginForm = document.getElementById('new_user')
-  if (utilities.retryIfMissing(loginForm, loginTime)) { return }
+const authPageSuccess = ({authToken, currentName}) => {
+  utilities.hideAlerts()
+  storeAuthData({authToken: authToken, currentName: currentName})
+  renderAuthMessage("You're signed in to the Convus browser extension")
+}
 
-  loginForm.classList.remove('hidden')
+const loginTime = () => {
+  const loginMessage = document.getElementById('sign_in_message')
+  if (utilities.retryIfMissing(loginMessage, loginTime)) { return }
+
+  loginMessage.classList.remove('hidden')
   document.getElementById('new_rating')?.classList?.add('hidden')
-  loginForm.addEventListener('submit', handleLoginSubmit)
   utilities.pageLoadedFunctions()
 }
 
 const logout = () => {
   browser.storage.local.remove('authToken')
   utilities.toggleMenu(false, true)
-  loginTime()
+  renderAuthMessage("logged out from the Convus browser extension")
 }
 
 export default {
+  authPageSuccess,
   checkAuthToken,
   loginTime,
   logout

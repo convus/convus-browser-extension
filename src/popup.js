@@ -3,11 +3,18 @@ import login from './login'
 import rating from './rating'
 
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
-if (process.env.browser_target == 'chrome') { browser = chrome } // eslint-disable-line
+if (browser_target == 'chrome') { browser = chrome } // eslint-disable-line
+
+// instantiating these outside functions prevents a periodic "process is undefined" bug
+const browser_target = process.env.browser_target
+const baseUrl = process.env.baseUrl
 
 browser.storage.local.get(['authToken', 'currentName'])
   .then(data => {
+    log.debug(`got authToken: ${data.authToken} and currentName: ${data.currentName}`)
+
     if (typeof (data.authToken) === 'undefined' || data.authToken === null) {
+      log.debug("in localstorage get authtoken > undefined")
       login.loginTime()
     } else {
       window.authToken = data.authToken
@@ -17,28 +24,7 @@ browser.storage.local.get(['authToken', 'currentName'])
     }
   })
 
-const checkAuthUrl = (url) => { return `${process.env.baseUrl}/browser_extension_auth` === url }
-
-// function coolPageScript(pageUrl) {
-//   // if (pageUrl === "https://www.convus.org/browser_extension_auth") {
-//   if (pageUrl === "http://localhost:3009/browser_extension_auth") {
-//     // el = document.getElementById('apiToken').textContent
-//     // console.log(el)
-//     const authInfo = {apiToken: window.apiToken, username: window.username}
-//     // console.log(authInfo)
-//     return JSON.stringify(authInfo)
-//     // return "asdfadsf" // JSON.stringify({apiToken: window.apiToken, username: window.username})
-//   } else {
-//     return JSON.stringify({metadata: "asdfasd"})
-//   }
-//   // return JSON.stringify({metadata: "asdfasd"})
-// }
-
-const authInfo = () => {
-  info = document.getElementById('new_user')?.getAttribute('action')
-  log.debug(info)
-  return {ratingToken: log.info, username: window.username}
-}
+const checkAuthUrl = (url) => { return `${baseUrl}/browser_extension_auth` === url }
 
 // NOTE: the function that's passed into executeScript must be self contained -
 //       it can't reference other things (e.g. other functions here)
@@ -54,16 +40,19 @@ const metaAttributes = (isAuthUrl = false) => {
   return elsToAttrs(elements)
 }
 
+// Takes the metAttributes response from isAuthUrl, returns {currentName: currentName, authToken: authToken}
+const resultToAuthData = (arr) => {
+  const metaKey = (name) => name === "ext-username" ? 'currentName' : 'authToken'
+  const keypairs = arr.map(el => [metaKey(el.name), el.content])
+  return Object.fromEntries(keypairs)
+}
+
 const getCurrentTab = async function () {
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
   // log.debug(tab)
   rating.updateRatingFields(tab.url, tab.title)
 
-  // log.debug(tab.url)
-
   const isAuthUrl = checkAuthUrl(tab.url)
-  // log.debug(isAuthUrl)
-
   const response = await browser.scripting.executeScript({
     target: { tabId: tab.id },
     function: metaAttributes,
@@ -71,33 +60,10 @@ const getCurrentTab = async function () {
   })
 
   // log.debug(response)
-  log.debug(response[0].result)
+  const result = response[0].result
   if (isAuthUrl) {
-    log.debug("Login party!")
+    login.authPageSuccess(result)
   }
 }
 
-// const getResponse = async function (tabId) {
-//   log.debug(`tab id: ${tabId}`)
-//   const response = await browser.tabs.sendMessage(tabId, {greeting: "hello"})
-//   log.debug(response)
-// }
-
 getCurrentTab()
-
-// async function browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-//   // since only one tab should be active and in the current window at once
-//   // the return variable should only have one entry
-//   const activeTab = tabs[0]
-//   // window.storedTabUrl = activeTab.url // this is available in updateRatingFields
-//   // log.debug(activeTab)
-//   rating.updateRatingFields(activeTab.url, activeTab.title)
-//   log.debug(tabs[0])
-// })
-
-// (async () => {
-//   const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
-//   const response = await chrome.tabs.sendMessage(tab.id, {greeting: "hello"});
-//   // do something with response here, not outside the function
-//   console.log(response);
-// })();

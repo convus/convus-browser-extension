@@ -476,22 +476,20 @@
 
   // login.js
   var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
-  var handleLoginSubmit = async function(e) {
-    e.preventDefault();
-    const formData = new FormData(document.getElementById("new_user"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.getAuthToken(formAuthUrl(), jsonFormData);
-    log_default.debug(result);
-    if (typeof result.authToken === "undefined" || result.authToken === null) {
-      utilities_default.renderAlerts(result.message);
-    } else {
-      browser.storage.local.set(result);
-      window.authToken = result.authToken;
-      window.currentName = result.currentName;
-      utilities_default.hideAlerts();
-      rating_default.ratingTime();
+  var storeAuthData = ({ authToken, currentName }) => {
+    browser.storage.local.set({ authToken, currentName });
+    window.authToken = authToken;
+    window.currentName = currentName;
+  };
+  var renderAuthMessage = (message) => {
+    const authMessage = document.getElementById("auth_message");
+    if (utilities_default.retryIfMissing(authMessage, renderAuthMessage, message)) {
+      return;
     }
-    return false;
+    document.getElementById("authMessageEl").textContent = message;
+    authMessage.classList.remove("hidden");
+    document.getElementById("new_rating")?.classList?.add("hidden");
+    document.getElementById("new_user")?.classList?.add("hidden");
   };
   var checkAuthToken = async function(token) {
     const authUrl = formAuthUrl();
@@ -507,33 +505,42 @@
     window.authToken = void 0;
     loginTime();
   };
+  var authPageSuccess = ({ authToken, currentName }) => {
+    utilities_default.hideAlerts();
+    storeAuthData({ authToken, currentName });
+    renderAuthMessage("You're signed in to the Convus browser extension");
+  };
   var loginTime = () => {
-    const loginForm = document.getElementById("new_user");
-    if (utilities_default.retryIfMissing(loginForm, loginTime)) {
+    const loginMessage = document.getElementById("sign_in_message");
+    if (utilities_default.retryIfMissing(loginMessage, loginTime)) {
       return;
     }
-    loginForm.classList.remove("hidden");
+    loginMessage.classList.remove("hidden");
     document.getElementById("new_rating")?.classList?.add("hidden");
-    loginForm.addEventListener("submit", handleLoginSubmit);
     utilities_default.pageLoadedFunctions();
   };
   var logout = () => {
     browser.storage.local.remove("authToken");
     utilities_default.toggleMenu(false, true);
-    loginTime();
+    renderAuthMessage("logged out from the Convus browser extension");
   };
   var login_default = {
+    authPageSuccess,
     checkAuthToken,
     loginTime,
     logout
   };
 
   // popup.js
-  if (true) {
+  if (browser_target == "chrome") {
     browser = chrome;
   }
+  var browser_target = "chrome";
+  var baseUrl2 = process.env.baseUrl;
   browser.storage.local.get(["authToken", "currentName"]).then((data) => {
+    log_default.debug(`got authToken: ${data.authToken} and currentName: ${data.currentName}`);
     if (typeof data.authToken === "undefined" || data.authToken === null) {
+      log_default.debug("in localstorage get authtoken > undefined");
       login_default.loginTime();
     } else {
       window.authToken = data.authToken;
@@ -543,7 +550,7 @@
     }
   });
   var checkAuthUrl = (url) => {
-    return `${"http://localhost:3009"}/browser_extension_auth` === url;
+    return `${baseUrl2}/browser_extension_auth` === url;
   };
   var metaAttributes = (isAuthUrl = false) => {
     const attrToPair = (attr) => [attr.name, attr.value];
@@ -561,9 +568,9 @@
       function: metaAttributes,
       args: [isAuthUrl]
     });
-    log_default.debug(response[0].result);
+    const result = response[0].result;
     if (isAuthUrl) {
-      log_default.debug("Login party!");
+      login_default.authPageSuccess(result);
     }
   };
   getCurrentTab();

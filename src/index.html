@@ -24,6 +24,16 @@
       <p class="mt-2"><a href="{{baseUrl}}/users/password/new" target="_blank">Forgot your password?</a></p>
       <p class="mt-2"><a href="{{baseUrl}}/users/sign_up" target="_blank">Sign up</a></p>
     </form>
+    <div id="sign_in_message" class="hidden">
+      <h2 class="my-4">Convus browser extension</h2>
+      <p class="mt-4 mb-4">
+        <a href="{{baseUrl}}/browser_extension_auth" target="_blank" class="btn btn-success">Sign in to the browser extension</a>
+      </p>
+    </div>
+    <div id="auth_message" class="hidden">
+      <h2 class="my-4" id="authMessageEl"></h2>
+      <p class="mt-4 mb-4">You can close this window</p>
+    </div>
     <form id="new_rating" action="{{baseUrl}}/api/v1/ratings" accept-charset="UTF-8" method="post" class="pb-2">
       <input autocomplete="off" type="hidden" value="{{target}}_extension-{{version}}" name="source" id="source" />
       <input autocomplete="off" type="hidden" value="" name="citation_metadata" id="citation_metadata" />

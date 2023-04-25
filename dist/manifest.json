@@ -18,11 +18,6 @@
     "storage"
   ],
 
-  // "background": {"service_worker": "background.js"},
-
-  "host_permissions": ["<all_urls>"], // Make sure this is necessary!
-  // "host_permissions": [ "*://*/*"],
-
   "action": {
     "default_icon": {
       "16": "images/icon-16.png",
