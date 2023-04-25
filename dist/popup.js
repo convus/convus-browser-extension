@@ -420,60 +420,6 @@
     retryIfMissing
   };
 
-  // rating.js
-  var updateRatingFields = (tabUrl, title) => {
-    const ratingUrlField = document.getElementById("submitted_url");
-    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
-    ratingUrlField.value = tabUrl;
-    document.getElementById("citation_title").value = title;
-    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  };
-  var ratingTime = () => {
-    const ratingForm = document.getElementById("new_rating");
-    if (utilities_default.retryIfMissing(ratingForm, ratingTime)) {
-      return;
-    }
-    ratingForm.addEventListener("submit", handleRatingSubmit);
-    document.getElementById("rating-menu-btn").addEventListener("click", utilities_default.toggleMenu);
-    document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
-    document.getElementById("logout-btn").addEventListener("click", login_default.logout);
-    if (window.authToken) {
-      document.getElementById("new_user").classList.add("hidden");
-      ratingForm.classList.remove("hidden");
-    }
-    if (window.currentName) {
-      document.getElementById("username").textContent = window.currentName;
-    }
-    utilities_default.pageLoadedFunctions();
-  };
-  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
-  var handleRatingSubmit = async function(e) {
-    e.preventDefault();
-    const formData = new FormData(document.getElementById("new_rating"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
-    log_default.debug(result);
-    utilities_default.renderAlerts(result.message, result.share);
-    if (result.success) {
-      document.getElementById("new_rating").classList.add("hidden");
-      utilities_default.toggleMenu(false, true);
-    }
-    return false;
-  };
-  var updateMenuCheck = (event) => {
-    const el = event.target;
-    const fieldId = el.getAttribute("data-target-id");
-    if (el.checked) {
-      document.getElementById(fieldId).classList.remove("hidden");
-    } else {
-      document.getElementById(fieldId).classList.add("hidden");
-    }
-  };
-  var rating_default = {
-    ratingTime,
-    updateRatingFields
-  };
-
   // login.js
   var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
   var storeAuthData = ({ authToken, currentName }) => {
@@ -531,12 +477,66 @@
     logout
   };
 
+  // rating.js
+  var updateRatingFields = (tabUrl, title) => {
+    const ratingUrlField = document.getElementById("submitted_url");
+    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
+    ratingUrlField.value = tabUrl;
+    document.getElementById("citation_title").value = title;
+    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  };
+  var ratingTime = () => {
+    const ratingForm = document.getElementById("new_rating");
+    if (utilities_default.retryIfMissing(ratingForm, ratingTime)) {
+      return;
+    }
+    ratingForm.addEventListener("submit", handleRatingSubmit);
+    document.getElementById("rating-menu-btn").addEventListener("click", utilities_default.toggleMenu);
+    document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
+    document.getElementById("logout-btn").addEventListener("click", login_default.logout);
+    if (window.authToken) {
+      document.getElementById("new_user").classList.add("hidden");
+      ratingForm.classList.remove("hidden");
+    }
+    if (window.currentName) {
+      document.getElementById("username").textContent = window.currentName;
+    }
+    utilities_default.pageLoadedFunctions();
+  };
+  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
+  var handleRatingSubmit = async function(e) {
+    e.preventDefault();
+    const formData = new FormData(document.getElementById("new_rating"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
+    log_default.debug(result);
+    utilities_default.renderAlerts(result.message, result.share);
+    if (result.success) {
+      document.getElementById("new_rating").classList.add("hidden");
+      utilities_default.toggleMenu(false, true);
+    }
+    return false;
+  };
+  var updateMenuCheck = (event) => {
+    const el = event.target;
+    const fieldId = el.getAttribute("data-target-id");
+    if (el.checked) {
+      document.getElementById(fieldId).classList.remove("hidden");
+    } else {
+      document.getElementById(fieldId).classList.add("hidden");
+    }
+  };
+  var rating_default = {
+    ratingTime,
+    updateRatingFields
+  };
+
   // popup.js
-  if (browser_target == "chrome") {
+  var browserTarget = "chrome";
+  var baseUrl2 = "http://localhost:3009";
+  if (browserTarget == "chrome") {
     browser = chrome;
   }
-  var browser_target = "chrome";
-  var baseUrl2 = process.env.baseUrl;
   browser.storage.local.get(["authToken", "currentName"]).then((data) => {
     log_default.debug(`got authToken: ${data.authToken} and currentName: ${data.currentName}`);
     if (typeof data.authToken === "undefined" || data.authToken === null) {
@@ -556,8 +556,13 @@
     const attrToPair = (attr) => [attr.name, attr.value];
     const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
     const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
-    elements = isAuthUrl ? document.querySelectorAll('meta[name="ext-token"], meta[name="ext-username"]') : document.getElementsByTagName("meta");
+    const elements = isAuthUrl ? document.querySelectorAll('meta[name="ext-token"], meta[name="ext-username"]') : document.getElementsByTagName("meta");
     return elsToAttrs(elements);
+  };
+  var resultToAuthData = (arr) => {
+    const metaKey = (name) => name === "ext-username" ? "currentName" : "authToken";
+    const keypairs = arr.map((el) => [metaKey(el.name), el.content]);
+    return Object.fromEntries(keypairs);
   };
   var getCurrentTab = async function() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -570,7 +575,7 @@
     });
     const result = response[0].result;
     if (isAuthUrl) {
-      login_default.authPageSuccess(result);
+      login_default.authPageSuccess(resultToAuthData(result));
     }
   };
   getCurrentTab();

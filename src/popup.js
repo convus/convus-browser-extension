@@ -2,19 +2,19 @@ import log from './log' // eslint-disable-line
 import login from './login'
 import rating from './rating'
 
-// Oh Chrome, it would be great if you used `browser` instead of `chrome`
-if (browser_target == 'chrome') { browser = chrome } // eslint-disable-line
-
 // instantiating these outside functions prevents a periodic "process is undefined" bug
-const browser_target = process.env.browser_target
+const browserTarget = process.env.browser_target
 const baseUrl = process.env.baseUrl
+
+// Oh Chrome, it would be great if you used `browser` instead of `chrome`
+if (browserTarget == 'chrome') { browser = chrome } // eslint-disable-line
 
 browser.storage.local.get(['authToken', 'currentName'])
   .then(data => {
     log.debug(`got authToken: ${data.authToken} and currentName: ${data.currentName}`)
 
     if (typeof (data.authToken) === 'undefined' || data.authToken === null) {
-      log.debug("in localstorage get authtoken > undefined")
+      log.debug('in localstorage get authtoken > undefined')
       login.loginTime()
     } else {
       window.authToken = data.authToken
@@ -36,13 +36,13 @@ const metaAttributes = (isAuthUrl = false) => {
   // Convert an iterable of elements to a list of element attributes
   const elsToAttrs = (els) => Array.from(els).map(elToAttrs)
 
-  elements = isAuthUrl ? document.querySelectorAll('meta[name="ext-token"], meta[name="ext-username"]') : document.getElementsByTagName('meta')
+  const elements = isAuthUrl ? document.querySelectorAll('meta[name="ext-token"], meta[name="ext-username"]') : document.getElementsByTagName('meta')
   return elsToAttrs(elements)
 }
 
 // Takes the metAttributes response from isAuthUrl, returns {currentName: currentName, authToken: authToken}
 const resultToAuthData = (arr) => {
-  const metaKey = (name) => name === "ext-username" ? 'currentName' : 'authToken'
+  const metaKey = (name) => name === 'ext-username' ? 'currentName' : 'authToken'
   const keypairs = arr.map(el => [metaKey(el.name), el.content])
   return Object.fromEntries(keypairs)
 }
@@ -62,7 +62,7 @@ const getCurrentTab = async function () {
   // log.debug(response)
   const result = response[0].result
   if (isAuthUrl) {
-    login.authPageSuccess(result)
+    login.authPageSuccess(resultToAuthData(result))
   }
 }
 

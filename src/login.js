@@ -1,36 +1,37 @@
 import log from './log' // eslint-disable-line
 import api from './api'
 import utilities from './utilities'
-// only importing rating for ratingTime - shouldn't import the rest :/
-import rating from './rating'
+
+// I don't think it's necessary anymore?
+// import rating from './rating'
 
 // Internal
 const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
 
+// // Internal
+// const handleLoginSubmit = async function (e) {
+//   e.preventDefault()
+//   const formData = new FormData(document.getElementById('new_user'))
+//   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
+
+//   const result = await api.getAuthToken(formAuthUrl(), jsonFormData)
+//   log.debug(result)
+
+//   if (typeof (result.authToken) === 'undefined' || result.authToken === null) {
+//     utilities.renderAlerts(result.message)
+//   } else {
+//     storeAuthData(result)
+//     utilities.hideAlerts()
+//     rating.ratingTime()
+//   }
+
+//   return false // fallback prevent submit
+// }
+
 // Internal
-const handleLoginSubmit = async function (e) {
-  e.preventDefault()
-  const formData = new FormData(document.getElementById('new_user'))
-  const jsonFormData = JSON.stringify(Object.fromEntries(formData))
-
-  const result = await api.getAuthToken(formAuthUrl(), jsonFormData)
-  log.debug(result)
-
-  if (typeof (result.authToken) === 'undefined' || result.authToken === null) {
-    utilities.renderAlerts(result.message)
-  } else {
-    storeAuthData(result)
-    utilities.hideAlerts()
-    rating.ratingTime()
-  }
-
-  return false // fallback prevent submit
-}
-
-// Internal
-const storeAuthData = ({authToken, currentName}) => {
+const storeAuthData = ({ authToken, currentName }) => {
   // TODO, there has to be a better way to handle passing the arguments
-  browser.storage.local.set({authToken: authToken, currentName: currentName})
+  browser.storage.local.set({ authToken: authToken, currentName: currentName })
   window.authToken = authToken
   window.currentName = currentName
 }
@@ -61,9 +62,9 @@ const checkAuthToken = async function (token) {
   loginTime()
 }
 
-const authPageSuccess = ({authToken, currentName}) => {
+const authPageSuccess = ({ authToken, currentName }) => {
   utilities.hideAlerts()
-  storeAuthData({authToken: authToken, currentName: currentName})
+  storeAuthData({ authToken: authToken, currentName: currentName })
   renderAuthMessage("You're signed in to the Convus browser extension")
 }
 
@@ -79,7 +80,7 @@ const loginTime = () => {
 const logout = () => {
   browser.storage.local.remove('authToken')
   utilities.toggleMenu(false, true)
-  renderAuthMessage("logged out from the Convus browser extension")
+  renderAuthMessage('logged out from the Convus browser extension')
 }
 
 export default {
