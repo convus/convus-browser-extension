@@ -261,10 +261,10 @@
   var log_default = import_loglevel.default;
 
   // api.js
-  var requestProps = (ratingToken = false, extraProps = {}) => {
+  var requestProps = (authToken = false, extraProps = {}) => {
     const headers = { "Content-Type": "application/json" };
-    if (ratingToken) {
-      headers.Authorization = `Bearer ${ratingToken}`;
+    if (authToken) {
+      headers.Authorization = `Bearer ${authToken}`;
     }
     const defaultProps = {
       method: "POST",
@@ -274,9 +274,9 @@
     };
     return { ...defaultProps, ...extraProps };
   };
-  var isRatingTokenValid = (authUrl, ratingToken) => new Promise((resolve, reject) => {
+  var isAuthTokenValid = (authUrl, authToken) => new Promise((resolve, reject) => {
     const authStatusUrl = `${authUrl}/status`;
-    return fetch(authStatusUrl, requestProps(ratingToken, { method: "GET" })).then(
+    return fetch(authStatusUrl, requestProps(authToken, { method: "GET" })).then(
       (response) => response.json().then((json) => {
         resolve(json.message !== "missing user" && response.status === 200);
       })
@@ -284,7 +284,7 @@
       resolve(errorResponse(e));
     });
   });
-  var getRatingToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
+  var getAuthToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
     const rProps = {
       method: "POST",
       async: true,
@@ -298,7 +298,7 @@
         if (response.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
           result.message = ["error", json.message];
         } else {
-          result = { ratingToken: json.review_token, currentName: json.name, message: ["success", "authenticated"] };
+          result = { authToken: json.review_token, currentName: json.name, message: ["success", "authenticated"] };
         }
         resolve(result);
       })
@@ -306,8 +306,8 @@
       resolve(errorResponse(e));
     });
   });
-  var submitRating = (ratingUrl, ratingToken, ratingFormData) => new Promise((resolve, reject) => {
-    const rProps = requestProps(ratingToken, { body: ratingFormData });
+  var submitRating = (ratingUrl, authToken, ratingFormData) => new Promise((resolve, reject) => {
+    const rProps = requestProps(authToken, { body: ratingFormData });
     return fetch(ratingUrl, rProps).then(
       (response) => response.json().then((json) => {
         if (response.status === 200) {
@@ -328,124 +328,61 @@
     return { success: false, message: ["error", `Error: ${e})`] };
   };
   var api_default = {
-    getRatingToken,
-    isRatingTokenValid,
+    getAuthToken,
+    isAuthTokenValid,
     requestProps,
     submitRating
   };
 
-  // popup.js
-  if (true) {
-    browser = chrome;
-  }
-  browser.storage.local.get(["ratingToken", "currentName"]).then((data) => {
-    if (typeof data.ratingToken === "undefined" || data.ratingToken === null) {
-      loginTime();
-    } else {
-      window.ratingToken = data.ratingToken;
-      window.currentName = data.currentName;
-      ratingTime();
-      checkRatingToken(data.ratingToken);
+  // utilities.js
+  var retryIfMissing = (obj, func, ...args) => {
+    if (typeof obj === "undefined" || obj === null) {
+      log_default.debug(`${func.name} requires an element not present in DOM, trying again in 50ms`);
+      setTimeout(func, 5e3, ...args);
+      return true;
     }
-  });
-  browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    const activeTab = tabs[0];
-    updateRatingFields(activeTab.url, activeTab.title);
-  });
-  var checkRatingToken = async function(token) {
-    const authUrl = formAuthUrl();
-    if (typeof authUrl === "undefined" || authUrl === null) {
-      return setTimeout(checkRatingToken, 50, token);
-    }
-    const result = await api_default.isRatingTokenValid(authUrl, token);
-    if (result) {
+  };
+  var baseUrl = () => {
+    return document.getElementById("body-popup").getAttribute("data-baseurl");
+  };
+  var renderLocalAlert = () => {
+    if (document.getElementById("local-alert")) {
       return;
     }
-    browser.storage.local.remove("ratingToken");
-    browser.storage.local.remove("name");
-    window.ratingToken = void 0;
-    loginTime();
-  };
-  var updateRatingFields = (tabUrl, title) => {
-    const ratingUrlField = document.getElementById("submitted_url");
-    if (typeof ratingUrlField === "undefined" || ratingUrlField === null) {
-      log_default.debug("ratingUrlField not present in DOM, trying again in 50ms");
-      return setTimeout(updateRatingFields, 50, tabUrl, title);
+    if (baseUrl().match(/http:\/\/localhost/i)) {
+      const localAlert = document.createElement("div");
+      localAlert.textContent = "local convus";
+      localAlert.classList.add("text-gray-400", "text-center");
+      localAlert.setAttribute("id", "local-alert");
+      document.getElementById("body-popup").append(localAlert);
     }
-    ratingUrlField.value = tabUrl;
-    document.getElementById("citation_title").value = title;
-    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  };
-  var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
-  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
-  var loginTime = () => {
-    const loginForm = document.getElementById("new_user");
-    if (typeof loginForm === "undefined" || loginForm === null) {
-      log_default.debug("login form not present in DOM, trying again in 50ms");
-      return setTimeout(loginTime, 50);
-    }
-    loginForm.classList.remove("hidden");
-    document.getElementById("new_rating")?.classList?.add("hidden");
-    loginForm.addEventListener("submit", handleLoginSubmit);
-    pageLoadedFunctions();
-  };
-  var ratingTime = () => {
-    const ratingForm = document.getElementById("new_rating");
-    if (typeof ratingForm === "undefined" || ratingForm === null) {
-      log_default.debug("rating form not present in DOM, trying again in 50ms");
-      return setTimeout(ratingTime, 50);
-    }
-    ratingForm.addEventListener("submit", handleRatingSubmit);
-    document.getElementById("rating-menu-btn").addEventListener("click", toggleMenu);
-    document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
-    document.getElementById("logout-btn").addEventListener("click", logout);
-    if (window.ratingToken) {
-      document.getElementById("new_user").classList.add("hidden");
-      ratingForm.classList.remove("hidden");
-    }
-    if (window.currentName) {
-      document.getElementById("username").textContent = window.currentName;
-    }
-    pageLoadedFunctions();
   };
   var pageLoadedFunctions = () => {
     renderLocalAlert();
-  };
-  var handleLoginSubmit = async function(e) {
-    e.preventDefault();
-    const formData = new FormData(document.getElementById("new_user"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.getRatingToken(formAuthUrl(), jsonFormData);
-    log_default.debug(result);
-    if (typeof result.ratingToken === "undefined" || result.ratingToken === null) {
-      renderAlerts(result.message);
-    } else {
-      browser.storage.local.set(result);
-      window.ratingToken = result.ratingToken;
-      window.currentName = result.currentName;
-      hideAlerts();
-      ratingTime();
-    }
-    return false;
-  };
-  var handleRatingSubmit = async function(e) {
-    e.preventDefault();
-    const formData = new FormData(document.getElementById("new_rating"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.submitRating(formNewRatingUrl(), window.ratingToken, jsonFormData);
-    log_default.debug(result);
-    renderAlerts(result.message, result.share);
-    if (result.success) {
-      document.getElementById("new_rating").classList.add("hidden");
-      toggleMenu(false, true);
-    }
-    return false;
   };
   var hideAlerts = () => {
     const visibleAlerts = document.querySelectorAll(".alert");
     visibleAlerts.forEach((el) => el.classList.add("hidden"));
     const visibleShares = document.querySelectorAll(".shareVisible");
     visibleShares.forEach((el) => el.classList.add("hidden"));
+  };
+  var copyShare = (event) => {
+    const el = event.target.closest(".shareVisible");
+    const shareText = el.getAttribute("data-sharetext");
+    navigator.clipboard.writeText(shareText);
+    const copiedAlert = document.createElement("p");
+    copiedAlert.textContent = "Copied results to clipboard";
+    copiedAlert.classList.add("text-center", "px-2", "py-2", "mt-4");
+    el.append(copiedAlert);
+  };
+  var shareDiv = (shareText) => {
+    const template = document.querySelector("#templates .shareTemplate");
+    const el = template.cloneNode(true);
+    el.classList.remove("shareTemplate");
+    el.classList.add("shareVisible");
+    el.setAttribute("data-sharetext", shareText);
+    el.querySelector(".btnShare").addEventListener("click", copyShare);
+    return el;
   };
   var renderAlerts = (message, shareText = null) => {
     hideAlerts();
@@ -475,23 +412,53 @@
       menuBtn.classList.add("active");
     }
   };
-  var copyShare = (event) => {
-    const el = event.target.closest(".shareVisible");
-    const shareText = el.getAttribute("data-sharetext");
-    navigator.clipboard.writeText(shareText);
-    const copiedAlert = document.createElement("p");
-    copiedAlert.textContent = "Copied results to clipboard";
-    copiedAlert.classList.add("text-center", "px-2", "py-2", "mt-4");
-    el.append(copiedAlert);
+  var utilities_default = {
+    hideAlerts,
+    pageLoadedFunctions,
+    renderAlerts,
+    toggleMenu,
+    retryIfMissing
   };
-  var shareDiv = (shareText) => {
-    const template = document.querySelector("#templates .shareTemplate");
-    const el = template.cloneNode(true);
-    el.classList.remove("shareTemplate");
-    el.classList.add("shareVisible");
-    el.setAttribute("data-sharetext", shareText);
-    el.querySelector(".btnShare").addEventListener("click", copyShare);
-    return el;
+
+  // rating.js
+  var updateRatingFields = (tabUrl, title) => {
+    const ratingUrlField = document.getElementById("submitted_url");
+    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
+    ratingUrlField.value = tabUrl;
+    document.getElementById("citation_title").value = title;
+    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  };
+  var ratingTime = () => {
+    const ratingForm = document.getElementById("new_rating");
+    if (utilities_default.retryIfMissing(ratingForm, ratingTime)) {
+      return;
+    }
+    ratingForm.addEventListener("submit", handleRatingSubmit);
+    document.getElementById("rating-menu-btn").addEventListener("click", utilities_default.toggleMenu);
+    document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
+    document.getElementById("logout-btn").addEventListener("click", login_default.logout);
+    if (window.authToken) {
+      document.getElementById("new_user").classList.add("hidden");
+      ratingForm.classList.remove("hidden");
+    }
+    if (window.currentName) {
+      document.getElementById("username").textContent = window.currentName;
+    }
+    utilities_default.pageLoadedFunctions();
+  };
+  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
+  var handleRatingSubmit = async function(e) {
+    e.preventDefault();
+    const formData = new FormData(document.getElementById("new_rating"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
+    log_default.debug(result);
+    utilities_default.renderAlerts(result.message, result.share);
+    if (result.success) {
+      document.getElementById("new_rating").classList.add("hidden");
+      utilities_default.toggleMenu(false, true);
+    }
+    return false;
   };
   var updateMenuCheck = (event) => {
     const el = event.target;
@@ -502,25 +469,82 @@
       document.getElementById(fieldId).classList.add("hidden");
     }
   };
-  var logout = () => {
-    browser.storage.local.remove("ratingToken");
-    toggleMenu(false, true);
-    loginTime();
+  var rating_default = {
+    ratingTime,
+    updateRatingFields
   };
-  var baseUrl = () => {
-    return document.getElementById("body-popup").getAttribute("data-baseurl");
+
+  // login.js
+  var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
+  var handleLoginSubmit = async function(e) {
+    e.preventDefault();
+    const formData = new FormData(document.getElementById("new_user"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    const result = await api_default.getAuthToken(formAuthUrl(), jsonFormData);
+    log_default.debug(result);
+    if (typeof result.authToken === "undefined" || result.authToken === null) {
+      utilities_default.renderAlerts(result.message);
+    } else {
+      browser.storage.local.set(result);
+      window.authToken = result.authToken;
+      window.currentName = result.currentName;
+      utilities_default.hideAlerts();
+      rating_default.ratingTime();
+    }
+    return false;
   };
-  var renderLocalAlert = () => {
-    if (document.getElementById("local-alert")) {
+  var checkAuthToken = async function(token) {
+    const authUrl = formAuthUrl();
+    if (utilities_default.retryIfMissing(authUrl, checkAuthToken, token)) {
       return;
     }
-    if (baseUrl().match(/http:\/\/localhost/i)) {
-      const localAlert = document.createElement("div");
-      localAlert.textContent = "local convus";
-      localAlert.classList.add("text-gray-400", "mt-2", "text-center");
-      localAlert.setAttribute("id", "local-alert");
-      document.getElementById("body-popup").append(localAlert);
+    const result = await api_default.isAuthTokenValid(authUrl, token);
+    if (result) {
+      return;
     }
+    browser.storage.local.remove("authToken");
+    browser.storage.local.remove("name");
+    window.authToken = void 0;
+    loginTime();
   };
+  var loginTime = () => {
+    const loginForm = document.getElementById("new_user");
+    if (utilities_default.retryIfMissing(loginForm, loginTime)) {
+      return;
+    }
+    loginForm.classList.remove("hidden");
+    document.getElementById("new_rating")?.classList?.add("hidden");
+    loginForm.addEventListener("submit", handleLoginSubmit);
+    utilities_default.pageLoadedFunctions();
+  };
+  var logout = () => {
+    browser.storage.local.remove("authToken");
+    utilities_default.toggleMenu(false, true);
+    loginTime();
+  };
+  var login_default = {
+    checkAuthToken,
+    loginTime,
+    logout
+  };
+
+  // popup.js
+  if (true) {
+    browser = chrome;
+  }
+  browser.storage.local.get(["authToken", "currentName"]).then((data) => {
+    if (typeof data.authToken === "undefined" || data.authToken === null) {
+      login_default.loginTime();
+    } else {
+      window.authToken = data.authToken;
+      window.currentName = data.currentName;
+      rating_default.ratingTime();
+      login_default.checkAuthToken(data.authToken);
+    }
+  });
+  browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    const activeTab = tabs[0];
+    rating_default.updateRatingFields(activeTab.url, activeTab.title);
+  });
 })();
 //# sourceMappingURL=popup.js.map

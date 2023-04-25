@@ -1,9 +1,9 @@
 import log from './log' // eslint-disable-line
 
-const requestProps = (ratingToken = false, extraProps = {}) => {
+const requestProps = (authToken = false, extraProps = {}) => {
   const headers = { 'Content-Type': 'application/json' }
-  if (ratingToken) {
-    headers.Authorization = `Bearer ${ratingToken}`
+  if (authToken) {
+    headers.Authorization = `Bearer ${authToken}`
   }
 
   const defaultProps = {
@@ -16,10 +16,10 @@ const requestProps = (ratingToken = false, extraProps = {}) => {
 }
 
 // Returns true/false
-const isRatingTokenValid = (authUrl, ratingToken) => new Promise((resolve, reject) => {
+const isAuthTokenValid = (authUrl, authToken) => new Promise((resolve, reject) => {
   const authStatusUrl = `${authUrl}/status`
 
-  return fetch(authStatusUrl, requestProps(ratingToken, { method: 'GET' }))
+  return fetch(authStatusUrl, requestProps(authToken, { method: 'GET' }))
     .then(response => response.json()
       .then((json) => {
         resolve(json.message !== 'missing user' && response.status === 200)
@@ -29,7 +29,7 @@ const isRatingTokenValid = (authUrl, ratingToken) => new Promise((resolve, rejec
     })
 })
 
-const getRatingToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
+const getAuthToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
   const rProps = {
     method: 'POST',
     async: true,
@@ -44,7 +44,7 @@ const getRatingToken = (authUrl, loginFormData) => new Promise((resolve, reject)
         if (response.status !== 200 || typeof (json.review_token) === 'undefined' || json.review_token === null) {
           result.message = ['error', json.message]
         } else {
-          result = { ratingToken: json.review_token, currentName: json.name, message: ['success', 'authenticated'] }
+          result = { authToken: json.review_token, currentName: json.name, message: ['success', 'authenticated'] }
         }
         resolve(result)
       })
@@ -53,8 +53,8 @@ const getRatingToken = (authUrl, loginFormData) => new Promise((resolve, reject)
     })
 })
 
-const submitRating = (ratingUrl, ratingToken, ratingFormData) => new Promise((resolve, reject) => {
-  const rProps = requestProps(ratingToken, { body: ratingFormData })
+const submitRating = (ratingUrl, authToken, ratingFormData) => new Promise((resolve, reject) => {
+  const rProps = requestProps(authToken, { body: ratingFormData })
 
   return fetch(ratingUrl, rProps)
     .then(response => response.json()
@@ -80,8 +80,8 @@ const errorResponse = (e) => {
 }
 
 export default {
-  getRatingToken,
-  isRatingTokenValid,
-  requestProps,
+  getAuthToken,
+  isAuthTokenValid,
+  requestProps, // Only exported for testing
   submitRating
 }

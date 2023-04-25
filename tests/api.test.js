@@ -45,37 +45,37 @@ describe('requestProps', function () {
   })
 })
 
-describe('isRatingTokenValid', function () {
+describe('isAuthTokenValid', function () {
   test('returns false for missing', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'missing users' }), { status: 401 })
 
-    const res = await api.isRatingTokenValid('xxxx', authUrl)
+    const res = await api.isAuthTokenValid('xxxx', authUrl)
     expect(res).toBe(false)
   })
 
   test('returns true for authenticated', async () => {
     fetch.mockResponseOnce(JSON.stringify({ success: 'authenticated' }), { status: 200 })
 
-    const res = await api.isRatingTokenValid(authUrl, 'xxxx')
+    const res = await api.isAuthTokenValid(authUrl, 'xxxx')
     expect(res).toBe(true)
   })
 })
 
-describe('getRatingToken', function () {
+describe('getAuthToken', function () {
   test('returns message for not-authenticated', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'Incorrect email or password' }), { status: 401 })
     const loginFormJson = { email: 'test@example.com', password: 'fakepass' }
 
-    const res = await api.getRatingToken(authUrl, loginFormJson)
+    const res = await api.getAuthToken(authUrl, loginFormJson)
     expect(res).toStrictEqual({ message: ['error', 'Incorrect email or password'] })
   })
 
-  test('returns ratingToken for authenticated', async () => {
+  test('returns authToken for authenticated', async () => {
     fetch.mockResponseOnce(JSON.stringify({ review_token: 'zzzzz', name: 'party' }), { status: 200 })
     const loginFormJson = { email: 'test@example.com', password: 'fakepass' }
 
-    const res = await api.getRatingToken(authUrl, loginFormJson)
-    expect(res).toStrictEqual({ ratingToken: 'zzzzz', currentName: 'party', message: ['success', 'authenticated'] })
+    const res = await api.getAuthToken(authUrl, loginFormJson)
+    expect(res).toStrictEqual({ authToken: 'zzzzz', currentName: 'party', message: ['success', 'authenticated'] })
   })
 })
 
