@@ -19,7 +19,7 @@ const ratingTime = () => {
 
   if (utilities.retryIfMissing(ratingForm, ratingTime)) { return }
   // Hide the spinners
-  utilities.elementsHide("#waiting-spinner, #rating-submit-spinner")
+  utilities.elementsHide(".spinners")
   // Render save and menu
   utilities.elementsShow("#rating-save-row")
 
@@ -31,8 +31,7 @@ const ratingTime = () => {
   document.getElementById('logout-btn').addEventListener('click', login.logout)
   // ... but only show or hide the form if authToken is set, in case of weird callback stuff
   if (window.authToken) {
-    document.getElementById('new_user').classList.add('hidden')
-    ratingForm.classList.remove('hidden')
+    utilities.elementsShow(ratingForm)
   }
   // not required, just nice to have username to keep track of what's going on
   if (window.currentName) {

@@ -12,14 +12,14 @@ if (browserTarget == 'chrome') { browser = chrome } // eslint-disable-line
 
 browser.storage.local.get(['authToken', 'currentName'])
   .then(data => {
-    log.debug(`got authToken: ${data.authToken} and currentName: ${data.currentName}`)
 
     if (typeof (data.authToken) === 'undefined' || data.authToken === null) {
+      log.debug(`missing auth!   authToken: ${data.authToken} and currentName: ${data.currentName}`)
       login.loginTime()
     } else {
+      // log.debug(`auth present`)
       window.authToken = data.authToken
       window.currentName = data.currentName
-      // rating.ratingTime() // not sure, might still want this?
       login.checkAuthToken(data.authToken)
     }
   })
@@ -31,9 +31,10 @@ const getCurrentTab = async function () {
   // log.debug(tab)
 
   const isAuthUrl = checkAuthUrl(tab.url)
+  window.onAuthUrl = isAuthUrl
 
   // Update rating fields that we have info for, the metadata can be added later
-  if (!isAuthUrl) { rating.updateRatingFields(tab.url, tab.title) }
+  if (!isAuthUrl) {rating.updateRatingFields(tab.url, tab.title)}
 
   const response = await browser.scripting.executeScript({
     target: { tabId: tab.id },
@@ -41,12 +42,11 @@ const getCurrentTab = async function () {
     args: [isAuthUrl]
   })
 
-  // log.debug(response)
   const result = response[0].result
   if (isAuthUrl) {
     login.authPageSuccess(injected_scripts.resultToAuthData(result))
   } else {
-
+    // rating.ratingTime()
   }
 }
 

@@ -3,7 +3,9 @@ import api from './api'
 import utilities from './utilities'
 
 // Internal
-const formAuthUrl = () => document.getElementById('new_user')?.getAttribute('action')
+const baseUrl = process.env.baseUrl
+const formAuthUrl = baseUrl + "/api/v1/auth"
+
 
 // Internal
 const storeAuthData = ({ authToken, currentName }) => {
@@ -28,18 +30,15 @@ const renderAuthMessage = (message) => {
   document.getElementById('authMessageEl').textContent = message
   utilities.elementsShow(authMessage)
   // authMessage.classList.remove('hidden')
-  utilities.elementsHide('#new_rating, #new_user')
+  utilities.elementsHide('#new_rating')
   // Hide other forms
-  // document.getElementById('new_rating')?.classList?.add('hidden')
-  // document.getElementById('new_user')?.classList?.add('hidden')
 }
 
 const checkAuthToken = async function (token) {
-  const authUrl = formAuthUrl()
-  if (utilities.retryIfMissing(authUrl, checkAuthToken, token)) { return }
+  if (utilities.retryIfMissing(formAuthUrl, checkAuthToken, token)) { return }
 
-  // log.debug('checking rating token:', token)
-  const result = await api.isAuthTokenValid(authUrl, token)
+  const result = await api.isAuthTokenValid(formAuthUrl, token)
+  log.debug('auth token check success:', result)
   if (result) { return }
   // Remove the existing data that is incorrect - maybe actually do in form submit?
   removeAuthData()
@@ -48,26 +47,27 @@ const checkAuthToken = async function (token) {
 
 const authPageSuccess = ({ authToken, currentName }) => {
   utilities.hideAlerts()
+  // in case we're already showing the "sign in to auth" message
+  utilities.elementsHide('#auth_message, .spinners')
   storeAuthData({ authToken: authToken, currentName: currentName })
-  renderAuthMessage("You're signed in to the Convus browser extension")
+  renderAuthMessage("You're signed in!")
 }
 
 const loginTime = () => {
+  // If we're on the auth page, don't do anything
+  if (!!window.onAuthUrl) { return }
+
   const loginMessage = document.getElementById('sign_in_message')
   if (utilities.retryIfMissing(loginMessage, loginTime)) { return }
-
-  // loginMessage.classList.remove('hidden')
   utilities.elementsShow(loginMessage)
   utilities.elementsHide('#new_rating')
-  // document.getElementById('new_user')?.classList?.add('hidden')
-
   utilities.pageLoadedFunctions()
 }
 
 const logout = () => {
   removeAuthData()
   utilities.toggleMenu(false, true)
-  renderAuthMessage('logged out from the Convus browser extension')
+  renderAuthMessage('Logged out from the Convus browser extension')
 }
 
 export default {

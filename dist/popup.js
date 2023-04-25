@@ -338,18 +338,16 @@
   var retryIfMissing = (obj, func, ...args) => {
     if (typeof obj === "undefined" || obj === null) {
       log_default.debug(`${func.name} requires an element not present in DOM, trying again in 50ms`);
-      setTimeout(func, 5e3, ...args);
+      setTimeout(func, 50, ...args);
       return true;
     }
   };
-  var baseUrl = () => {
-    return document.getElementById("body-popup").getAttribute("data-baseurl");
-  };
+  var baseUrl = "http://localhost:3009";
   var renderLocalAlert = () => {
     if (document.getElementById("local-alert")) {
       return;
     }
-    if (baseUrl().match(/http:\/\/localhost/i)) {
+    if (baseUrl.match(/http:\/\/localhost/i)) {
       const localAlert = document.createElement("div");
       localAlert.textContent = "local convus";
       localAlert.classList.add("text-gray-400", "text-center");
@@ -365,7 +363,7 @@
     if (typeof selOrEl === "string") {
       return document.querySelectorAll(selOrEl);
     } else {
-      [selOrEl].flat();
+      return [selOrEl].flat();
     }
   };
   var elementsHide = (selOrEl) => {
@@ -373,12 +371,6 @@
   };
   var elementsShow = (selOrEl) => {
     elementsFromSelectorOrElements(selOrEl).forEach((el) => el.classList.remove("hidden"));
-  };
-  var elementsExpand = (selOrEl) => {
-    elementsShow(selOrEl);
-  };
-  var elementsCollapse = (selOrEl) => {
-    elementsHide(selOrEl);
   };
   var hideAlerts = () => {
     const visibleAlerts = document.querySelectorAll(".alert");
@@ -434,8 +426,6 @@
   };
   var utilities_default = {
     hideAlerts,
-    elementsCollapse,
-    elementsExpand,
     elementsHide,
     elementsShow,
     pageLoadedFunctions,
@@ -445,7 +435,8 @@
   };
 
   // login.js
-  var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
+  var baseUrl2 = "http://localhost:3009";
+  var formAuthUrl = baseUrl2 + "/api/v1/auth";
   var storeAuthData = ({ authToken, currentName }) => {
     browser.storage.local.set({ authToken, currentName });
     window.authToken = authToken;
@@ -463,14 +454,14 @@
     }
     document.getElementById("authMessageEl").textContent = message;
     utilities_default.elementsShow(authMessage);
-    utilities_default.elementsHide("#new_rating, #new_user");
+    utilities_default.elementsHide("#new_rating");
   };
   var checkAuthToken = async function(token) {
-    const authUrl = formAuthUrl();
-    if (utilities_default.retryIfMissing(authUrl, checkAuthToken, token)) {
+    if (utilities_default.retryIfMissing(formAuthUrl, checkAuthToken, token)) {
       return;
     }
-    const result = await api_default.isAuthTokenValid(authUrl, token);
+    const result = await api_default.isAuthTokenValid(formAuthUrl, token);
+    log_default.debug("auth token check success:", result);
     if (result) {
       return;
     }
@@ -479,10 +470,14 @@
   };
   var authPageSuccess = ({ authToken, currentName }) => {
     utilities_default.hideAlerts();
+    utilities_default.elementsHide("#auth_message, .spinners");
     storeAuthData({ authToken, currentName });
-    renderAuthMessage("You're signed in to the Convus browser extension");
+    renderAuthMessage("You're signed in!");
   };
   var loginTime = () => {
+    if (!!window.onAuthUrl) {
+      return;
+    }
     const loginMessage = document.getElementById("sign_in_message");
     if (utilities_default.retryIfMissing(loginMessage, loginTime)) {
       return;
@@ -494,7 +489,7 @@
   var logout = () => {
     removeAuthData();
     utilities_default.toggleMenu(false, true);
-    renderAuthMessage("logged out from the Convus browser extension");
+    renderAuthMessage("Logged out from the Convus browser extension");
   };
   var login_default = {
     authPageSuccess,
@@ -517,15 +512,14 @@
     if (utilities_default.retryIfMissing(ratingForm, ratingTime)) {
       return;
     }
-    utilities_default.elementsHide("#waiting-spinner, #rating-submit-spinner");
+    utilities_default.elementsHide(".spinners");
     utilities_default.elementsShow("#rating-save-row");
     ratingForm.addEventListener("submit", handleRatingSubmit);
     document.getElementById("rating-menu-btn").addEventListener("click", utilities_default.toggleMenu);
     document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
     document.getElementById("logout-btn").addEventListener("click", login_default.logout);
     if (window.authToken) {
-      document.getElementById("new_user").classList.add("hidden");
-      ratingForm.classList.remove("hidden");
+      utilities_default.elementsShow(ratingForm);
     }
     if (window.currentName) {
       document.getElementById("username").textContent = window.currentName;
@@ -585,13 +579,13 @@
 
   // popup.js
   var browserTarget = "chrome";
-  var baseUrl2 = "http://localhost:3009";
+  var baseUrl3 = "http://localhost:3009";
   if (browserTarget == "chrome") {
     browser = chrome;
   }
   browser.storage.local.get(["authToken", "currentName"]).then((data) => {
-    log_default.debug(`got authToken: ${data.authToken} and currentName: ${data.currentName}`);
     if (typeof data.authToken === "undefined" || data.authToken === null) {
+      log_default.debug(`missing auth!   authToken: ${data.authToken} and currentName: ${data.currentName}`);
       login_default.loginTime();
     } else {
       window.authToken = data.authToken;
@@ -600,11 +594,12 @@
     }
   });
   var checkAuthUrl = (url) => {
-    return `${baseUrl2}/browser_extension_auth` === url;
+    return `${baseUrl3}/browser_extension_auth` === url;
   };
   var getCurrentTab = async function() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     const isAuthUrl = checkAuthUrl(tab.url);
+    window.onAuthUrl = isAuthUrl;
     if (!isAuthUrl) {
       rating_default.updateRatingFields(tab.url, tab.title);
     }

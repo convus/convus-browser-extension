@@ -4,21 +4,18 @@ import log from './log' // eslint-disable-line
 const retryIfMissing = (obj, func, ...args) => {
   if (typeof (obj) === 'undefined' || obj === null) {
     log.debug(`${func.name} requires an element not present in DOM, trying again in 50ms`)
-    setTimeout(func, 5000, ...args)
+    setTimeout(func, 50, ...args)
     return true
   }
 }
 
-// Internal
-const baseUrl = () => {
-  return document.getElementById('body-popup').getAttribute('data-baseurl')
-}
+const baseUrl = process.env.baseUrl
 
 // Add a visual cue to show that you're attached to local
 const renderLocalAlert = () => {
   // If alert is already rendered, skip
   if (document.getElementById('local-alert')) { return }
-  if (baseUrl().match(/http:\/\/localhost/i)) {
+  if (baseUrl.match(/http:\/\/localhost/i)) {
     const localAlert = document.createElement('div')
     localAlert.textContent = 'local convus'
     localAlert.classList.add('text-gray-400', 'text-center')
@@ -37,10 +34,11 @@ const elementsFromSelectorOrElements = (selOrEl) => {
   if (typeof (selOrEl) === 'string') {
     return document.querySelectorAll(selOrEl)
   } else {
-    [selOrEl].flat()
+    return [selOrEl].flat()
   }
 }
 
+// TODO: handle collapse/animation for hide and show
 const elementsHide = (selOrEl) => {
   elementsFromSelectorOrElements(selOrEl)
     .forEach(el => el.classList.add('hidden'))
@@ -50,11 +48,6 @@ const elementsShow = (selOrEl) => {
   elementsFromSelectorOrElements(selOrEl)
     .forEach(el => el.classList.remove('hidden'))
 }
-
-// Including to make it easier to switch to animation in the future
-const elementsExpand = (selOrEl) => { elementsShow(selOrEl) }
-// Including to make it easier to switch to animation in the future
-const elementsCollapse = (selOrEl) => { elementsHide(selOrEl) }
 
 const hideAlerts = () => {
   // TODO: switch to (and test):
@@ -122,17 +115,11 @@ const toggleMenu = (event = false, closeMenu = 'toggle') => {
   }
 }
 
-const renderSpinner = () => {
-  elementsShow('#waiting-spinner')
-}
-
 // Not currently using - but want to remember how to do if necessary in the future
 // const closePopup = () { window.close }
 
 export default {
   hideAlerts,
-  elementsCollapse,
-  elementsExpand,
   elementsHide,
   elementsShow,
   pageLoadedFunctions,
