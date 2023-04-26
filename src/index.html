@@ -15,14 +15,18 @@
         <a href="{{baseUrl}}/browser_extension_auth" target="_blank" class="btn btn-success">Sign in to the browser extension</a>
       </p>
     </div>
-    <div id="auth_message_out" class="hidden">
-      <h2 class="my-4">Logged out from browser extension</h2>
-      <p class="mt-4 mb-4">You can close this popup, or it will close automatically in 5 seconds.</p>
-    </div>
     <div id="auth_message_in" class="hidden">
       <h2 class="my-4">You're signed in!</h2>
-      <p class="mt-4">You can <a href="#" id="closeTabLink">close this window</a>.</p>
-      <p class="mt-4 mb-4 opacity-50">If you do nothing, it will close automatically in 5 seconds.</p>
+      <p class="mt-4">
+        You can <a href="#" id="closeTabLink">close this window</a>.
+      </p>
+      <p class="mt-2 mb-4 opacity-50">
+        It will close automatically in <span id="in_countdown">5</span> seconds.
+      </p>
+    </div>
+    <div id="auth_message_out" class="hidden">
+      <h2 class="my-4">Logged out from browser extension</h2>
+      <p class="mt-4 mb-4">You can close this popup, or it will close automatically in <span id="out_countdown">5</span> seconds.</p>
     </div>
     <form id="new_rating" action="{{baseUrl}}/api/v1/ratings" accept-charset="UTF-8" method="post" class="pb-2 hidden">
       <input autocomplete="off" type="hidden" value="{{target}}_extension-{{version}}" name="source" id="source" />
@@ -174,7 +178,7 @@
           </label>
         </div> -->
       </div>
-      <div class="mt-2 text-right" id="logout-wrapper">
+      <div class="mt-4 text-right" id="logout-wrapper">
         <button class="underline text-sm" type="submit" id="logout-btn">
           logout
           <span id="username"></span>

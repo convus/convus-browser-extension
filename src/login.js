@@ -15,6 +15,19 @@ const storeAuthData = ({ authToken, currentName }) => {
 }
 
 // Internal
+const countdownToClose = (selector, ms, func) => {
+  let secondsLeft = ms / 1000
+  const countdownEl = document.querySelector(selector)
+  countdownEl.textContent = secondsLeft // Set the initial time
+  const countdownTimer = setInterval(function () {
+    countdownEl.textContent = secondsLeft -= 1
+    if (secondsLeft <= 0) { clearInterval(countdownTimer) }
+  }, 1000)
+  // Run close function
+  setTimeout(func, ms)
+}
+
+// Internal
 const removeAuthData = () => {
   browser.storage.local.remove('authToken')
   browser.storage.local.remove('currentName')
@@ -44,8 +57,7 @@ const authPageSuccess = ({ authToken, currentName }) => {
     chrome.tabs.remove(window.tabId)
   }
   document.getElementById('closeTabLink').addEventListener('click', window.closeTabFunction)
-  // Close window after a pause
-  setTimeout(window.closeTabFunction, 5000)
+  countdownToClose('#in_countdown', 3000, window.closeTabFunction)
 }
 
 const loginTime = () => {
@@ -66,7 +78,7 @@ const logout = () => {
   utilities.elementsHide('#new_rating')
   utilities.elementsShow('#auth_message_out')
   // Close popup after a pause
-  setTimeout(window.close, 5000)
+  countdownToClose('#out_countdown', 5000, window.close)
 }
 
 export default {

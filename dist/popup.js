@@ -442,6 +442,18 @@
     window.authToken = authToken;
     window.currentName = currentName;
   };
+  var countdownToClose = (selector, ms, func) => {
+    let secondsLeft = ms / 1e3;
+    const countdownEl = document.querySelector(selector);
+    countdownEl.textContent = secondsLeft;
+    const countdownTimer = setInterval(function() {
+      countdownEl.textContent = secondsLeft -= 1;
+      if (secondsLeft <= 0) {
+        clearInterval(countdownTimer);
+      }
+    }, 1e3);
+    setTimeout(func, ms);
+  };
   var removeAuthData = () => {
     browser.storage.local.remove("authToken");
     browser.storage.local.remove("currentName");
@@ -469,7 +481,7 @@
       chrome.tabs.remove(window.tabId);
     };
     document.getElementById("closeTabLink").addEventListener("click", window.closeTabFunction);
-    setTimeout(window.closeTabFunction, 5e3);
+    countdownToClose("#in_countdown", 3e3, window.closeTabFunction);
   };
   var loginTime = () => {
     if (window.onAuthUrl) {
@@ -488,7 +500,7 @@
     utilities_default.toggleMenu(false, true);
     utilities_default.elementsHide("#new_rating");
     utilities_default.elementsShow("#auth_message_out");
-    setTimeout(window.close, 5e3);
+    countdownToClose("#out_countdown", 5e3, window.close);
   };
   var login_default = {
     authPageSuccess,
@@ -559,21 +571,22 @@
   };
 
   // injected_scripts.js
-  var metaAttributes = (isAuthUrl = false) => {
+  var getPageData = (isAuthUrl = false) => {
+    if (isAuthUrl) {
+      const authData = {
+        currentName: document.querySelector('meta[name="ext-username"]')?.content,
+        authToken: document.querySelector('meta[name="ext-token"]')?.content
+      };
+      return authData;
+    }
     const attrToPair = (attr) => [attr.name, attr.value];
     const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
     const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
-    const elements = isAuthUrl ? document.querySelectorAll('meta[name="ext-token"], meta[name="ext-username"]') : document.getElementsByTagName("meta");
+    const elements = document.getElementsByTagName("meta");
     return elsToAttrs(elements);
   };
-  var resultToAuthData = (arr) => {
-    const metaKey = (name) => name === "ext-username" ? "currentName" : "authToken";
-    const keypairs = arr.map((el) => [metaKey(el.name), el.content]);
-    return Object.fromEntries(keypairs);
-  };
   var injected_scripts_default = {
-    metaAttributes,
-    resultToAuthData
+    getPageData
   };
 
   // popup.js
@@ -595,20 +608,20 @@
   var checkAuthUrl = (url) => `${baseUrl3}/browser_extension_auth` === url;
   var getCurrentTab = async function() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-    const isAuthUrl = checkAuthUrl(tab.url);
-    window.onAuthUrl = isAuthUrl;
+    window.onAuthUrl = checkAuthUrl(tab.url);
     window.tabId = tab.id;
-    if (!isAuthUrl) {
+    if (!window.onAuthUrl) {
       rating_default.updateRatingFields(tab.url, tab.title);
     }
     const response = await browser.scripting.executeScript({
       target: { tabId: tab.id },
-      function: injected_scripts_default.metaAttributes,
-      args: [isAuthUrl]
+      function: injected_scripts_default.getPageData,
+      args: [window.onAuthUrl]
     });
     const result = response[0].result;
-    if (isAuthUrl) {
-      login_default.authPageSuccess(injected_scripts_default.resultToAuthData(result));
+    log_default.debug(result);
+    if (window.onAuthUrl) {
+      login_default.authPageSuccess(result);
     } else {
     }
   };

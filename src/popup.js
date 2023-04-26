@@ -29,22 +29,23 @@ const getCurrentTab = async function () {
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
   // log.debug(tab)
 
-  const isAuthUrl = checkAuthUrl(tab.url)
-  window.onAuthUrl = isAuthUrl
+  // const isAuthUrl = checkAuthUrl(tab.url)
+  window.onAuthUrl = checkAuthUrl(tab.url)
   window.tabId = tab.id
 
   // Update rating fields that we have info for, the metadata can be added later
-  if (!isAuthUrl) { rating.updateRatingFields(tab.url, tab.title) }
+  if (!window.onAuthUrl) { rating.updateRatingFields(tab.url, tab.title) }
 
   const response = await browser.scripting.executeScript({
     target: { tabId: tab.id },
-    function: injectedScripts.metaAttributes,
-    args: [isAuthUrl]
+    function: injectedScripts.getPageData,
+    args: [window.onAuthUrl]
   })
 
   const result = response[0].result
-  if (isAuthUrl) {
-    login.authPageSuccess(injectedScripts.resultToAuthData(result))
+  log.debug(result)
+  if (window.onAuthUrl) {
+    login.authPageSuccess(result)
   } else {
     // rating.ratingTime()
   }
