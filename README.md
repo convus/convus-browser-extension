@@ -52,7 +52,7 @@ To run the build process with watch, run:
 ./start.sh
 ```
 
-It always builds using the configuration options from `esbuild.config.js`
+This builds and watches using the configuration options from `esbuild.config.js` and uses nodemon to restart esbuild if the html, manifests or config change.
 
 ---
 

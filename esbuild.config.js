@@ -1,17 +1,16 @@
 const path = require('path')
 const fs = require('fs')
 
-const watch = process.argv.includes('--watch')
+const watch = process.argv.includes('--watch') || process.env.WATCH === "true"
 
 // Current options: chrome, firefox, safari, safari_ios
 const target = 'chrome'
 
-// NOTE: index.html and manifest.json are generated via this script
-// THEY DO NOT UPDATE ON SAVE when watching (the JS does)
 process.env.NODE_ENV ||= 'localhost'
 const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.convus.org' : 'http://localhost:3009'
 const version = process.env.npm_package_version
-// Generate relevant index.html file via this hack
+
+//Generate relevant index.html file via this hack
 const htmlContent = fs.readFileSync('src/index.html', 'utf8')
   .replace(/{{baseUrl}}/g, baseUrl)
   .replace(/{{target}}/g, target)
@@ -43,6 +42,7 @@ require('esbuild')
     define: {
       'process.env.baseUrl': `"${baseUrl}"`,
       'process.env.browser_target': `"${target}"`,
+      'process.env.version': `"${version}"`,
       'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`
     },
     entryPoints: ['popup.js'],
