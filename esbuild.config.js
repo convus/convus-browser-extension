@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 
-const watch = process.argv.includes('--watch') || process.env.WATCH === "true"
+const watch = process.argv.includes('--watch') || process.env.WATCH === 'true'
 
 // Current options: chrome, firefox, safari, safari_ios
 const target = 'chrome'
