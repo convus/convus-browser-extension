@@ -1643,7 +1643,6 @@ input.form-control.number-field-no-btns::-webkit-outer-spin-button,
 }
 /* extension popup ID - make sure it matches the extension! */
 #body-popup, #new_rating.no-layout {
-  padding-top: 0.5rem;
   padding-left: 0.75rem; /* update rating menu if changed */
   padding-right: 0.75rem; /* update rating menu if changed */
   min-width: 375px;
@@ -1896,6 +1895,9 @@ input.form-control.number-field-no-btns::-webkit-outer-spin-button,
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+.-mt-1 {
+  margin-top: -0.25rem;
 }
 .mb-1 {
   margin-bottom: 0.25rem;
@@ -2626,4 +2628,3 @@ h4 {
     max-width: 42rem;
   }
 }
-
