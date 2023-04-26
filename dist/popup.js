@@ -372,6 +372,17 @@
   var elementsShow = (selOrEl) => {
     elementsFromSelectorOrElements(selOrEl).forEach((el) => el.classList.remove("hidden"));
   };
+  var elementsCollapse = (selOrEl, toggle = true) => {
+    const els = elementsFromSelectorOrElements(selOrEl);
+    if (toggle === true) {
+      toggle = els[0]?.classList.contains("hidden") ? "show" : "hide";
+    }
+    if (toggle === "show") {
+      els.forEach((el) => el.classList.remove("hidden"));
+    } else {
+      els.forEach((el) => el.classList.add("hidden"));
+    }
+  };
   var hideAlerts = () => {
     const visibleAlerts = document.querySelectorAll(".alert");
     visibleAlerts.forEach((el) => el.classList.add("hidden"));
@@ -409,29 +420,29 @@
       alert.after(shareDiv(shareText));
     }
   };
-  var toggleMenu = (event = false, closeMenu = "toggle") => {
+  var toggleMenu = (event = false, toggle = true) => {
     event && event.preventDefault();
     const menuBtn = document.getElementById("rating-menu-btn");
     const menu = document.getElementById("rating-menu");
-    const action = closeMenu === "toggle" ? menu.classList.contains("active") : closeMenu;
-    if (action) {
-      menu.classList.add("hidden");
-      menu.classList.remove("active");
+    if (toggle === true) {
+      toggle = menuBtn.classList.contains("active") ? "hide" : "show";
+    }
+    elementsCollapse(menu, toggle);
+    if (toggle === "hide") {
       menuBtn.classList.remove("active");
     } else {
-      menu.classList.remove("hidden");
-      menu.classList.add("active");
       menuBtn.classList.add("active");
     }
   };
   var utilities_default = {
-    hideAlerts,
+    elementsCollapse,
     elementsHide,
     elementsShow,
+    hideAlerts,
     pageLoadedFunctions,
     renderAlerts,
-    toggleMenu,
-    retryIfMissing
+    retryIfMissing,
+    toggleMenu
   };
 
   // login.js
@@ -497,7 +508,7 @@
   };
   var logout = () => {
     removeAuthData();
-    utilities_default.toggleMenu(false, true);
+    utilities_default.toggleMenu(false, "hide");
     utilities_default.elementsHide("#new_rating");
     utilities_default.elementsShow("#auth_message_out");
     countdownToClose("#out_countdown", 5e3, window.close);
@@ -510,13 +521,29 @@
   };
 
   // rating.js
-  var updateRatingFields = (tabUrl, title) => {
-    const ratingUrlField = document.getElementById("submitted_url");
-    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
-    ratingUrlField.value = tabUrl;
-    document.getElementById("citation_title").value = title;
-    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    ratingTime();
+  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
+  var handleRatingSubmit = async function(e) {
+    e.preventDefault();
+    const submitBtn = document.getElementById("ratingSubmitButton");
+    submitBtn.classList.add("disabled");
+    utilities_default.elementsShow("#rating-submit-spinner");
+    const formData = new FormData(document.getElementById("new_rating"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
+    log_default.debug(result);
+    utilities_default.renderAlerts(result.message, result.share);
+    if (result.success) {
+      document.getElementById("new_rating").classList.add("hidden");
+      utilities_default.toggleMenu(false, "hide");
+    }
+    utilities_default.elementsHide("#rating-submit-spinner");
+    submitBtn.classList.remove("disabled");
+    return false;
+  };
+  var updateMenuCheck = (event) => {
+    const el = event.target;
+    const targetField = document.getElementById(el.getAttribute("data-target-id"));
+    utilities_default.elementsCollapse(targetField, el.checked ? "show" : "hide");
   };
   var ratingTime = () => {
     const ratingForm = document.getElementById("new_rating");
@@ -537,36 +564,21 @@
     }
     utilities_default.pageLoadedFunctions();
   };
-  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
-  var handleRatingSubmit = async function(e) {
-    e.preventDefault();
-    const submitBtn = document.getElementById("ratingSubmitButton");
-    submitBtn.classList.add("disabled");
-    utilities_default.elementsShow("#rating-submit-spinner");
-    const formData = new FormData(document.getElementById("new_rating"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
-    log_default.debug(result);
-    utilities_default.renderAlerts(result.message, result.share);
-    if (result.success) {
-      document.getElementById("new_rating").classList.add("hidden");
-      utilities_default.toggleMenu(false, true);
-    }
-    utilities_default.elementsHide("#rating-submit-spinner");
-    submitBtn.classList.remove("disabled");
-    return false;
+  var updateRatingFields = (tabUrl, title) => {
+    const ratingUrlField = document.getElementById("submitted_url");
+    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
+    ratingUrlField.value = tabUrl;
+    document.getElementById("citation_title").value = title;
+    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    ratingTime();
   };
-  var updateMenuCheck = (event) => {
-    const el = event.target;
-    const fieldId = el.getAttribute("data-target-id");
-    if (el.checked) {
-      document.getElementById(fieldId).classList.remove("hidden");
-    } else {
-      document.getElementById(fieldId).classList.add("hidden");
-    }
+  var addMetadata = (metadata) => {
+    const citationMetadataField = document.getElementById("citation_metadata_str");
+    utilities_default.retryIfMissing(citationMetadataField, addMetadata, metadata);
+    citationMetadataField.value = JSON.stringify(metadata);
   };
   var rating_default = {
-    ratingTime,
+    addMetadata,
     updateRatingFields
   };
 
@@ -619,10 +631,10 @@
       args: [window.onAuthUrl]
     });
     const result = response[0].result;
-    log_default.debug(result);
     if (window.onAuthUrl) {
       login_default.authPageSuccess(result);
     } else {
+      rating_default.addMetadata(result);
     }
   };
   getCurrentTab();

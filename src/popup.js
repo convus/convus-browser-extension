@@ -43,11 +43,10 @@ const getCurrentTab = async function () {
   })
 
   const result = response[0].result
-  log.debug(result)
   if (window.onAuthUrl) {
     login.authPageSuccess(result)
   } else {
-    // rating.ratingTime()
+    rating.addMetadata(result)
   }
 }
 

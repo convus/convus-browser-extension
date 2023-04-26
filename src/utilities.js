@@ -38,7 +38,6 @@ const elementsFromSelectorOrElements = (selOrEl) => {
   }
 }
 
-// TODO: handle collapse/animation for hide and show
 const elementsHide = (selOrEl) => {
   elementsFromSelectorOrElements(selOrEl)
     .forEach(el => el.classList.add('hidden'))
@@ -47,6 +46,22 @@ const elementsHide = (selOrEl) => {
 const elementsShow = (selOrEl) => {
   elementsFromSelectorOrElements(selOrEl)
     .forEach(el => el.classList.remove('hidden'))
+}
+
+// toggle can be: [true, 'hide', 'show']
+const elementsCollapse = (selOrEl, toggle = true) => {
+  const els = elementsFromSelectorOrElements(selOrEl)
+  // log.debug(`toggling: ${toggle}`)
+  // If toggling, determine which direction to toggle
+  if (toggle === true) {
+    toggle = els[0]?.classList.contains('hidden') ? 'show' : 'hide'
+  }
+  // TODO: add animation functionality
+  if (toggle === 'show') {
+    els.forEach(el => el.classList.remove('hidden'))
+  } else {
+    els.forEach(el => el.classList.add('hidden'))
+  }
 }
 
 const hideAlerts = () => {
@@ -98,32 +113,31 @@ const renderAlerts = (message, shareText = null) => {
   }
 }
 
-// closeMenu can be: ["toggle", true, false]
-const toggleMenu = (event = false, closeMenu = 'toggle') => {
+// toggle: [true, 'hide', 'show'] - matches elementsCollapse above
+const toggleMenu = (event = false, toggle = true) => {
   event && event.preventDefault()
   const menuBtn = document.getElementById('rating-menu-btn')
   const menu = document.getElementById('rating-menu')
-  const action = closeMenu === 'toggle' ? menu.classList.contains('active') : closeMenu
-  if (action) {
-    menu.classList.add('hidden')
-    menu.classList.remove('active')
+  // Choose toggle based on state of button, if toggling
+  if (toggle === true) {
+    toggle = menuBtn.classList.contains('active') ? 'hide' : 'show'
+  }
+  elementsCollapse(menu, toggle)
+
+  if (toggle === 'hide') {
     menuBtn.classList.remove('active')
   } else {
-    menu.classList.remove('hidden')
-    menu.classList.add('active')
     menuBtn.classList.add('active')
   }
 }
 
-// Not currently using - but want to remember how to do if necessary in the future
-// const closePopup = () { window.close }
-
 export default {
-  hideAlerts,
+  elementsCollapse,
   elementsHide,
   elementsShow,
+  hideAlerts,
   pageLoadedFunctions,
   renderAlerts,
-  toggleMenu,
-  retryIfMissing
+  retryIfMissing,
+  toggleMenu
 }

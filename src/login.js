@@ -73,7 +73,7 @@ const loginTime = () => {
 
 const logout = () => {
   removeAuthData()
-  utilities.toggleMenu(false, true)
+  utilities.toggleMenu(false, 'hide')
 
   utilities.elementsHide('#new_rating')
   utilities.elementsShow('#auth_message_out')

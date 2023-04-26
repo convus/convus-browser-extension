@@ -4,16 +4,40 @@ import utilities from './utilities'
 // only importing login for loginTime - shouldn't import the rest :/
 import login from './login'
 
-const updateRatingFields = (tabUrl, title) => {
-  const ratingUrlField = document.getElementById('submitted_url')
-  utilities.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title)
+// Internal
+const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribute('action')
 
-  ratingUrlField.value = tabUrl
-  document.getElementById('citation_title').value = title
-  document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
-  ratingTime()
+// Internal
+const handleRatingSubmit = async function (e) {
+  e.preventDefault()
+  const submitBtn = document.getElementById('ratingSubmitButton')
+  submitBtn.classList.add('disabled')
+  utilities.elementsShow('#rating-submit-spinner')
+  const formData = new FormData(document.getElementById('new_rating'))
+  const jsonFormData = JSON.stringify(Object.fromEntries(formData))
+  const result = await api.submitRating(formNewRatingUrl(), window.authToken, jsonFormData)
+
+  log.debug(result)
+  utilities.renderAlerts(result.message, result.share)
+  if (result.success) {
+    document.getElementById('new_rating').classList.add('hidden')
+    utilities.toggleMenu(false, 'hide')
+  }
+  utilities.elementsHide('#rating-submit-spinner')
+  submitBtn.classList.remove('disabled')
+
+  return false // fallback prevent submit
 }
 
+// Internal
+const updateMenuCheck = (event) => {
+  const el = event.target
+  const targetField = document.getElementById(el.getAttribute('data-target-id'))
+  // const toggle = el.checked ? 'show' : 'hide'
+  utilities.elementsCollapse(targetField, el.checked ? 'show' : 'hide')
+}
+
+// Internal
 const ratingTime = () => {
   const ratingForm = document.getElementById('new_rating')
 
@@ -40,44 +64,24 @@ const ratingTime = () => {
   utilities.pageLoadedFunctions()
 }
 
-// Internal
-const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribute('action')
+const updateRatingFields = (tabUrl, title) => {
+  const ratingUrlField = document.getElementById('submitted_url')
+  utilities.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title)
 
-// Internal
-const handleRatingSubmit = async function (e) {
-  e.preventDefault()
-  const submitBtn = document.getElementById('ratingSubmitButton')
-  submitBtn.classList.add('disabled')
-  utilities.elementsShow('#rating-submit-spinner')
-  const formData = new FormData(document.getElementById('new_rating'))
-  const jsonFormData = JSON.stringify(Object.fromEntries(formData))
-  const result = await api.submitRating(formNewRatingUrl(), window.authToken, jsonFormData)
-
-  log.debug(result)
-  utilities.renderAlerts(result.message, result.share)
-  if (result.success) {
-    document.getElementById('new_rating').classList.add('hidden')
-    utilities.toggleMenu(false, true)
-  }
-  utilities.elementsHide('#rating-submit-spinner')
-  submitBtn.classList.remove('disabled')
-
-  return false // fallback prevent submit
+  ratingUrlField.value = tabUrl
+  document.getElementById('citation_title').value = title
+  document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
+  ratingTime()
 }
 
-// Internal
-const updateMenuCheck = (event) => {
-  const el = event.target
-  const fieldId = el.getAttribute('data-target-id')
-
-  if (el.checked) {
-    document.getElementById(fieldId).classList.remove('hidden')
-  } else {
-    document.getElementById(fieldId).classList.add('hidden')
-  }
+const addMetadata = (metadata) => {
+  // log.debug(metadata)
+  const citationMetadataField = document.getElementById('citation_metadata_str')
+  utilities.retryIfMissing(citationMetadataField, addMetadata, metadata)
+  citationMetadataField.value = JSON.stringify(metadata)
 }
 
 export default {
-  ratingTime,
+  addMetadata,
   updateRatingFields
 }
