@@ -17,6 +17,7 @@
     "jest-cli": "^27.4.7",
     "jest-fetch-mock": "^3.0.3",
     "jest-junit": "^13.0.0",
+    "nodemon": "^2.0.22",
     "prettier-standard": "^16.4.1",
     "standard": "^16.0.4"
   },
