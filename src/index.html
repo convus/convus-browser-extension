@@ -23,10 +23,6 @@
       <input autocomplete="off" type="hidden" value="" name="citation_metadata" id="citation_metadata" />
 
       <input class="hiddenFieldTimezone" autocomplete="off" type="hidden" name="timezone" id="timezone" />
-      <div class="form-row collapsible hidden" id="field-group-url">
-        <label for="submitted_url">URL</label>
-        <input placeholder="URL" class="form-control" autocomplete="off" type="text" name="submitted_url" id="submitted_url" />
-      </div>
       <div class="row grid-cols-2 divide-x">
         <div class="col py-1">
           <label class="form-control-radio" for="agreement_agree">
@@ -43,6 +39,7 @@
           </label>
         </div>
         <div class="col py-1">
+
           <label class="form-control-radio" for="quality_quality_high">
             <input type="radio" value="quality_high" name="quality" id="quality_quality_high" />
             High Quality
@@ -57,23 +54,34 @@
           </label>
         </div>
       </div>
-      <div class="form-row mt-2">
-        <label class="form-control-check" for="learned_something">
-          <input name="learned_something" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="learned_something" id="learned_something" />
-          Learned something new
-        </label>
-      </div>
-      <div class="form-row ">
-        <label class="form-control-check" for="changed_opinion">
-          <input name="changed_opinion" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="changed_opinion" id="changed_opinion" />
-          Changed my opinion
-        </label>
-      </div>
-      <div class="form-row ">
-        <label class="form-control-check" for="not_understood">
-          <input name="not_understood" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="not_understood" id="not_understood" />
-          Did not understand
-        </label>
+      <div class="row grid-cols-2 mt-2">
+        <div class="col py-1">
+          <div class="form-row mt-2">
+            <label class="form-control-check" for="learned_something">
+              <input name="learned_something" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="learned_something" id="learned_something" />
+              Learned something
+            </label>
+          </div>
+          <div class="form-row ">
+            <label class="form-control-check" for="changed_opinion">
+              <input name="changed_opinion" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="changed_opinion" id="changed_opinion" />
+              Changed opinion
+            </label>
+          </div>
+        </div>
+        <div class="col py-1">
+        <div class="form-row">
+          <label class="form-control-check" for="not_understood">
+            <input name="not_understood" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="not_understood" id="not_understood" />
+            Didn't understand
+          </label>
+        </div>
+        <div class="form-row">
+          <label class="form-control-check" for="did_not_finish">
+            <input name="did_not_finish" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="did_not_finish" id="did_not_finish" />
+            Did not finish
+          </label>
+        </div>
       </div>
       <div class="form-row">
         <label class="form-control-check" for="significant_factual_error">
@@ -102,6 +110,10 @@
             </svg>
           </button>
         </div>
+      </div>
+      <div class="form-row collapsible hidden" id="field-group-url">
+        <label for="submitted_url">URL</label>
+        <input placeholder="URL" class="form-control" autocomplete="off" type="text" name="submitted_url" id="submitted_url" />
       </div>
       <div class="form-row collapsible hidden" id="field-group-title">
         <label for="citation_title">Title</label>
@@ -132,12 +144,14 @@
             Show URL
           </label>
         </div>
+        <!-- TODO: remove next version.
+             Pretty sure this is longer ever necessary, I think title will actually be sourced from metadata
         <div class="col py-1">
           <label class="form-control-check" for="show_title">
             <input type="checkbox" name="show_title" id="show_title" value="1" data-target-id="field-group-title">
             Show Title
           </label>
-        </div>
+        </div> -->
       </div>
       <div class="mt-2 text-right" id="logout-wrapper">
         <button class="gray-link text-sm" type="submit" id="logout-btn">
