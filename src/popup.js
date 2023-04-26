@@ -29,7 +29,7 @@ const getCurrentTab = async function () {
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
   // log.debug(tab)
 
-  // const isAuthUrl = checkAuthUrl(tab.url)
+  // Assign these things to window so they can be accessed other places
   window.onAuthUrl = checkAuthUrl(tab.url)
   window.tabId = tab.id
 

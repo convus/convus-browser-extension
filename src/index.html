@@ -155,28 +155,29 @@
     <div id="rating-menu"  class="collapsible hidden">
       <hr>
       <p class="text-sm mt-2 hidden-safari_ios">Open rating dialog with <code>control</code> + <code>shift</code> + <code>R</code></p>
-      <p class="text-sm mt-5 opacity-50">Diagnostic display options:</p>
-      <div class="row mt-1 grid-cols-2 opacity-50 mt-2">
+      <div class="row mt-4 grid-cols-2 opacity-50">
         <div class="col">
           <label class="form-control-check" for="show_topics">
             <input type="checkbox" name="show_topics" id="show_topics" value="1" data-target-id="field-group-topics">
             Show Topics
           </label>
         </div>
-        <div class="col">
+        <!--
+          TODO: remove these checks entirely next version.
+            Pretty sure these are longer ever necessary, I think title will actually be sourced from metadata
+        -->
+        <div class="col hidden">
           <label class="form-control-check" for="show_url">
             <input type="checkbox" name="show_url" id="show_url" value="1" data-target-id="field-group-url">
             Show URL
           </label>
         </div>
-        <!-- TODO: remove next version.
-             Pretty sure this is longer ever necessary, I think title will actually be sourced from metadata
-        <div class="col py-1">
+        <div class="col hidden">
           <label class="form-control-check" for="show_title">
             <input type="checkbox" name="show_title" id="show_title" value="1" data-target-id="field-group-title">
             Show Title
           </label>
-        </div> -->
+        </div>
       </div>
       <div class="mt-4 text-right" id="logout-wrapper">
         <button class="underline text-sm" type="submit" id="logout-btn">
