@@ -19,9 +19,9 @@ const ratingTime = () => {
 
   if (utilities.retryIfMissing(ratingForm, ratingTime)) { return }
   // Hide the spinners
-  utilities.elementsHide(".spinners")
+  utilities.elementsHide('.spinners, #whitespace-preserver')
   // Render save and menu
-  utilities.elementsShow("#rating-save-row")
+  utilities.elementsShow('#rating-save-row')
 
   // I think it's a good thing to attach the event listener to the rating form
   ratingForm.addEventListener('submit', handleRatingSubmit)

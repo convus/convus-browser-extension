@@ -444,17 +444,8 @@
   };
   var removeAuthData = () => {
     browser.storage.local.remove("authToken");
-    browser.storage.local.remove("name");
+    browser.storage.local.remove("currentName");
     window.authToken = void 0;
-  };
-  var renderAuthMessage = (message) => {
-    const authMessage = document.getElementById("auth_message");
-    if (utilities_default.retryIfMissing(authMessage, renderAuthMessage, message)) {
-      return;
-    }
-    document.getElementById("authMessageEl").textContent = message;
-    utilities_default.elementsShow(authMessage);
-    utilities_default.elementsHide("#new_rating");
   };
   var checkAuthToken = async function(token) {
     if (utilities_default.retryIfMissing(formAuthUrl, checkAuthToken, token)) {
@@ -470,26 +461,34 @@
   };
   var authPageSuccess = ({ authToken, currentName }) => {
     utilities_default.hideAlerts();
-    utilities_default.elementsHide("#auth_message, .spinners");
     storeAuthData({ authToken, currentName });
-    renderAuthMessage("You're signed in!");
+    utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
+    utilities_default.elementsShow("#auth_message_in");
+    window.closeTabFunction = (event = false) => {
+      event && event.preventDefault();
+      chrome.tabs.remove(window.tabId);
+    };
+    document.getElementById("closeTabLink").addEventListener("click", window.closeTabFunction);
+    setTimeout(window.closeTabFunction, 5e3);
   };
   var loginTime = () => {
-    if (!!window.onAuthUrl) {
+    if (window.onAuthUrl) {
       return;
     }
     const loginMessage = document.getElementById("sign_in_message");
     if (utilities_default.retryIfMissing(loginMessage, loginTime)) {
       return;
     }
+    utilities_default.elementsHide("#new_rating, #whitespace-preserver");
     utilities_default.elementsShow(loginMessage);
-    utilities_default.elementsHide("#new_rating");
     utilities_default.pageLoadedFunctions();
   };
   var logout = () => {
     removeAuthData();
     utilities_default.toggleMenu(false, true);
-    renderAuthMessage("Logged out from the Convus browser extension");
+    utilities_default.elementsHide("#new_rating");
+    utilities_default.elementsShow("#auth_message_out");
+    setTimeout(window.close, 5e3);
   };
   var login_default = {
     authPageSuccess,
@@ -512,7 +511,7 @@
     if (utilities_default.retryIfMissing(ratingForm, ratingTime)) {
       return;
     }
-    utilities_default.elementsHide(".spinners");
+    utilities_default.elementsHide(".spinners, #whitespace-preserver");
     utilities_default.elementsShow("#rating-save-row");
     ratingForm.addEventListener("submit", handleRatingSubmit);
     document.getElementById("rating-menu-btn").addEventListener("click", utilities_default.toggleMenu);
@@ -593,13 +592,12 @@
       login_default.checkAuthToken(data.authToken);
     }
   });
-  var checkAuthUrl = (url) => {
-    return `${baseUrl3}/browser_extension_auth` === url;
-  };
+  var checkAuthUrl = (url) => `${baseUrl3}/browser_extension_auth` === url;
   var getCurrentTab = async function() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     const isAuthUrl = checkAuthUrl(tab.url);
     window.onAuthUrl = isAuthUrl;
+    window.tabId = tab.id;
     if (!isAuthUrl) {
       rating_default.updateRatingFields(tab.url, tab.title);
     }

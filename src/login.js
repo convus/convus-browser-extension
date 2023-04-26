@@ -4,8 +4,7 @@ import utilities from './utilities'
 
 // Internal
 const baseUrl = process.env.baseUrl
-const formAuthUrl = baseUrl + "/api/v1/auth"
-
+const formAuthUrl = baseUrl + '/api/v1/auth'
 
 // Internal
 const storeAuthData = ({ authToken, currentName }) => {
@@ -18,20 +17,8 @@ const storeAuthData = ({ authToken, currentName }) => {
 // Internal
 const removeAuthData = () => {
   browser.storage.local.remove('authToken')
-  browser.storage.local.remove('name')
+  browser.storage.local.remove('currentName')
   window.authToken = undefined
-}
-
-// Internal
-const renderAuthMessage = (message) => {
-  const authMessage = document.getElementById('auth_message')
-  if (utilities.retryIfMissing(authMessage, renderAuthMessage, message)) { return }
-
-  document.getElementById('authMessageEl').textContent = message
-  utilities.elementsShow(authMessage)
-  // authMessage.classList.remove('hidden')
-  utilities.elementsHide('#new_rating')
-  // Hide other forms
 }
 
 const checkAuthToken = async function (token) {
@@ -47,27 +34,39 @@ const checkAuthToken = async function (token) {
 
 const authPageSuccess = ({ authToken, currentName }) => {
   utilities.hideAlerts()
-  // in case we're already showing the "sign in to auth" message
-  utilities.elementsHide('#auth_message, .spinners')
   storeAuthData({ authToken: authToken, currentName: currentName })
-  renderAuthMessage("You're signed in!")
+  // in case we're already showing the "sign in to auth" message
+  utilities.elementsHide('.spinners, #new_rating, #whitespace-preserver')
+  utilities.elementsShow('#auth_message_in')
+
+  window.closeTabFunction = (event = false) => {
+    event && event.preventDefault()
+    chrome.tabs.remove(window.tabId)
+  }
+  document.getElementById('closeTabLink').addEventListener('click', window.closeTabFunction)
+  // Close window after a pause
+  setTimeout(window.closeTabFunction, 5000)
 }
 
 const loginTime = () => {
   // If we're on the auth page, don't do anything
-  if (!!window.onAuthUrl) { return }
+  if (window.onAuthUrl) { return }
 
   const loginMessage = document.getElementById('sign_in_message')
   if (utilities.retryIfMissing(loginMessage, loginTime)) { return }
+  utilities.elementsHide('#new_rating, #whitespace-preserver')
   utilities.elementsShow(loginMessage)
-  utilities.elementsHide('#new_rating')
   utilities.pageLoadedFunctions()
 }
 
 const logout = () => {
   removeAuthData()
   utilities.toggleMenu(false, true)
-  renderAuthMessage('Logged out from the Convus browser extension')
+
+  utilities.elementsHide('#new_rating')
+  utilities.elementsShow('#auth_message_out')
+  // Close popup after a pause
+  setTimeout(window.close, 5000)
 }
 
 export default {
