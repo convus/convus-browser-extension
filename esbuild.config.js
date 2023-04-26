@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 
-const watch = process.argv.includes('--watch') || process.env.WATCH === "true"
+const watch = process.argv.includes('--watch') || process.env.WATCH === 'true'
 
 // Current options: chrome, firefox, safari, safari_ios
 const target = 'chrome'
@@ -10,7 +10,7 @@ process.env.NODE_ENV ||= 'localhost'
 const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.convus.org' : 'http://localhost:3009'
 const version = process.env.npm_package_version
 
-//Generate relevant index.html file via this hack
+// Generate relevant index.html file via this hack
 const htmlContent = fs.readFileSync('src/index.html', 'utf8')
   .replace(/{{baseUrl}}/g, baseUrl)
   .replace(/{{target}}/g, target)
