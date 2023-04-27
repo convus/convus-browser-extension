@@ -39,13 +39,10 @@ const updateMenuCheck = (event) => {
 
 // Internal
 const ratingTime = () => {
+  log.debug("ratingTime")
   const ratingForm = document.getElementById('new_rating')
 
   if (utilities.retryIfMissing(ratingForm, ratingTime)) { return }
-  // Hide the spinners
-  utilities.elementsHide('.spinners, #whitespace-preserver')
-  // Render save and menu
-  utilities.elementsShow('#rating-save-row')
 
   // I think it's a good thing to attach the event listener to the rating form
   ratingForm.addEventListener('submit', handleRatingSubmit)
@@ -53,15 +50,25 @@ const ratingTime = () => {
   document.getElementById('rating-menu-btn').addEventListener('click', utilities.toggleMenu)
   document.querySelectorAll('#rating-menu .form-control-check input').forEach(el => el.addEventListener('change', updateMenuCheck))
   document.getElementById('logout-btn').addEventListener('click', login.logout)
-  // ... but only show or hide the form if authToken is set, in case of weird callback stuff
+
+  showRatingForm()
+  utilities.pageLoadedFunctions()
+}
+
+const showRatingForm = () => {
+  log.debug("showRatingForm")
+  // Only show or hide the form if authToken is set, in case of weird callback stuff
   if (window.authToken) {
-    utilities.elementsShow(ratingForm)
+    // Hide the spinners
+    utilities.elementsHide('.spinners, #whitespace-preserver')
+    // Render save and menu
+    utilities.elementsShow('#rating-save-row')
+    utilities.elementsShow('#new_rating')
   }
-  // not required, just nice to have username to keep track of what's going on
+  // Nice to have username to keep track of what's going on
   if (window.currentName) {
     document.getElementById('username').textContent = window.currentName
   }
-  utilities.pageLoadedFunctions()
 }
 
 const updateRatingFields = (tabUrl, title) => {
@@ -75,7 +82,7 @@ const updateRatingFields = (tabUrl, title) => {
 }
 
 const addMetadata = (metadata) => {
-  // log.debug(metadata)
+  log.debug("addMetadata")
   const citationMetadataField = document.getElementById('citation_metadata_str')
   utilities.retryIfMissing(citationMetadataField, addMetadata, metadata)
   citationMetadataField.value = JSON.stringify(metadata)
@@ -83,5 +90,6 @@ const addMetadata = (metadata) => {
 
 export default {
   addMetadata,
+  showRatingForm,
   updateRatingFields
 }

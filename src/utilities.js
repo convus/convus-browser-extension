@@ -25,7 +25,6 @@ const renderLocalAlert = () => {
 }
 
 const pageLoadedFunctions = () => {
-  elementsHide('#waiting-spinner')
   renderLocalAlert() // Render local alert if it's warranted
 }
 

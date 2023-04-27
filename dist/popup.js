@@ -253,7 +253,7 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  if (false) {
+  if (true) {
     import_loglevel.default.setLevel("warn");
   } else {
     import_loglevel.default.setLevel("debug");
@@ -342,7 +342,7 @@
       return true;
     }
   };
-  var baseUrl = "http://localhost:3009";
+  var baseUrl = "https://www.convus.org";
   var renderLocalAlert = () => {
     if (document.getElementById("local-alert")) {
       return;
@@ -356,7 +356,6 @@
     }
   };
   var pageLoadedFunctions = () => {
-    elementsHide("#waiting-spinner");
     renderLocalAlert();
   };
   var elementsFromSelectorOrElements = (selOrEl) => {
@@ -445,8 +444,77 @@
     toggleMenu
   };
 
+  // rating.js
+  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
+  var handleRatingSubmit = async function(e) {
+    e.preventDefault();
+    const submitBtn = document.getElementById("ratingSubmitButton");
+    submitBtn.classList.add("disabled");
+    utilities_default.elementsShow("#rating-submit-spinner");
+    const formData = new FormData(document.getElementById("new_rating"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
+    log_default.debug(result);
+    utilities_default.renderAlerts(result.message, result.share);
+    if (result.success) {
+      document.getElementById("new_rating").classList.add("hidden");
+      utilities_default.toggleMenu(false, "hide");
+    }
+    utilities_default.elementsHide("#rating-submit-spinner");
+    submitBtn.classList.remove("disabled");
+    return false;
+  };
+  var updateMenuCheck = (event) => {
+    const el = event.target;
+    const targetField = document.getElementById(el.getAttribute("data-target-id"));
+    utilities_default.elementsCollapse(targetField, el.checked ? "show" : "hide");
+  };
+  var ratingTime = () => {
+    log_default.debug("ratingTime");
+    const ratingForm = document.getElementById("new_rating");
+    if (utilities_default.retryIfMissing(ratingForm, ratingTime)) {
+      return;
+    }
+    ratingForm.addEventListener("submit", handleRatingSubmit);
+    document.getElementById("rating-menu-btn").addEventListener("click", utilities_default.toggleMenu);
+    document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
+    document.getElementById("logout-btn").addEventListener("click", login_default.logout);
+    showRatingForm();
+    utilities_default.pageLoadedFunctions();
+  };
+  var showRatingForm = () => {
+    log_default.debug("showRatingForm");
+    if (window.authToken) {
+      utilities_default.elementsHide(".spinners, #whitespace-preserver");
+      utilities_default.elementsShow("#rating-save-row");
+      utilities_default.elementsShow("#new_rating");
+    }
+    if (window.currentName) {
+      document.getElementById("username").textContent = window.currentName;
+    }
+  };
+  var updateRatingFields = (tabUrl, title) => {
+    const ratingUrlField = document.getElementById("submitted_url");
+    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
+    ratingUrlField.value = tabUrl;
+    document.getElementById("citation_title").value = title;
+    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    ratingTime();
+  };
+  var addMetadata = (metadata) => {
+    log_default.debug("addMetadata");
+    const citationMetadataField = document.getElementById("citation_metadata_str");
+    utilities_default.retryIfMissing(citationMetadataField, addMetadata, metadata);
+    citationMetadataField.value = JSON.stringify(metadata);
+  };
+  var rating_default = {
+    addMetadata,
+    showRatingForm,
+    updateRatingFields
+  };
+
   // login.js
-  var baseUrl2 = "http://localhost:3009";
+  var baseUrl2 = "https://www.convus.org";
   var formAuthUrl = baseUrl2 + "/api/v1/auth";
   var storeAuthData = ({ authToken, currentName }) => {
     browser.storage.local.set({ authToken, currentName });
@@ -477,6 +545,7 @@
     const result = await api_default.isAuthTokenValid(formAuthUrl, token);
     log_default.debug("auth token check success:", result);
     if (result) {
+      rating_default.showRatingForm();
       return;
     }
     removeAuthData();
@@ -495,6 +564,7 @@
     countdownToClose("#in_countdown", 3e3, window.closeTabFunction);
   };
   var loginTime = () => {
+    log_default.debug("loginTime");
     if (window.onAuthUrl) {
       return;
     }
@@ -520,68 +590,6 @@
     logout
   };
 
-  // rating.js
-  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
-  var handleRatingSubmit = async function(e) {
-    e.preventDefault();
-    const submitBtn = document.getElementById("ratingSubmitButton");
-    submitBtn.classList.add("disabled");
-    utilities_default.elementsShow("#rating-submit-spinner");
-    const formData = new FormData(document.getElementById("new_rating"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
-    log_default.debug(result);
-    utilities_default.renderAlerts(result.message, result.share);
-    if (result.success) {
-      document.getElementById("new_rating").classList.add("hidden");
-      utilities_default.toggleMenu(false, "hide");
-    }
-    utilities_default.elementsHide("#rating-submit-spinner");
-    submitBtn.classList.remove("disabled");
-    return false;
-  };
-  var updateMenuCheck = (event) => {
-    const el = event.target;
-    const targetField = document.getElementById(el.getAttribute("data-target-id"));
-    utilities_default.elementsCollapse(targetField, el.checked ? "show" : "hide");
-  };
-  var ratingTime = () => {
-    const ratingForm = document.getElementById("new_rating");
-    if (utilities_default.retryIfMissing(ratingForm, ratingTime)) {
-      return;
-    }
-    utilities_default.elementsHide(".spinners, #whitespace-preserver");
-    utilities_default.elementsShow("#rating-save-row");
-    ratingForm.addEventListener("submit", handleRatingSubmit);
-    document.getElementById("rating-menu-btn").addEventListener("click", utilities_default.toggleMenu);
-    document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
-    document.getElementById("logout-btn").addEventListener("click", login_default.logout);
-    if (window.authToken) {
-      utilities_default.elementsShow(ratingForm);
-    }
-    if (window.currentName) {
-      document.getElementById("username").textContent = window.currentName;
-    }
-    utilities_default.pageLoadedFunctions();
-  };
-  var updateRatingFields = (tabUrl, title) => {
-    const ratingUrlField = document.getElementById("submitted_url");
-    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
-    ratingUrlField.value = tabUrl;
-    document.getElementById("citation_title").value = title;
-    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    ratingTime();
-  };
-  var addMetadata = (metadata) => {
-    const citationMetadataField = document.getElementById("citation_metadata_str");
-    utilities_default.retryIfMissing(citationMetadataField, addMetadata, metadata);
-    citationMetadataField.value = JSON.stringify(metadata);
-  };
-  var rating_default = {
-    addMetadata,
-    updateRatingFields
-  };
-
   // injected_scripts.js
   var getPageData = (isAuthUrl = false) => {
     if (isAuthUrl) {
@@ -594,8 +602,14 @@
     const attrToPair = (attr) => [attr.name, attr.value];
     const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
     const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
-    const elements = document.getElementsByTagName("meta");
-    return elsToAttrs(elements);
+    const countWords = (str) => str.trim().split(/\s+/).length;
+    metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
+    wordCount = { word_count: countWords(document.body.textContent) };
+    jsonLD = Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((i) => i.innerText.trim());
+    if (jsonLD.length) {
+      metadataAttrs = metadataAttrs.concat([{ json_ld: jsonLD }]);
+    }
+    return metadataAttrs.concat([wordCount]);
   };
   var injected_scripts_default = {
     getPageData
@@ -603,7 +617,7 @@
 
   // popup.js
   var browserTarget = "chrome";
-  var baseUrl3 = "http://localhost:3009";
+  var baseUrl3 = "https://www.convus.org";
   if (browserTarget == "chrome") {
     browser = chrome;
   }

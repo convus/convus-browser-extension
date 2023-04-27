@@ -16,11 +16,27 @@ const getPageData = (isAuthUrl = false) => {
   // Convert an iterable of elements to a list of element attributes
   const elsToAttrs = (els) => Array.from(els).map(elToAttrs)
 
-  // const elements = isAuthUrl ? document.querySelectorAll('meta[name="ext-token"], meta[name="ext-username"]') : document.getElementsByTagName('meta')
-  const elements = document.getElementsByTagName('meta')
-  return elsToAttrs(elements)
+  const countWords = (str) => str.trim().split(/\s+/).length
+
+  metadataAttrs = elsToAttrs(document.getElementsByTagName('meta'))
+  wordCount = {word_count: countWords(document.body.textContent)}
+
+  // Add jsonLD - don't parse here, in case malformed
+  jsonLD = Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((i) => i.innerText.trim())
+  if (jsonLD.length) {
+    metadataAttrs = metadataAttrs.concat([{json_ld: jsonLD}])
+  }
+  return metadataAttrs.concat([wordCount])
 }
 
 export default {
   getPageData
 }
+
+
+// TODO:
+//
+// rel="tags" - https://hakaimagazine.com/news/the-toxic-threat-in-thawing-permafrost/
+// https://microformats.org/wiki/rel-tag
+// wtf - https://pluralistic.net/
+//

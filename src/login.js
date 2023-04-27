@@ -1,5 +1,7 @@
 import log from './log' // eslint-disable-line
 import api from './api'
+// only importing for showRatingForm, TODO stop importing the rest
+import rating from './rating'
 import utilities from './utilities'
 
 // Internal
@@ -39,7 +41,10 @@ const checkAuthToken = async function (token) {
 
   const result = await api.isAuthTokenValid(formAuthUrl, token)
   log.debug('auth token check success:', result)
-  if (result) { return }
+  if (result) {
+    rating.showRatingForm()
+    return
+  }
   // Remove the existing data that is incorrect - maybe actually do in form submit?
   removeAuthData()
   loginTime()
@@ -61,6 +66,7 @@ const authPageSuccess = ({ authToken, currentName }) => {
 }
 
 const loginTime = () => {
+  log.debug("loginTime")
   // If we're on the auth page, don't do anything
   if (window.onAuthUrl) { return }
 

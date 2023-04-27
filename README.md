@@ -20,7 +20,7 @@ Required to get the url and title of the website you are reading, for your ratin
 
 #### scripting justification
 
-Required to read the API on Convus.org and to get the metadata from the page to send with the rating.
+Required to read the API token on Convus.org and to get the metadata from the page to send with the rating.
 
 #### storage justification
 
