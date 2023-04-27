@@ -603,9 +603,9 @@
     const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
     const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
     const countWords = (str) => str.trim().split(/\s+/).length;
-    metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
-    wordCount = { word_count: countWords(document.body.textContent) };
-    jsonLD = Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((i) => i.innerText.trim());
+    let metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
+    const wordCount = { word_count: countWords(document.body.textContent) };
+    const jsonLD = Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((i) => i.innerText.trim());
     if (jsonLD.length) {
       metadataAttrs = metadataAttrs.concat([{ json_ld: jsonLD }]);
     }

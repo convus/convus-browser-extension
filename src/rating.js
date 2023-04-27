@@ -39,7 +39,7 @@ const updateMenuCheck = (event) => {
 
 // Internal
 const ratingTime = () => {
-  log.debug("ratingTime")
+  log.debug('ratingTime')
   const ratingForm = document.getElementById('new_rating')
 
   if (utilities.retryIfMissing(ratingForm, ratingTime)) { return }
@@ -56,7 +56,7 @@ const ratingTime = () => {
 }
 
 const showRatingForm = () => {
-  log.debug("showRatingForm")
+  log.debug('showRatingForm')
   // Only show or hide the form if authToken is set, in case of weird callback stuff
   if (window.authToken) {
     // Hide the spinners
@@ -82,7 +82,7 @@ const updateRatingFields = (tabUrl, title) => {
 }
 
 const addMetadata = (metadata) => {
-  log.debug("addMetadata")
+  log.debug('addMetadata')
   const citationMetadataField = document.getElementById('citation_metadata_str')
   utilities.retryIfMissing(citationMetadataField, addMetadata, metadata)
   citationMetadataField.value = JSON.stringify(metadata)

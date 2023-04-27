@@ -66,7 +66,7 @@ const authPageSuccess = ({ authToken, currentName }) => {
 }
 
 const loginTime = () => {
-  log.debug("loginTime")
+  log.debug('loginTime')
   // If we're on the auth page, don't do anything
   if (window.onAuthUrl) { return }
 

@@ -18,13 +18,13 @@ const getPageData = (isAuthUrl = false) => {
 
   const countWords = (str) => str.trim().split(/\s+/).length
 
-  metadataAttrs = elsToAttrs(document.getElementsByTagName('meta'))
-  wordCount = {word_count: countWords(document.body.textContent)}
+  let metadataAttrs = elsToAttrs(document.getElementsByTagName('meta'))
+  const wordCount = { word_count: countWords(document.body.textContent) }
 
   // Add jsonLD - don't parse here, in case malformed
-  jsonLD = Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((i) => i.innerText.trim())
+  const jsonLD = Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((i) => i.innerText.trim())
   if (jsonLD.length) {
-    metadataAttrs = metadataAttrs.concat([{json_ld: jsonLD}])
+    metadataAttrs = metadataAttrs.concat([{ json_ld: jsonLD }])
   }
   return metadataAttrs.concat([wordCount])
 }
@@ -32,7 +32,6 @@ const getPageData = (isAuthUrl = false) => {
 export default {
   getPageData
 }
-
 
 // TODO:
 //
