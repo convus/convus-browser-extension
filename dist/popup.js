@@ -616,7 +616,7 @@
   };
 
   // popup.js
-  var browserTarget = "chrome";
+  var browserTarget = "safari";
   var baseUrl3 = "https://www.convus.org";
   if (browserTarget == "chrome") {
     browser = chrome;

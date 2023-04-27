@@ -1,0 +1,15 @@
+//
+//  Config.xcconfig
+//  Convus Config
+//
+//  To release a new version:
+//
+//  1. Update these numbers
+//  2. Run the Archive process in XCODE
+//  ... Someday add fastlane (fastlane.tools) to automate things
+//
+CURRENT_PROJECT_VERSION = 5
+MARKETING_VERSION = 0.9.1
+//
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974

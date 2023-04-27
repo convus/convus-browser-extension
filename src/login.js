@@ -72,7 +72,7 @@ const loginTime = () => {
 
   const loginMessage = document.getElementById('sign_in_message')
   if (utilities.retryIfMissing(loginMessage, loginTime)) { return }
-  utilities.elementsHide('#new_rating, #whitespace-preserver')
+  utilities.elementsHide('.spinners, #new_rating, #whitespace-preserver')
   utilities.elementsShow(loginMessage)
   utilities.pageLoadedFunctions()
 }

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D3E575929FADC7B00CB544E /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5D3E575829FADC7B00CB544E /* Config.xcconfig */; };
+		5D3E575A29FADC7B00CB544E /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5D3E575829FADC7B00CB544E /* Config.xcconfig */; };
+		5D3E575B29FADC7B00CB544E /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5D3E575829FADC7B00CB544E /* Config.xcconfig */; };
+		5D3E575C29FADC7B00CB544E /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5D3E575829FADC7B00CB544E /* Config.xcconfig */; };
 		5D55965229B82A1100BD5C1C /* application.css in Resources */ = {isa = PBXBuildFile; fileRef = 5D55965129B82A1100BD5C1C /* application.css */; };
 		5D55965329B82A1100BD5C1C /* application.css in Resources */ = {isa = PBXBuildFile; fileRef = 5D55965129B82A1100BD5C1C /* application.css */; };
 		5D8F00ED29B574AD003A1EE5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F00EC29B574AD003A1EE5 /* AppDelegate.swift */; };
@@ -84,6 +88,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5D3E575829FADC7B00CB544E /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		5D55965129B82A1100BD5C1C /* application.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = application.css; path = ../../dist/application.css; sourceTree = "<group>"; };
 		5D8F00DD29B574AC003A1EE5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = ../Base.lproj/Main.html; sourceTree = "<group>"; };
 		5D8F00DE29B574AC003A1EE5 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
@@ -149,6 +154,7 @@
 		5D8F00D529B574AC003A1EE5 = {
 			isa = PBXGroup;
 			children = (
+				5D3E575829FADC7B00CB544E /* Config.xcconfig */,
 				5D8F00DA29B574AC003A1EE5 /* Shared (App) */,
 				5D8F00E329B574AD003A1EE5 /* Shared (Extension) */,
 				5D8F00EB29B574AD003A1EE5 /* iOS (App) */,
@@ -384,6 +390,7 @@
 				5D8F00F229B574AD003A1EE5 /* LaunchScreen.storyboard in Resources */,
 				5D8F011929B574AD003A1EE5 /* Main.html in Resources */,
 				5D8F011F29B574AD003A1EE5 /* Script.js in Resources */,
+				5D3E575929FADC7B00CB544E /* Config.xcconfig in Resources */,
 				5D8F012329B574AD003A1EE5 /* Assets.xcassets in Resources */,
 				5D8F00F529B574AD003A1EE5 /* Main.storyboard in Resources */,
 				5D8F011D29B574AD003A1EE5 /* Style.css in Resources */,
@@ -399,6 +406,7 @@
 				5D8F010129B574AD003A1EE5 /* Main.storyboard in Resources */,
 				5D8F012029B574AD003A1EE5 /* Script.js in Resources */,
 				5D8F012429B574AD003A1EE5 /* Assets.xcassets in Resources */,
+				5D3E575A29FADC7B00CB544E /* Config.xcconfig in Resources */,
 				5D8F011A29B574AD003A1EE5 /* Main.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -411,6 +419,7 @@
 				5D55965229B82A1100BD5C1C /* application.css in Resources */,
 				5D8F014229B574AD003A1EE5 /* popup.js in Resources */,
 				5D8F014629B574AD003A1EE5 /* manifest.json in Resources */,
+				5D3E575B29FADC7B00CB544E /* Config.xcconfig in Resources */,
 				5D8F014329B574AD003A1EE5 /* index.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -423,6 +432,7 @@
 				5D55965329B82A1100BD5C1C /* application.css in Resources */,
 				5D8F013D29B574AD003A1EE5 /* popup.js in Resources */,
 				5D8F014129B574AD003A1EE5 /* manifest.json in Resources */,
+				5D3E575C29FADC7B00CB544E /* Config.xcconfig in Resources */,
 				5D8F013E29B574AD003A1EE5 /* index.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -518,6 +528,7 @@
 /* Begin XCBuildConfiguration section */
 		5D8F012729B574AD003A1EE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D3E575829FADC7B00CB544E /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -577,6 +588,7 @@
 		};
 		5D8F012829B574AD003A1EE5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D3E575829FADC7B00CB544E /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -629,9 +641,9 @@
 		};
 		5D8F012A29B574AD003A1EE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D3E575829FADC7B00CB544E /* Config.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
@@ -643,7 +655,6 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 0.8.1;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -660,9 +671,9 @@
 		};
 		5D8F012B29B574AD003A1EE5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D3E575829FADC7B00CB544E /* Config.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
@@ -674,7 +685,6 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 0.8.1;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -692,13 +702,13 @@
 		};
 		5D8F012E29B574AD003A1EE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D3E575829FADC7B00CB544E /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
@@ -713,7 +723,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.8.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -734,13 +743,13 @@
 		};
 		5D8F012F29B574AD003A1EE5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D3E575829FADC7B00CB544E /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
@@ -755,7 +764,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.8.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -777,12 +785,12 @@
 		};
 		5D8F013129B574AD003A1EE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D3E575829FADC7B00CB544E /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/Convus.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -796,7 +804,6 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = 0.8.1;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -812,12 +819,12 @@
 		};
 		5D8F013229B574AD003A1EE5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D3E575829FADC7B00CB544E /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/Convus.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -831,7 +838,6 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = 0.8.1;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -847,6 +853,7 @@
 		};
 		5D8F013529B574AD003A1EE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D3E575829FADC7B00CB544E /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -854,7 +861,6 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = "macOS (App)/Convus.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -869,7 +875,6 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = 0.8.1;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -886,6 +891,7 @@
 		};
 		5D8F013629B574AD003A1EE5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5D3E575829FADC7B00CB544E /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -893,7 +899,6 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = "macOS (App)/Convus.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = SY2AZUHP42;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -908,7 +913,6 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = 0.8.1;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
