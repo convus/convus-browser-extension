@@ -38,7 +38,8 @@ const getCurrentTab = async function () {
     // Update rating fields that we have info for, the metadata can be added later
     rating.updateRatingFields(window.currentUrl, tab.title)
   }
-  const scriptSource = safari.extension.baseURI + 'injected_script.js'
+  // const scriptSource = safari.extension.baseURI + 'injected_script.js'
+  const scriptSource = '/injected_script.js'
   log.debug(scriptSource)
 
   await browser.scripting.executeScript({

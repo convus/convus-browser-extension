@@ -639,7 +639,7 @@
     } else if (!isAuthUrl2) {
       rating_default.updateRatingFields(window.currentUrl, tab.title);
     }
-    const scriptSource = safari.extension.baseURI + "injected_script.js";
+    const scriptSource = "/injected_script.js";
     log_default.debug(scriptSource);
     await browser.scripting.executeScript({
       target: { tabId: tab.id },
