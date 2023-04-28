@@ -5,7 +5,7 @@ import injectedScript from './injected_script'
 
 // instantiating these outside functions prevents a periodic "process is undefined" bug
 const browserTarget = process.env.browser_target
-const safariType = !!browserTarget.match("safari") // get safari_ios too
+const safariType = !!browserTarget.match('safari') // get safari_ios too
 
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
 if (browserTarget == 'chrome') { browser = chrome } // eslint-disable-line

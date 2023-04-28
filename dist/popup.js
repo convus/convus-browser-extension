@@ -535,10 +535,6 @@
         clearInterval(countdownTimer);
       }
     }, 1e3);
-    if (closeFunc) {
-      setTimeout(closeFunc, ms);
-    }
-    setTimeout(window.close, ms);
   };
   var removeAuthData = () => {
     browser.storage.local.remove("authToken");

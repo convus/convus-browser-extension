@@ -67,7 +67,7 @@ const loginFromAuthPageData = (authToken, currentName) => {
   utilities.hideAlerts()
   storeAuthData(authToken, currentName)
   // in case we're already showing the "sign in to auth" message
-  utilities.elementsHide('.spinners, #new_rating, #whitespace-preserver')
+  utilities.elementsHide('.spinners, #new_rating, #whitespace-preserver, #sign_in_message')
   utilities.elementsShow('#auth_message_in')
 
   window.closeTabFunction = (event = false) => {
