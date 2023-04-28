@@ -1,4 +1,5 @@
-(function () {
+export default function injectedScript () {
+  // (function () {
   const authUrl = '{{baseUrl}}/browser_extension_auth'
 
   console.log('Convus extension is getting the page metadata!')
@@ -32,4 +33,7 @@
   }
 
   return metadataAttrs.concat([wordCount])
-})()
+  // })()
+}
+
+

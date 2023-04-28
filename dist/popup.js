@@ -525,7 +525,7 @@
     window.authToken = authToken;
     window.currentName = currentName;
   };
-  var countdownToClose = (selector, ms, closeFunc = false) => {
+  var countdownAndClose = (selector, ms, closeFunc = false) => {
     let secondsLeft = ms / 1e3;
     const countdownEl = document.querySelector(selector);
     countdownEl.textContent = secondsLeft;
@@ -574,7 +574,7 @@
       chrome.tabs.remove(window.tabId);
     };
     document.getElementById("closeTabLink").addEventListener("click", window.closeTabFunction);
-    countdownToClose("#in_countdown", 3e3, window.closeTabFunction);
+    countdownAndClose("#in_countdown", 3e3, window.closeTabFunction);
   };
   var loginTime = () => {
     log_default.trace("loginTime");
@@ -601,7 +601,7 @@
     utilities_default.toggleMenu(false, "hide");
     utilities_default.elementsHide("#new_rating");
     utilities_default.elementsShow("#auth_message_out");
-    countdownToClose("#out_countdown", 5e3);
+    countdownAndClose("#out_countdown", 5e3);
   };
   var login_default = {
     loginFromAuthPageData,
@@ -612,8 +612,34 @@
     logout
   };
 
+  // injected_script.js
+  function injectedScript() {
+    const authUrl2 = "{{baseUrl}}/browser_extension_auth";
+    console.log("Convus extension is getting the page metadata!");
+    if (authUrl2 === window.location.href) {
+      const authData = {
+        currentName: document.querySelector('meta[name="ext-username"]')?.content,
+        authToken: document.querySelector('meta[name="ext-token"]')?.content
+      };
+      return authData;
+    }
+    const attrToPair = (attr) => [attr.name, attr.value];
+    const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
+    const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
+    const countWords = (str) => str.trim().split(/\s+/).length;
+    const jsonLdString = (scriptEls) => Array.from(scriptEls).map((i) => i.innerText.trim());
+    let metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
+    const wordCount = { word_count: countWords(document.body.textContent) };
+    const jsonLD = jsonLdString(document.querySelectorAll('script[type="application/ld+json"]'));
+    if (jsonLD.length) {
+      metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]];
+    }
+    return metadataAttrs.concat([wordCount]);
+  }
+
   // popup.js
   var browserTarget = "safari";
+  var safariType = !!browserTarget.match("safari");
   if (browserTarget == "chrome") {
     browser = chrome;
   }
@@ -639,14 +665,12 @@
     } else if (!isAuthUrl2) {
       rating_default.updateRatingFields(window.currentUrl, tab.title);
     }
-    const scriptSource = "/injected_script.js";
-    log_default.debug(scriptSource);
     await browser.scripting.executeScript({
       target: { tabId: tab.id },
-      files: [scriptSource]
+      func: injectedScript
     }).then((response) => {
       log_default.debug("Script response: ", response);
-      const result = response[0].result;
+      const result = safariType ? response[0] : response[0].result;
       if (isAuthUrl2) {
         login_default.loginFromAuthPageData(result.authToken, result.currentName);
       } else {
