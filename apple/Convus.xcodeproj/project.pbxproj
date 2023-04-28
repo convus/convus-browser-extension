@@ -13,7 +13,6 @@
 		5D3E575C29FADC7B00CB544E /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5D3E575829FADC7B00CB544E /* Config.xcconfig */; };
 		5D55965229B82A1100BD5C1C /* application.css in Resources */ = {isa = PBXBuildFile; fileRef = 5D55965129B82A1100BD5C1C /* application.css */; };
 		5D55965329B82A1100BD5C1C /* application.css in Resources */ = {isa = PBXBuildFile; fileRef = 5D55965129B82A1100BD5C1C /* application.css */; };
-		5D7664B329FC7B61008C0D7C /* injected_script.js in Resources */ = {isa = PBXBuildFile; fileRef = 5D7664B229FC7B61008C0D7C /* injected_script.js */; };
 		5D8F00ED29B574AD003A1EE5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F00EC29B574AD003A1EE5 /* AppDelegate.swift */; };
 		5D8F00EF29B574AD003A1EE5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F00EE29B574AD003A1EE5 /* SceneDelegate.swift */; };
 		5D8F00F229B574AD003A1EE5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F00F029B574AD003A1EE5 /* LaunchScreen.storyboard */; };
@@ -404,7 +403,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D7664B329FC7B61008C0D7C /* injected_script.js in Resources */,
 				5D8F011C29B574AD003A1EE5 /* Icon.png in Resources */,
 				5D8F011E29B574AD003A1EE5 /* Style.css in Resources */,
 				5D8F010129B574AD003A1EE5 /* Main.storyboard in Resources */,
