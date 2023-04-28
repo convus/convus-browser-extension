@@ -9,7 +9,7 @@ const baseUrl = process.env.baseUrl
 const formAuthUrl = baseUrl + '/api/v1/auth'
 
 // Internal
-const storeAuthData = ({ authToken, currentName }) => {
+const storeAuthData = (authToken, currentName) => {
   // TODO, there has to be a better way to handle passing the arguments
   browser.storage.local.set({ authToken: authToken, currentName: currentName })
   window.authToken = authToken
@@ -50,9 +50,10 @@ const checkAuthToken = async function (token) {
   loginTime()
 }
 
-const authPageSuccess = ({ authToken, currentName }) => {
+const loginFromAuthPageData = (authToken, currentName) => {
+  log.debug(`authToken: ${authToken}, ${currentName}`)
   utilities.hideAlerts()
-  storeAuthData({ authToken: authToken, currentName: currentName })
+  storeAuthData(authToken, currentName)
   // in case we're already showing the "sign in to auth" message
   utilities.elementsHide('.spinners, #new_rating, #whitespace-preserver')
   utilities.elementsShow('#auth_message_in')
@@ -88,7 +89,7 @@ const logout = () => {
 }
 
 export default {
-  authPageSuccess,
+  loginFromAuthPageData,
   checkAuthToken,
   loginTime,
   logout

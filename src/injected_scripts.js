@@ -18,6 +18,7 @@ const getPageData = (isAuthUrl = false) => {
 
   const countWords = (str) => str.trim().split(/\s+/).length
 
+  // document.addEventListener("DOMContentLoaded", function(event) {
   let metadataAttrs = elsToAttrs(document.getElementsByTagName('meta'))
   const wordCount = { word_count: countWords(document.body.textContent) }
 
@@ -27,15 +28,9 @@ const getPageData = (isAuthUrl = false) => {
     metadataAttrs = metadataAttrs.concat([{ json_ld: jsonLD }])
   }
   return metadataAttrs.concat([wordCount])
+  // }
 }
 
 export default {
   getPageData
 }
-
-// TODO:
-//
-// rel="tags" - https://hakaimagazine.com/news/the-toxic-threat-in-thawing-permafrost/
-// https://microformats.org/wiki/rel-tag
-// wtf - https://pluralistic.net/
-//

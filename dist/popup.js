@@ -253,7 +253,7 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  if (true) {
+  if (false) {
     import_loglevel.default.setLevel("warn");
   } else {
     import_loglevel.default.setLevel("debug");
@@ -342,7 +342,7 @@
       return true;
     }
   };
-  var baseUrl = "https://www.convus.org";
+  var baseUrl = "http://localhost:3009";
   var renderLocalAlert = () => {
     if (document.getElementById("local-alert")) {
       return;
@@ -514,9 +514,9 @@
   };
 
   // login.js
-  var baseUrl2 = "https://www.convus.org";
+  var baseUrl2 = "http://localhost:3009";
   var formAuthUrl = baseUrl2 + "/api/v1/auth";
-  var storeAuthData = ({ authToken, currentName }) => {
+  var storeAuthData = (authToken, currentName) => {
     browser.storage.local.set({ authToken, currentName });
     window.authToken = authToken;
     window.currentName = currentName;
@@ -551,9 +551,10 @@
     removeAuthData();
     loginTime();
   };
-  var authPageSuccess = ({ authToken, currentName }) => {
+  var loginFromAuthPageData = (authToken, currentName) => {
+    log_default.debug(`authToken: ${authToken}, ${currentName}`);
     utilities_default.hideAlerts();
-    storeAuthData({ authToken, currentName });
+    storeAuthData(authToken, currentName);
     utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
     utilities_default.elementsShow("#auth_message_in");
     window.closeTabFunction = (event = false) => {
@@ -572,7 +573,7 @@
     if (utilities_default.retryIfMissing(loginMessage, loginTime)) {
       return;
     }
-    utilities_default.elementsHide("#new_rating, #whitespace-preserver");
+    utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
     utilities_default.elementsShow(loginMessage);
     utilities_default.pageLoadedFunctions();
   };
@@ -584,7 +585,7 @@
     countdownToClose("#out_countdown", 5e3, window.close);
   };
   var login_default = {
-    authPageSuccess,
+    loginFromAuthPageData,
     checkAuthToken,
     loginTime,
     logout
@@ -616,8 +617,8 @@
   };
 
   // popup.js
-  var browserTarget = "safari";
-  var baseUrl3 = "https://www.convus.org";
+  var browserTarget = "chrome";
+  var baseUrl3 = "http://localhost:3009";
   if (browserTarget == "chrome") {
     browser = chrome;
   }
@@ -646,7 +647,7 @@
     });
     const result = response[0].result;
     if (window.onAuthUrl) {
-      login_default.authPageSuccess(result);
+      login_default.loginFromAuthPageData(result.authToken, result.currentName);
     } else {
       rating_default.addMetadata(result);
     }
