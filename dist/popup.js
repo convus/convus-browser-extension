@@ -253,7 +253,7 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  if (false) {
+  if (true) {
     import_loglevel.default.setLevel("warn");
   } else {
     import_loglevel.default.setLevel("debug");
@@ -342,7 +342,7 @@
       return true;
     }
   };
-  var baseUrl = "http://localhost:3009";
+  var baseUrl = "https://www.convus.org";
   var renderLocalAlert = () => {
     if (document.getElementById("local-alert")) {
       return;
@@ -517,7 +517,7 @@
   };
 
   // login.js
-  var baseUrl2 = "http://localhost:3009";
+  var baseUrl2 = "https://www.convus.org";
   var formAuthUrl = baseUrl2 + "/api/v1/auth";
   var authUrl = baseUrl2 + "/browser_extension_auth";
   var storeAuthData = (authToken, currentName) => {
@@ -597,32 +597,6 @@
     logout
   };
 
-  // injected_script.js
-  function getPageData() {
-    const baseUrl3 = "http://localhost:3009/browser_extension_auth";
-    const isAuthUrl2 = baseUrl3 === window.location.href;
-    if (isAuthUrl2) {
-      const authData = {
-        currentName: document.querySelector('meta[name="ext-username"]')?.content,
-        authToken: document.querySelector('meta[name="ext-token"]')?.content
-      };
-      return authData;
-    }
-    const attrToPair = (attr) => [attr.name, attr.value];
-    const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
-    const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
-    const countWords = (str) => str.trim().split(/\s+/).length;
-    const jsonLdScripts = (els) => Array.from(els).map((i) => i.innerText.trim());
-    console.log("running on the page!");
-    let metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
-    const wordCount = { word_count: countWords(document.body.textContent) };
-    const jsonLD = jsonLdScripts(document.querySelectorAll('script[type="application/ld+json"]'));
-    if (jsonLD.length) {
-      metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]];
-    }
-    return metadataAttrs.concat([wordCount]);
-  }
-
   // popup.js
   var browserTarget = "chrome";
   if (browserTarget == "chrome") {
@@ -649,9 +623,9 @@
     }
     browser.scripting.executeScript({
       target: { tabId: tab.id },
-      function: getPageData
+      files: ["/injected_script.js"]
     }).then((response) => {
-      log_default.debug(`Script response: ${response}`);
+      log_default.debug("Script response: ", response);
       const result = response[0].result;
       if (isAuthUrl2) {
         login_default.loginFromAuthPageData(result.authToken, result.currentName);

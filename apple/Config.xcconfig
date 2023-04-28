@@ -6,7 +6,7 @@
 //
 //  1. Update these numbers
 //  2. Run the Archive process in XCODE
-//  ... Someday add fastlane (fastlane.tools) to automate things
+//  ... Someday use https://fastlane.tools to automate things
 //
 CURRENT_PROJECT_VERSION = 5
 MARKETING_VERSION = 0.9.1

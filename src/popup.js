@@ -1,7 +1,6 @@
 import log from './log' // eslint-disable-line
 import login from './login'
 import rating from './rating'
-import injectedScript from './injected_script'
 
 // instantiating these outside functions prevents a periodic "process is undefined" bug
 const browserTarget = process.env.browser_target
@@ -34,20 +33,19 @@ const getCurrentTab = async function () {
   // Update rating fields that we have info for, the metadata can be added later
   if (!isAuthUrl) { rating.updateRatingFields(tab.url, tab.title) }
 
-  // const response = await browser.scripting.executeScript({
-  // files: ["injected_scripts.js"]
   browser.scripting.executeScript({
     target: { tabId: tab.id },
-    function: injectedScript
-  }).then(response => {
-    log.debug(`Script response: ${response}`)
-    const result = response[0].result
-    if (isAuthUrl) {
-      login.loginFromAuthPageData(result.authToken, result.currentName)
-    } else {
-      rating.addMetadata(result)
-    }
+    files: ['/injected_script.js']
   })
+    .then(response => {
+      log.debug('Script response: ', response)
+      const result = response[0].result
+      if (isAuthUrl) {
+        login.loginFromAuthPageData(result.authToken, result.currentName)
+      } else {
+        rating.addMetadata(result)
+      }
+    })
 }
 
 getCurrentTab()

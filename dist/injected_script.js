@@ -1,5 +1,5 @@
 (function () {
-  const authUrl = '{{baseUrl}}/browser_extension_auth'
+  const authUrl = 'https://www.convus.org/browser_extension_auth'
 
   // If on the extension auth URL, we only care about the two auth meta fields
   if (authUrl === window.location.href) {
