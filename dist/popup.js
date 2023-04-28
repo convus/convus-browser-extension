@@ -502,7 +502,7 @@
     ratingTime();
   };
   var addMetadata = (metadata) => {
-    log_default.debug("addMetadata");
+    log_default.debug("addMetadata", metadata);
     const citationMetadataField = document.getElementById("citation_metadata_str");
     utilities_default.retryIfMissing(citationMetadataField, addMetadata, metadata);
     citationMetadataField.value = JSON.stringify(metadata);
@@ -516,7 +516,7 @@
   // login.js
   var baseUrl2 = "https://www.convus.org";
   var formAuthUrl = baseUrl2 + "/api/v1/auth";
-  var storeAuthData = ({ authToken, currentName }) => {
+  var storeAuthData = (authToken, currentName) => {
     browser.storage.local.set({ authToken, currentName });
     window.authToken = authToken;
     window.currentName = currentName;
@@ -551,9 +551,10 @@
     removeAuthData();
     loginTime();
   };
-  var authPageSuccess = ({ authToken, currentName }) => {
+  var authPageSuccess = (authToken, currentName) => {
+    log_default.debug(`authToken: ${authToken}, ${currentName}`);
     utilities_default.hideAlerts();
-    storeAuthData({ authToken, currentName });
+    storeAuthData(authToken, currentName);
     utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
     utilities_default.elementsShow("#auth_message_in");
     window.closeTabFunction = (event = false) => {
@@ -572,7 +573,7 @@
     if (utilities_default.retryIfMissing(loginMessage, loginTime)) {
       return;
     }
-    utilities_default.elementsHide("#new_rating, #whitespace-preserver");
+    utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
     utilities_default.elementsShow(loginMessage);
     utilities_default.pageLoadedFunctions();
   };
@@ -590,7 +591,24 @@
     logout
   };
 
-  // injected_scripts.js
+  // popup.js
+  var browserTarget = "safari";
+  var baseUrl3 = "https://www.convus.org";
+  if (browserTarget == "chrome") {
+    browser = chrome;
+  }
+  log_default.debug("--------");
+  browser.storage.local.get(["authToken", "currentName"]).then((data) => {
+    if (typeof data.authToken === "undefined" || data.authToken === null) {
+      log_default.debug(`missing auth!   authToken: ${data.authToken} and currentName: ${data.currentName}`);
+      login_default.loginTime();
+    } else {
+      log_default.debug(`auth present`);
+      window.authToken = data.authToken;
+      window.currentName = data.currentName;
+      login_default.checkAuthToken(data.authToken);
+    }
+  });
   var getPageData = (isAuthUrl = false) => {
     if (isAuthUrl) {
       const authData = {
@@ -611,27 +629,8 @@
     }
     return metadataAttrs.concat([wordCount]);
   };
-  var injected_scripts_default = {
-    getPageData
-  };
-
-  // popup.js
-  var browserTarget = "safari";
-  var baseUrl3 = "https://www.convus.org";
-  if (browserTarget == "chrome") {
-    browser = chrome;
-  }
-  browser.storage.local.get(["authToken", "currentName"]).then((data) => {
-    if (typeof data.authToken === "undefined" || data.authToken === null) {
-      log_default.debug(`missing auth!   authToken: ${data.authToken} and currentName: ${data.currentName}`);
-      login_default.loginTime();
-    } else {
-      window.authToken = data.authToken;
-      window.currentName = data.currentName;
-      login_default.checkAuthToken(data.authToken);
-    }
-  });
   var checkAuthUrl = (url) => `${baseUrl3}/browser_extension_auth` === url;
+  log_default.debug("000000");
   var getCurrentTab = async function() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     window.onAuthUrl = checkAuthUrl(tab.url);
@@ -639,17 +638,20 @@
     if (!window.onAuthUrl) {
       rating_default.updateRatingFields(tab.url, tab.title);
     }
-    const response = await browser.scripting.executeScript({
+    log_default.debug("kkkkkkkk");
+    browser.scripting.executeScript({
       target: { tabId: tab.id },
-      function: injected_scripts_default.getPageData,
+      function: getPageData,
       args: [window.onAuthUrl]
+    }).then((response) => {
+      log_default.debug(`CCCCCCC ${response}`);
+      const result = response[0].result;
+      if (window.onAuthUrl) {
+        login_default.authPageSuccess(result.authToken, result.currentName);
+      } else {
+        rating_default.addMetadata(result);
+      }
     });
-    const result = response[0].result;
-    if (window.onAuthUrl) {
-      login_default.authPageSuccess(result);
-    } else {
-      rating_default.addMetadata(result);
-    }
   };
   getCurrentTab();
 })();

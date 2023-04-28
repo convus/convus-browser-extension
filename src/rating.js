@@ -82,7 +82,7 @@ const updateRatingFields = (tabUrl, title) => {
 }
 
 const addMetadata = (metadata) => {
-  log.debug('addMetadata')
+  log.debug('addMetadata', metadata)
   const citationMetadataField = document.getElementById('citation_metadata_str')
   utilities.retryIfMissing(citationMetadataField, addMetadata, metadata)
   citationMetadataField.value = JSON.stringify(metadata)
