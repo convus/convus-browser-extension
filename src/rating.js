@@ -1,7 +1,6 @@
 import log from './log' // eslint-disable-line
 import api from './api'
 import utilities from './utilities'
-// only importing login for loginTime - shouldn't import the rest :/
 import login from './login'
 
 // Internal
@@ -59,6 +58,8 @@ const showRatingForm = () => {
   log.trace('showRatingForm')
   // Only show or hide the form if authToken is set, in case of weird callback stuff
   if (window.authToken) {
+    // If we're on the auth page, don't do anything
+    if (login.isAuthUrl()) { return }
     // Hide the spinners
     utilities.elementsHide('.spinners, #whitespace-preserver')
     // Render save and menu

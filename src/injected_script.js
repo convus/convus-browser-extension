@@ -2,7 +2,10 @@
 //       it can't reference other things (e.g. other functions in this file)
 
 // (function() {
-export default function getPageData (isAuthUrl = false) {
+export default function getPageData () {
+  const baseUrl = process.env.baseUrl + '/browser_extension_auth'
+  const isAuthUrl = baseUrl === window.location.href
+
   // If it's auth data, we only care about the two auth meta fields
   if (isAuthUrl) {
     const authData = {

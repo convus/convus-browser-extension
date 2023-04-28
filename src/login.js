@@ -7,6 +7,7 @@ import utilities from './utilities'
 // Internal
 const baseUrl = process.env.baseUrl
 const formAuthUrl = baseUrl + '/api/v1/auth'
+const authUrl = baseUrl + '/browser_extension_auth'
 
 // Internal
 const storeAuthData = (authToken, currentName) => {
@@ -25,7 +26,7 @@ const countdownToClose = (selector, ms, func) => {
     countdownEl.textContent = secondsLeft -= 1
     if (secondsLeft <= 0) { clearInterval(countdownTimer) }
   }, 1000)
-  // Run close function
+  // Run function (close popup or tab)
   setTimeout(func, ms)
 }
 
@@ -35,6 +36,8 @@ const removeAuthData = () => {
   browser.storage.local.remove('currentName')
   window.authToken = undefined
 }
+
+const isAuthUrl = (url = null) => authUrl === (url || window.currentUrl)
 
 const checkAuthToken = async function (token) {
   if (utilities.retryIfMissing(formAuthUrl, checkAuthToken, token)) { return }
@@ -69,7 +72,7 @@ const loginFromAuthPageData = (authToken, currentName) => {
 const loginTime = () => {
   log.trace('loginTime')
   // If we're on the auth page, don't do anything
-  if (window.onAuthUrl) { return }
+  if (isAuthUrl()) { return }
 
   const loginMessage = document.getElementById('sign_in_message')
   if (utilities.retryIfMissing(loginMessage, loginTime)) { return }
@@ -91,6 +94,7 @@ const logout = () => {
 export default {
   loginFromAuthPageData,
   checkAuthToken,
+  isAuthUrl,
   loginTime,
   logout
 }

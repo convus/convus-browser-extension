@@ -274,8 +274,8 @@
     };
     return { ...defaultProps, ...extraProps };
   };
-  var isAuthTokenValid = (authUrl, authToken) => new Promise((resolve, reject) => {
-    const authStatusUrl = `${authUrl}/status`;
+  var isAuthTokenValid = (authUrl2, authToken) => new Promise((resolve, reject) => {
+    const authStatusUrl = `${authUrl2}/status`;
     return fetch(authStatusUrl, requestProps(authToken, { method: "GET" })).then(
       (response) => response.json().then((json) => {
         resolve(json.message !== "missing user" && response.status === 200);
@@ -284,7 +284,7 @@
       resolve(errorResponse(e));
     });
   });
-  var getAuthToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
+  var getAuthToken = (authUrl2, loginFormData) => new Promise((resolve, reject) => {
     const rProps = {
       method: "POST",
       async: true,
@@ -292,7 +292,7 @@
       contentType: "json",
       body: loginFormData
     };
-    return fetch(authUrl, rProps).then(
+    return fetch(authUrl2, rProps).then(
       (response) => response.json().then((json) => {
         let result = {};
         if (response.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
@@ -485,6 +485,9 @@
   var showRatingForm = () => {
     log_default.trace("showRatingForm");
     if (window.authToken) {
+      if (login_default.isAuthUrl()) {
+        return;
+      }
       utilities_default.elementsHide(".spinners, #whitespace-preserver");
       utilities_default.elementsShow("#rating-save-row");
       utilities_default.elementsShow("#new_rating");
@@ -516,6 +519,7 @@
   // login.js
   var baseUrl2 = "http://localhost:3009";
   var formAuthUrl = baseUrl2 + "/api/v1/auth";
+  var authUrl = baseUrl2 + "/browser_extension_auth";
   var storeAuthData = (authToken, currentName) => {
     browser.storage.local.set({ authToken, currentName });
     window.authToken = authToken;
@@ -538,6 +542,7 @@
     browser.storage.local.remove("currentName");
     window.authToken = void 0;
   };
+  var isAuthUrl = (url = null) => authUrl === (url || window.currentUrl);
   var checkAuthToken = async function(token) {
     if (utilities_default.retryIfMissing(formAuthUrl, checkAuthToken, token)) {
       return;
@@ -566,7 +571,7 @@
   };
   var loginTime = () => {
     log_default.trace("loginTime");
-    if (window.onAuthUrl) {
+    if (isAuthUrl()) {
       return;
     }
     const loginMessage = document.getElementById("sign_in_message");
@@ -587,13 +592,16 @@
   var login_default = {
     loginFromAuthPageData,
     checkAuthToken,
+    isAuthUrl,
     loginTime,
     logout
   };
 
   // injected_script.js
-  function getPageData(isAuthUrl = false) {
-    if (isAuthUrl) {
+  function getPageData() {
+    const baseUrl3 = "http://localhost:3009/browser_extension_auth";
+    const isAuthUrl2 = baseUrl3 === window.location.href;
+    if (isAuthUrl2) {
       const authData = {
         currentName: document.querySelector('meta[name="ext-username"]')?.content,
         authToken: document.querySelector('meta[name="ext-token"]')?.content
@@ -617,7 +625,6 @@
 
   // popup.js
   var browserTarget = "chrome";
-  var baseUrl3 = "http://localhost:3009";
   if (browserTarget == "chrome") {
     browser = chrome;
   }
@@ -632,22 +639,21 @@
       login_default.checkAuthToken(data.authToken);
     }
   });
-  var checkAuthUrl = (url) => `${baseUrl3}/browser_extension_auth` === url;
   var getCurrentTab = async function() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-    window.onAuthUrl = checkAuthUrl(tab.url);
+    window.currentUrl = tab.url;
+    const isAuthUrl2 = login_default.isAuthUrl(tab.url);
     window.tabId = tab.id;
-    if (!window.onAuthUrl) {
+    if (!isAuthUrl2) {
       rating_default.updateRatingFields(tab.url, tab.title);
     }
     browser.scripting.executeScript({
       target: { tabId: tab.id },
-      function: getPageData,
-      args: [window.onAuthUrl]
+      function: getPageData
     }).then((response) => {
       log_default.debug(`Script response: ${response}`);
       const result = response[0].result;
-      if (window.onAuthUrl) {
+      if (isAuthUrl2) {
         login_default.loginFromAuthPageData(result.authToken, result.currentName);
       } else {
         rating_default.addMetadata(result);
