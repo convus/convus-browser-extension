@@ -18,7 +18,7 @@ const storeAuthData = (authToken, currentName) => {
 }
 
 // Internal
-const countdownToClose = (selector, ms, func) => {
+const countdownToClose = (selector, ms, closeFunc = false) => {
   let secondsLeft = ms / 1000
   const countdownEl = document.querySelector(selector)
   countdownEl.textContent = secondsLeft // Set the initial time
@@ -26,8 +26,11 @@ const countdownToClose = (selector, ms, func) => {
     countdownEl.textContent = secondsLeft -= 1
     if (secondsLeft <= 0) { clearInterval(countdownTimer) }
   }, 1000)
-  // Run function (close popup or tab)
-  setTimeout(func, ms)
+  // Run special close function
+  if (closeFunc) { setTimeout(closeFunc, ms) }
+  // Firefox doesn't close the popup on when the tab is closed, so make sure it happens
+  // Close the popup by default
+  setTimeout(window.close, ms)
 }
 
 // Internal
@@ -38,6 +41,12 @@ const removeAuthData = () => {
 }
 
 const isAuthUrl = (url = null) => authUrl === (url || window.currentUrl)
+const isSignInOrUpUrl = (url = null) => {
+  url ||= window.currentUrl
+  // These are the URLs the user is sent to if they aren't signed signed in to Convus
+  // when they try to login to the extension
+  return (`${baseUrl}/users/sign_in` === url) || (`${baseUrl}/users/sign_up` === url)
+}
 
 const checkAuthToken = async function (token) {
   if (utilities.retryIfMissing(formAuthUrl, checkAuthToken, token)) { return }
@@ -71,14 +80,23 @@ const loginFromAuthPageData = (authToken, currentName) => {
 
 const loginTime = () => {
   log.trace('loginTime')
-  // If we're on the auth page, don't do anything
+  // If we're on the auth page, exit
   if (isAuthUrl()) { return }
-
   const loginMessage = document.getElementById('sign_in_message')
   if (utilities.retryIfMissing(loginMessage, loginTime)) { return }
+  // If the user is signing in or signing up on Convus, show text rather than a button which opens another tab
+  if (isSignInOrUpUrl()) {
+    document.querySelector('#sign_in_message p').textContent = 'Sign in to Convus on this page'
+  }
   utilities.elementsHide('.spinners, #new_rating, #whitespace-preserver')
   utilities.elementsShow(loginMessage)
   utilities.pageLoadedFunctions()
+
+  // In Firefox, the popup stays around after you click the signIn button
+  // Ideally, it would go back to getCurrentTab,, but I couldn't figure out how, so just close
+  document.getElementById('signInBtn').addEventListener('click', () => {
+    setTimeout(window.close, 100)
+  })
 }
 
 const logout = () => {
@@ -88,13 +106,14 @@ const logout = () => {
   utilities.elementsHide('#new_rating')
   utilities.elementsShow('#auth_message_out')
   // Close popup after a pause
-  countdownToClose('#out_countdown', 5000, window.close)
+  countdownToClose('#out_countdown', 5000)
 }
 
 export default {
   loginFromAuthPageData,
   checkAuthToken,
   isAuthUrl,
+  isSignInOrUpUrl,
   loginTime,
   logout
 }

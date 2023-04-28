@@ -30,15 +30,21 @@ const getCurrentTab = async function () {
   const isAuthUrl = login.isAuthUrl(tab.url)
   window.tabId = tab.id
 
-  // Update rating fields that we have info for, the metadata can be added later
-  if (!isAuthUrl) { rating.updateRatingFields(tab.url, tab.title) }
+  if (login.isSignInOrUpUrl(window.currentUrl)) {
+    // If the user is signing in/up to Convus, don't inject a script
+    log.debug('Viewing Convus sign in or up')
+    return
+  } else if (!isAuthUrl) {
+    // Update rating fields that we have info for, the metadata can be added later
+    rating.updateRatingFields(window.currentUrl, tab.title)
+  }
 
   browser.scripting.executeScript({
     target: { tabId: tab.id },
     files: ['/injected_script.js']
   })
     .then(response => {
-      log.debug('Script response: ', response)
+      // log.debug('Script response: ', response)
       const result = response[0].result
       if (isAuthUrl) {
         login.loginFromAuthPageData(result.authToken, result.currentName)

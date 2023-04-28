@@ -4,7 +4,7 @@ const fs = require('fs')
 const watch = process.argv.includes('--watch') || process.env.WATCH === 'true'
 
 // Current options: chrome, firefox, safari, safari_ios
-const target = 'chrome'
+const target = 'firefox'
 
 process.env.NODE_ENV ||= 'production'
 const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.convus.org' : 'http://localhost:3009'
@@ -20,9 +20,8 @@ const replaceEnvValues = (str) => {
 // TODO: make this a better process
 const htmlContent = fs.readFileSync('src/index.html', 'utf8')
 fs.writeFileSync('dist/index.html', replaceEnvValues(htmlContent))
-// manifest for the current env
-const mSuffix = target === 'firefox' ? 'firefox' : 'v3'
-const manifestContent = fs.readFileSync(`src/manifest_${mSuffix}.json`, 'utf8')
+// manifest
+const manifestContent = fs.readFileSync('src/manifest_v3.json', 'utf8')
 fs.writeFileSync('dist/manifest.json', replaceEnvValues(manifestContent))
 // esbuild doesn't build Immediately Invoked Function Expression (IIFE) files and respect their return values
 // https://github.com/evanw/esbuild/issues/2277

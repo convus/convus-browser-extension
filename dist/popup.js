@@ -525,7 +525,7 @@
     window.authToken = authToken;
     window.currentName = currentName;
   };
-  var countdownToClose = (selector, ms, func) => {
+  var countdownToClose = (selector, ms, closeFunc = false) => {
     let secondsLeft = ms / 1e3;
     const countdownEl = document.querySelector(selector);
     countdownEl.textContent = secondsLeft;
@@ -535,7 +535,10 @@
         clearInterval(countdownTimer);
       }
     }, 1e3);
-    setTimeout(func, ms);
+    if (closeFunc) {
+      setTimeout(closeFunc, ms);
+    }
+    setTimeout(window.close, ms);
   };
   var removeAuthData = () => {
     browser.storage.local.remove("authToken");
@@ -543,6 +546,10 @@
     window.authToken = void 0;
   };
   var isAuthUrl = (url = null) => authUrl === (url || window.currentUrl);
+  var isSignInOrUpUrl = (url = null) => {
+    url ||= window.currentUrl;
+    return `${baseUrl2}/users/sign_in` === url || `${baseUrl2}/users/sign_up` === url;
+  };
   var checkAuthToken = async function(token) {
     if (utilities_default.retryIfMissing(formAuthUrl, checkAuthToken, token)) {
       return;
@@ -578,27 +585,34 @@
     if (utilities_default.retryIfMissing(loginMessage, loginTime)) {
       return;
     }
+    if (isSignInOrUpUrl()) {
+      document.querySelector("#sign_in_message p").textContent = "Sign in to Convus on this page";
+    }
     utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
     utilities_default.elementsShow(loginMessage);
     utilities_default.pageLoadedFunctions();
+    document.getElementById("signInBtn").addEventListener("click", () => {
+      setTimeout(window.close, 100);
+    });
   };
   var logout = () => {
     removeAuthData();
     utilities_default.toggleMenu(false, "hide");
     utilities_default.elementsHide("#new_rating");
     utilities_default.elementsShow("#auth_message_out");
-    countdownToClose("#out_countdown", 5e3, window.close);
+    countdownToClose("#out_countdown", 5e3);
   };
   var login_default = {
     loginFromAuthPageData,
     checkAuthToken,
     isAuthUrl,
+    isSignInOrUpUrl,
     loginTime,
     logout
   };
 
   // popup.js
-  var browserTarget = "chrome";
+  var browserTarget = "firefox";
   if (browserTarget == "chrome") {
     browser = chrome;
   }
@@ -618,14 +632,16 @@
     window.currentUrl = tab.url;
     const isAuthUrl2 = login_default.isAuthUrl(tab.url);
     window.tabId = tab.id;
-    if (!isAuthUrl2) {
-      rating_default.updateRatingFields(tab.url, tab.title);
+    if (login_default.isSignInOrUpUrl(window.currentUrl)) {
+      log_default.debug("Viewing Convus sign in or up");
+      return;
+    } else if (!isAuthUrl2) {
+      rating_default.updateRatingFields(window.currentUrl, tab.title);
     }
     browser.scripting.executeScript({
       target: { tabId: tab.id },
       files: ["/injected_script.js"]
     }).then((response) => {
-      log_default.debug("Script response: ", response);
       const result = response[0].result;
       if (isAuthUrl2) {
         login_default.loginFromAuthPageData(result.authToken, result.currentName);
