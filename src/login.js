@@ -10,7 +10,7 @@ const formAuthUrl = baseUrl + '/api/v1/auth'
 
 // Internal
 const storeAuthData = (authToken, currentName) => {
-  // TODO, there has to be a better way to handle passing the arguments
+  // TODO: ^ there has to be a better way to handle passing the arguments
   browser.storage.local.set({ authToken: authToken, currentName: currentName })
   window.authToken = authToken
   window.currentName = currentName
@@ -40,7 +40,7 @@ const checkAuthToken = async function (token) {
   if (utilities.retryIfMissing(formAuthUrl, checkAuthToken, token)) { return }
 
   const result = await api.isAuthTokenValid(formAuthUrl, token)
-  log.debug('auth token check success:', result)
+  log.trace('auth token check success:', result)
   if (result) {
     rating.showRatingForm()
     return
@@ -51,7 +51,7 @@ const checkAuthToken = async function (token) {
 }
 
 const loginFromAuthPageData = (authToken, currentName) => {
-  log.debug(`authToken: ${authToken}, ${currentName}`)
+  log.trace(`loginFromAuthPageData - authToken: ${authToken}, ${currentName}`)
   utilities.hideAlerts()
   storeAuthData(authToken, currentName)
   // in case we're already showing the "sign in to auth" message
@@ -67,7 +67,7 @@ const loginFromAuthPageData = (authToken, currentName) => {
 }
 
 const loginTime = () => {
-  log.debug('loginTime')
+  log.trace('loginTime')
   // If we're on the auth page, don't do anything
   if (window.onAuthUrl) { return }
 

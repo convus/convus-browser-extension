@@ -1,6 +1,8 @@
 // NOTE: the function that's passed into executeScript must be self contained -
 //       it can't reference other things (e.g. other functions in this file)
-const getPageData = (isAuthUrl = false) => {
+
+// (function() {
+export default function getPageData (isAuthUrl = false) {
   // If it's auth data, we only care about the two auth meta fields
   if (isAuthUrl) {
     const authData = {
@@ -15,22 +17,22 @@ const getPageData = (isAuthUrl = false) => {
   const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair))
   // Convert an iterable of elements to a list of element attributes
   const elsToAttrs = (els) => Array.from(els).map(elToAttrs)
-
+  // Count the total words on the page
   const countWords = (str) => str.trim().split(/\s+/).length
+  // Grab the JSON-LD data (skip parsing it)
+  const jsonLdScripts = (els) => Array.from(els).map((i) => i.innerText.trim())
 
-  // document.addEventListener("DOMContentLoaded", function(event) {
+  console.log('running on the page!')
+
   let metadataAttrs = elsToAttrs(document.getElementsByTagName('meta'))
   const wordCount = { word_count: countWords(document.body.textContent) }
 
   // Add jsonLD - don't parse here, in case malformed
-  const jsonLD = Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((i) => i.innerText.trim())
+  const jsonLD = jsonLdScripts(document.querySelectorAll('script[type="application/ld+json"]'))
   if (jsonLD.length) {
-    metadataAttrs = metadataAttrs.concat([{ json_ld: jsonLD }])
+    metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]]
   }
-  return metadataAttrs.concat([wordCount])
-  // }
-}
 
-export default {
-  getPageData
+  return metadataAttrs.concat([wordCount])
 }
+// })

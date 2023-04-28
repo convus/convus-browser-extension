@@ -470,7 +470,7 @@
     utilities_default.elementsCollapse(targetField, el.checked ? "show" : "hide");
   };
   var ratingTime = () => {
-    log_default.debug("ratingTime");
+    log_default.trace("ratingTime");
     const ratingForm = document.getElementById("new_rating");
     if (utilities_default.retryIfMissing(ratingForm, ratingTime)) {
       return;
@@ -483,7 +483,7 @@
     utilities_default.pageLoadedFunctions();
   };
   var showRatingForm = () => {
-    log_default.debug("showRatingForm");
+    log_default.trace("showRatingForm");
     if (window.authToken) {
       utilities_default.elementsHide(".spinners, #whitespace-preserver");
       utilities_default.elementsShow("#rating-save-row");
@@ -502,7 +502,7 @@
     ratingTime();
   };
   var addMetadata = (metadata) => {
-    log_default.debug("addMetadata");
+    log_default.debug(`addMetadata, metadata length: ${metadata?.length}`);
     const citationMetadataField = document.getElementById("citation_metadata_str");
     utilities_default.retryIfMissing(citationMetadataField, addMetadata, metadata);
     citationMetadataField.value = JSON.stringify(metadata);
@@ -543,7 +543,7 @@
       return;
     }
     const result = await api_default.isAuthTokenValid(formAuthUrl, token);
-    log_default.debug("auth token check success:", result);
+    log_default.trace("auth token check success:", result);
     if (result) {
       rating_default.showRatingForm();
       return;
@@ -552,7 +552,7 @@
     loginTime();
   };
   var loginFromAuthPageData = (authToken, currentName) => {
-    log_default.debug(`authToken: ${authToken}, ${currentName}`);
+    log_default.trace(`loginFromAuthPageData - authToken: ${authToken}, ${currentName}`);
     utilities_default.hideAlerts();
     storeAuthData(authToken, currentName);
     utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
@@ -565,7 +565,7 @@
     countdownToClose("#in_countdown", 3e3, window.closeTabFunction);
   };
   var loginTime = () => {
-    log_default.debug("loginTime");
+    log_default.trace("loginTime");
     if (window.onAuthUrl) {
       return;
     }
@@ -591,8 +591,8 @@
     logout
   };
 
-  // injected_scripts.js
-  var getPageData = (isAuthUrl = false) => {
+  // injected_script.js
+  function getPageData(isAuthUrl = false) {
     if (isAuthUrl) {
       const authData = {
         currentName: document.querySelector('meta[name="ext-username"]')?.content,
@@ -604,17 +604,16 @@
     const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
     const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
     const countWords = (str) => str.trim().split(/\s+/).length;
+    const jsonLdScripts = (els) => Array.from(els).map((i) => i.innerText.trim());
+    console.log("running on the page!");
     let metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
     const wordCount = { word_count: countWords(document.body.textContent) };
-    const jsonLD = Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((i) => i.innerText.trim());
+    const jsonLD = jsonLdScripts(document.querySelectorAll('script[type="application/ld+json"]'));
     if (jsonLD.length) {
-      metadataAttrs = metadataAttrs.concat([{ json_ld: jsonLD }]);
+      metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]];
     }
     return metadataAttrs.concat([wordCount]);
-  };
-  var injected_scripts_default = {
-    getPageData
-  };
+  }
 
   // popup.js
   var browserTarget = "chrome";
@@ -627,6 +626,7 @@
       log_default.debug(`missing auth!   authToken: ${data.authToken} and currentName: ${data.currentName}`);
       login_default.loginTime();
     } else {
+      log_default.trace("auth present");
       window.authToken = data.authToken;
       window.currentName = data.currentName;
       login_default.checkAuthToken(data.authToken);
@@ -640,17 +640,19 @@
     if (!window.onAuthUrl) {
       rating_default.updateRatingFields(tab.url, tab.title);
     }
-    const response = await browser.scripting.executeScript({
+    browser.scripting.executeScript({
       target: { tabId: tab.id },
-      function: injected_scripts_default.getPageData,
+      function: getPageData,
       args: [window.onAuthUrl]
+    }).then((response) => {
+      log_default.debug(`Script response: ${response}`);
+      const result = response[0].result;
+      if (window.onAuthUrl) {
+        login_default.loginFromAuthPageData(result.authToken, result.currentName);
+      } else {
+        rating_default.addMetadata(result);
+      }
     });
-    const result = response[0].result;
-    if (window.onAuthUrl) {
-      login_default.loginFromAuthPageData(result.authToken, result.currentName);
-    } else {
-      rating_default.addMetadata(result);
-    }
   };
   getCurrentTab();
 })();

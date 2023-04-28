@@ -1,7 +1,7 @@
 import log from './log' // eslint-disable-line
 import login from './login'
 import rating from './rating'
-import injectedScripts from './injected_scripts'
+import injectedScript from './injected_script'
 
 // instantiating these outside functions prevents a periodic "process is undefined" bug
 const browserTarget = process.env.browser_target
@@ -16,7 +16,7 @@ browser.storage.local.get(['authToken', 'currentName'])
       log.debug(`missing auth!   authToken: ${data.authToken} and currentName: ${data.currentName}`)
       login.loginTime()
     } else {
-      // log.debug(`auth present`)
+      log.trace('auth present')
       window.authToken = data.authToken
       window.currentName = data.currentName
       login.checkAuthToken(data.authToken)
@@ -36,18 +36,21 @@ const getCurrentTab = async function () {
   // Update rating fields that we have info for, the metadata can be added later
   if (!window.onAuthUrl) { rating.updateRatingFields(tab.url, tab.title) }
 
-  const response = await browser.scripting.executeScript({
+  // const response = await browser.scripting.executeScript({
+  // files: ["injected_scripts.js"]
+  browser.scripting.executeScript({
     target: { tabId: tab.id },
-    function: injectedScripts.getPageData,
+    function: injectedScript,
     args: [window.onAuthUrl]
+  }).then(response => {
+    log.debug(`Script response: ${response}`)
+    const result = response[0].result
+    if (window.onAuthUrl) {
+      login.loginFromAuthPageData(result.authToken, result.currentName)
+    } else {
+      rating.addMetadata(result)
+    }
   })
-
-  const result = response[0].result
-  if (window.onAuthUrl) {
-    login.loginFromAuthPageData(result.authToken, result.currentName)
-  } else {
-    rating.addMetadata(result)
-  }
 }
 
 getCurrentTab()

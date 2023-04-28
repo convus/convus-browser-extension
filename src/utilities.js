@@ -50,7 +50,7 @@ const elementsShow = (selOrEl) => {
 // toggle can be: [true, 'hide', 'show']
 const elementsCollapse = (selOrEl, toggle = true) => {
   const els = elementsFromSelectorOrElements(selOrEl)
-  // log.debug(`toggling: ${toggle}`)
+  // log.trace(`toggling: ${toggle}`)
   // If toggling, determine which direction to toggle
   if (toggle === true) {
     toggle = els[0]?.classList.contains('hidden') ? 'show' : 'hide'
@@ -77,7 +77,7 @@ const copyShare = (event) => {
   // Get the share wrapper
   const el = event.target.closest('.shareVisible')
   const shareText = el.getAttribute('data-sharetext')
-  // log.debug(`copyShare: ${shareText}`)
+  // log.trace(`copyShare: ${shareText}`)
   navigator.clipboard.writeText(shareText)
   const copiedAlert = document.createElement('p')
   copiedAlert.textContent = 'Copied results to clipboard'
