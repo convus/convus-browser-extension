@@ -253,7 +253,7 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  if (false) {
+  if (true) {
     import_loglevel.default.setLevel("warn");
   } else {
     import_loglevel.default.setLevel("debug");
@@ -342,7 +342,7 @@
       return true;
     }
   };
-  var baseUrl = "http://localhost:3009";
+  var baseUrl = "https://www.convus.org";
   var renderLocalAlert = () => {
     if (document.getElementById("local-alert")) {
       return;
@@ -517,7 +517,7 @@
   };
 
   // login.js
-  var baseUrl2 = "http://localhost:3009";
+  var baseUrl2 = "https://www.convus.org";
   var formAuthUrl = baseUrl2 + "/api/v1/auth";
   var authUrl = baseUrl2 + "/browser_extension_auth";
   var storeAuthData = (authToken, currentName) => {
@@ -614,7 +614,7 @@
 
   // injected_script.js
   function injectedScript() {
-    const authUrl2 = "{{baseUrl}}/browser_extension_auth";
+    const authUrl2 = "https://www.convus.org/browser_extension_auth";
     console.log("Convus extension is getting the page metadata!");
     if (authUrl2 === window.location.href) {
       const authData = {
@@ -657,7 +657,7 @@
   var getCurrentTab = async function() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     window.currentUrl = tab.url;
-    const isAuthUrl2 = login_default.isAuthUrl(tab.url);
+    const isAuthUrl2 = login_default.isAuthUrl(window.currentUrl);
     window.tabId = tab.id;
     if (login_default.isSignInOrUpUrl(window.currentUrl)) {
       log_default.debug("Viewing Convus sign in or up");
@@ -672,6 +672,8 @@
       log_default.debug("Script response: ", response);
       const result = safariType ? response[0] : response[0].result;
       if (isAuthUrl2) {
+        log_default.debug(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
+        log_default.debug(`result: ${JSON.stringify(result)}`);
         login_default.loginFromAuthPageData(result.authToken, result.currentName);
       } else {
         rating_default.addMetadata(result);

@@ -6,7 +6,7 @@ const watch = process.argv.includes('--watch') || process.env.WATCH === 'true'
 // Current options: chrome, firefox, safari, safari_ios
 const target = 'safari'
 
-process.env.NODE_ENV ||= 'development'
+process.env.NODE_ENV ||= 'production'
 const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.convus.org' : 'http://localhost:3009'
 const version = process.env.npm_package_version
 
@@ -23,11 +23,6 @@ fs.writeFileSync('dist/index.html', replaceEnvValues(htmlContent))
 // manifest
 const manifestContent = fs.readFileSync('src/manifest_v3.json', 'utf8')
 fs.writeFileSync('dist/manifest.json', replaceEnvValues(manifestContent))
-// esbuild doesn't build Immediately Invoked Function Expression (IIFE) files and respect their return values
-// https://github.com/evanw/esbuild/issues/2277
-// This extension injects a script and uses the return value, so we need to handle it ourselves
-const jsContent = fs.readFileSync('src/injected_script.js', 'utf8')
-fs.writeFileSync('dist/injected_script.js', replaceEnvValues(jsContent))
 
 // esbuild, go to town
 const errorFilePath = 'esbuild_error'
