@@ -4,7 +4,7 @@ const fs = require('fs')
 const watch = process.argv.includes('--watch') || process.env.WATCH === 'true'
 
 // Current options: chrome, firefox, safari, safari_ios
-const target = 'safari'
+const target = 'safari_ios'
 
 process.env.NODE_ENV ||= 'production'
 const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.convus.org' : 'http://localhost:3009'

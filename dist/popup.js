@@ -535,6 +535,10 @@
         clearInterval(countdownTimer);
       }
     }, 1e3);
+    if (closeFunc) {
+      setTimeout(closeFunc, ms);
+    }
+    setTimeout(window.close, ms);
   };
   var removeAuthData = () => {
     browser.storage.local.remove("authToken");
@@ -563,7 +567,7 @@
     log_default.trace(`loginFromAuthPageData - authToken: ${authToken}, ${currentName}`);
     utilities_default.hideAlerts();
     storeAuthData(authToken, currentName);
-    utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
+    utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver, #sign_in_message");
     utilities_default.elementsShow("#auth_message_in");
     window.closeTabFunction = (event = false) => {
       event && event.preventDefault();
@@ -634,7 +638,7 @@
   }
 
   // popup.js
-  var browserTarget = "safari";
+  var browserTarget = "safari_ios";
   var safariType = !!browserTarget.match("safari");
   if (browserTarget == "chrome") {
     browser = chrome;
