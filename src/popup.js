@@ -38,13 +38,15 @@ const getCurrentTab = async function () {
     // Update rating fields that we have info for, the metadata can be added later
     rating.updateRatingFields(window.currentUrl, tab.title)
   }
+  const scriptSource = safari.extension.baseURI + 'injected_script.js'
+  log.debug(scriptSource)
 
-  browser.scripting.executeScript({
+  await browser.scripting.executeScript({
     target: { tabId: tab.id },
-    files: ['/injected_script.js']
+    files: [scriptSource]
   })
     .then(response => {
-      // log.debug('Script response: ', response)
+      log.debug('Script response: ', response)
       const result = response[0].result
       if (isAuthUrl) {
         login.loginFromAuthPageData(result.authToken, result.currentName)

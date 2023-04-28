@@ -86,6 +86,7 @@ const loginTime = () => {
   if (utilities.retryIfMissing(loginMessage, loginTime)) { return }
   // If the user is signing in or signing up on Convus, show text rather than a button which opens another tab
   if (isSignInOrUpUrl()) {
+    log.debug('sign in page!!!')
     document.querySelector('#sign_in_message p').textContent = 'Sign in to Convus on this page'
   }
   utilities.elementsHide('.spinners, #new_rating, #whitespace-preserver')

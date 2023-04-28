@@ -253,7 +253,7 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  if (true) {
+  if (false) {
     import_loglevel.default.setLevel("warn");
   } else {
     import_loglevel.default.setLevel("debug");
@@ -342,7 +342,7 @@
       return true;
     }
   };
-  var baseUrl = "https://www.convus.org";
+  var baseUrl = "http://localhost:3009";
   var renderLocalAlert = () => {
     if (document.getElementById("local-alert")) {
       return;
@@ -517,7 +517,7 @@
   };
 
   // login.js
-  var baseUrl2 = "https://www.convus.org";
+  var baseUrl2 = "http://localhost:3009";
   var formAuthUrl = baseUrl2 + "/api/v1/auth";
   var authUrl = baseUrl2 + "/browser_extension_auth";
   var storeAuthData = (authToken, currentName) => {
@@ -586,6 +586,7 @@
       return;
     }
     if (isSignInOrUpUrl()) {
+      log_default.debug("sign in page!!!");
       document.querySelector("#sign_in_message p").textContent = "Sign in to Convus on this page";
     }
     utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
@@ -612,7 +613,7 @@
   };
 
   // popup.js
-  var browserTarget = "firefox";
+  var browserTarget = "safari";
   if (browserTarget == "chrome") {
     browser = chrome;
   }
@@ -638,10 +639,13 @@
     } else if (!isAuthUrl2) {
       rating_default.updateRatingFields(window.currentUrl, tab.title);
     }
-    browser.scripting.executeScript({
+    const scriptSource = safari.extension.baseURI + "injected_script.js";
+    log_default.debug(scriptSource);
+    await browser.scripting.executeScript({
       target: { tabId: tab.id },
-      files: ["/injected_script.js"]
+      files: [scriptSource]
     }).then((response) => {
+      log_default.debug("Script response: ", response);
       const result = response[0].result;
       if (isAuthUrl2) {
         login_default.loginFromAuthPageData(result.authToken, result.currentName);

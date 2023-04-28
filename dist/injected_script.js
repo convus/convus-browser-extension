@@ -1,5 +1,7 @@
 (function () {
-  const authUrl = 'https://www.convus.org/browser_extension_auth'
+  const authUrl = 'http://localhost:3009/browser_extension_auth'
+
+  console.log('Convus extension is getting the page metadata!')
 
   // If on the extension auth URL, we only care about the two auth meta fields
   if (authUrl === window.location.href) {
@@ -19,8 +21,6 @@
   const countWords = (str) => str.trim().split(/\s+/).length
   // Grab the JSON-LD data from the script elements, without parsing it
   const jsonLdString = (scriptEls) => Array.from(scriptEls).map((i) => i.innerText.trim())
-
-  console.log('running on the page!')
 
   let metadataAttrs = elsToAttrs(document.getElementsByTagName('meta'))
   const wordCount = { word_count: countWords(document.body.textContent) }
