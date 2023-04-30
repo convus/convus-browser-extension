@@ -112,7 +112,7 @@ const renderAlert = (kind, text, shareText) => {
 const renderAlerts = (messages, shareText = null) => {
   hideAlerts()
   // Wrap messages if messages is just a single message
-  if (typeof(messages[0]) === "string") { messages = [messages] }
+  if (typeof (messages[0]) === 'string') { messages = [messages] }
   messages.forEach(m => renderAlert(m[0], m[1], shareText))
 }
 
