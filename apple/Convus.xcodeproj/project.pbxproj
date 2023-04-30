@@ -90,7 +90,6 @@
 /* Begin PBXFileReference section */
 		5D3E575829FADC7B00CB544E /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		5D55965129B82A1100BD5C1C /* application.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = application.css; path = ../../dist/application.css; sourceTree = "<group>"; };
-		5D7664B229FC7B61008C0D7C /* injected_script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = injected_script.js; path = ../dist/injected_script.js; sourceTree = "<group>"; };
 		5D8F00DD29B574AC003A1EE5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = ../Base.lproj/Main.html; sourceTree = "<group>"; };
 		5D8F00DE29B574AC003A1EE5 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		5D8F00DF29B574AC003A1EE5 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
@@ -155,7 +154,6 @@
 		5D8F00D529B574AC003A1EE5 = {
 			isa = PBXGroup;
 			children = (
-				5D7664B229FC7B61008C0D7C /* injected_script.js */,
 				5D3E575829FADC7B00CB544E /* Config.xcconfig */,
 				5D8F00DA29B574AC003A1EE5 /* Shared (App) */,
 				5D8F00E329B574AD003A1EE5 /* Shared (Extension) */,
