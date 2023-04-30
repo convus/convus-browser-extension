@@ -253,11 +253,7 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  if (true) {
-    import_loglevel.default.setLevel("warn");
-  } else {
-    import_loglevel.default.setLevel("debug");
-  }
+  import_loglevel.default.setLevel("debug");
   var log_default = import_loglevel.default;
 
   // api.js
@@ -406,10 +402,7 @@
     el.querySelector(".btnShare").addEventListener("click", copyShare);
     return el;
   };
-  var renderAlerts = (message, shareText = null) => {
-    hideAlerts();
-    const kind = message[0];
-    const text = message[1];
+  var renderAlert = (kind, text, shareText) => {
     const body = document.getElementById("body-popup");
     const alert = document.createElement("div");
     alert.textContent = text;
@@ -418,6 +411,13 @@
     if (typeof shareText !== "undefined" && shareText !== null) {
       alert.after(shareDiv(shareText));
     }
+  };
+  var renderAlerts = (messages, shareText = null) => {
+    hideAlerts();
+    if (typeof messages[0] === "string") {
+      messages = [messages];
+    }
+    messages.forEach((m) => renderAlert(m[0], m[1], shareText));
   };
   var toggleMenu = (event = false, toggle = true) => {
     event && event.preventDefault();
@@ -654,6 +654,34 @@
       login_default.checkAuthToken(data.authToken);
     }
   });
+  var handlePageData = (response, isAuthUrl2) => {
+    log_default.debug("Script response: ", response);
+    const result = safariType ? response[0] : response[0]?.result;
+    if (isAuthUrl2) {
+      log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
+      log_default.warn(`result: ${JSON.stringify(result)}`);
+      login_default.loginFromAuthPageData(result.authToken, result.currentName);
+    } else {
+      rating_default.addMetadata(result);
+    }
+  };
+  var injectScript = async function(tabId, isAuthUrl2) {
+    await browser.scripting.executeScript({
+      target: { tabId },
+      func: injectedScript
+    }).then((response) => {
+      try {
+        handlePageData(response, isAuthUrl2);
+      } catch (e) {
+        log_default.debug(e);
+        let alerts = [["warning", "Unable to parse the page."]];
+        if (browserTarget === "safari_ios") {
+          alerts = [...[["error", "Please upgrade to the most recent version iOS"]], ...alerts];
+        }
+        utilities_default.renderAlerts(alerts);
+      }
+    });
+  };
   var getCurrentTab = async function() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     window.currentUrl = tab.url;
@@ -665,20 +693,7 @@
     } else if (!isAuthUrl2) {
       rating_default.updateRatingFields(window.currentUrl, tab.title);
     }
-    await browser.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: injectedScript
-    }).then((response) => {
-      log_default.debug("Script response: ", response);
-      const result = safariType ? response[0] : response[0].result;
-      if (isAuthUrl2) {
-        log_default.debug(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
-        log_default.debug(`result: ${JSON.stringify(result)}`);
-        login_default.loginFromAuthPageData(result.authToken, result.currentName);
-      } else {
-        rating_default.addMetadata(result);
-      }
-    });
+    injectScript(window.tabId, isAuthUrl2);
   };
   getCurrentTab();
 })();

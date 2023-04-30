@@ -95,12 +95,8 @@ const shareDiv = (shareText) => {
   el.querySelector('.btnShare').addEventListener('click', copyShare)
   return el
 }
-
-// message is an array of: [kind, text]
-const renderAlerts = (message, shareText = null) => {
-  hideAlerts()
-  const kind = message[0]
-  const text = message[1]
+// Internal
+const renderAlert = (kind, text, shareText) => {
   const body = document.getElementById('body-popup')
   const alert = document.createElement('div')
   alert.textContent = text
@@ -110,6 +106,14 @@ const renderAlerts = (message, shareText = null) => {
   if (typeof (shareText) !== 'undefined' && shareText !== null) {
     alert.after(shareDiv(shareText))
   }
+}
+
+// message is an array of: [kind, text]
+const renderAlerts = (messages, shareText = null) => {
+  hideAlerts()
+  // Wrap messages if messages is just a single message
+  if (typeof(messages[0]) === "string") { messages = [messages] }
+  messages.forEach(m => renderAlert(m[0], m[1], shareText))
 }
 
 // toggle: [true, 'hide', 'show'] - matches elementsCollapse above
