@@ -18,7 +18,7 @@ const storeAuthData = (authToken, currentName) => {
 }
 
 // Internal
-const countdownToClose = (selector, ms, closeFunc = false) => {
+const countdownAndClose = (selector, ms, closeFunc = false) => {
   let secondsLeft = ms / 1000
   const countdownEl = document.querySelector(selector)
   countdownEl.textContent = secondsLeft // Set the initial time
@@ -67,7 +67,7 @@ const loginFromAuthPageData = (authToken, currentName) => {
   utilities.hideAlerts()
   storeAuthData(authToken, currentName)
   // in case we're already showing the "sign in to auth" message
-  utilities.elementsHide('.spinners, #new_rating, #whitespace-preserver')
+  utilities.elementsHide('.spinners, #new_rating, #whitespace-preserver, #sign_in_message')
   utilities.elementsShow('#auth_message_in')
 
   window.closeTabFunction = (event = false) => {
@@ -75,7 +75,7 @@ const loginFromAuthPageData = (authToken, currentName) => {
     chrome.tabs.remove(window.tabId)
   }
   document.getElementById('closeTabLink').addEventListener('click', window.closeTabFunction)
-  countdownToClose('#in_countdown', 3000, window.closeTabFunction)
+  countdownAndClose('#in_countdown', 3000, window.closeTabFunction)
 }
 
 const loginTime = () => {
@@ -86,6 +86,7 @@ const loginTime = () => {
   if (utilities.retryIfMissing(loginMessage, loginTime)) { return }
   // If the user is signing in or signing up on Convus, show text rather than a button which opens another tab
   if (isSignInOrUpUrl()) {
+    log.debug('sign in page!!!')
     document.querySelector('#sign_in_message p').textContent = 'Sign in to Convus on this page'
   }
   utilities.elementsHide('.spinners, #new_rating, #whitespace-preserver')
@@ -93,7 +94,7 @@ const loginTime = () => {
   utilities.pageLoadedFunctions()
 
   // In Firefox, the popup stays around after you click the signIn button
-  // Ideally, it would go back to getCurrentTab,, but I couldn't figure out how, so just close
+  // Ideally, this would call getCurrentTab, but I couldn't figure out how, so just closing
   document.getElementById('signInBtn').addEventListener('click', () => {
     setTimeout(window.close, 100)
   })
@@ -105,8 +106,7 @@ const logout = () => {
 
   utilities.elementsHide('#new_rating')
   utilities.elementsShow('#auth_message_out')
-  // Close popup after a pause
-  countdownToClose('#out_countdown', 5000)
+  countdownAndClose('#out_countdown', 5000)
 }
 
 export default {

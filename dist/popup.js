@@ -253,11 +253,7 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  if (true) {
-    import_loglevel.default.setLevel("warn");
-  } else {
-    import_loglevel.default.setLevel("debug");
-  }
+  import_loglevel.default.setLevel("debug");
   var log_default = import_loglevel.default;
 
   // api.js
@@ -406,10 +402,7 @@
     el.querySelector(".btnShare").addEventListener("click", copyShare);
     return el;
   };
-  var renderAlerts = (message, shareText = null) => {
-    hideAlerts();
-    const kind = message[0];
-    const text = message[1];
+  var renderAlert = (kind, text, shareText) => {
     const body = document.getElementById("body-popup");
     const alert = document.createElement("div");
     alert.textContent = text;
@@ -418,6 +411,13 @@
     if (typeof shareText !== "undefined" && shareText !== null) {
       alert.after(shareDiv(shareText));
     }
+  };
+  var renderAlerts = (messages, shareText = null) => {
+    hideAlerts();
+    if (typeof messages[0] === "string") {
+      messages = [messages];
+    }
+    messages.forEach((m) => renderAlert(m[0], m[1], shareText));
   };
   var toggleMenu = (event = false, toggle = true) => {
     event && event.preventDefault();
@@ -525,7 +525,7 @@
     window.authToken = authToken;
     window.currentName = currentName;
   };
-  var countdownToClose = (selector, ms, closeFunc = false) => {
+  var countdownAndClose = (selector, ms, closeFunc = false) => {
     let secondsLeft = ms / 1e3;
     const countdownEl = document.querySelector(selector);
     countdownEl.textContent = secondsLeft;
@@ -567,14 +567,14 @@
     log_default.trace(`loginFromAuthPageData - authToken: ${authToken}, ${currentName}`);
     utilities_default.hideAlerts();
     storeAuthData(authToken, currentName);
-    utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
+    utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver, #sign_in_message");
     utilities_default.elementsShow("#auth_message_in");
     window.closeTabFunction = (event = false) => {
       event && event.preventDefault();
       chrome.tabs.remove(window.tabId);
     };
     document.getElementById("closeTabLink").addEventListener("click", window.closeTabFunction);
-    countdownToClose("#in_countdown", 3e3, window.closeTabFunction);
+    countdownAndClose("#in_countdown", 3e3, window.closeTabFunction);
   };
   var loginTime = () => {
     log_default.trace("loginTime");
@@ -586,6 +586,7 @@
       return;
     }
     if (isSignInOrUpUrl()) {
+      log_default.debug("sign in page!!!");
       document.querySelector("#sign_in_message p").textContent = "Sign in to Convus on this page";
     }
     utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
@@ -600,7 +601,7 @@
     utilities_default.toggleMenu(false, "hide");
     utilities_default.elementsHide("#new_rating");
     utilities_default.elementsShow("#auth_message_out");
-    countdownToClose("#out_countdown", 5e3);
+    countdownAndClose("#out_countdown", 5e3);
   };
   var login_default = {
     loginFromAuthPageData,
@@ -611,8 +612,34 @@
     logout
   };
 
+  // injected_script.js
+  function injectedScript() {
+    const authUrl2 = "https://www.convus.org/browser_extension_auth";
+    console.log("Convus extension is getting the page metadata!");
+    if (authUrl2 === window.location.href) {
+      const authData = {
+        currentName: document.querySelector('meta[name="ext-username"]')?.content,
+        authToken: document.querySelector('meta[name="ext-token"]')?.content
+      };
+      return authData;
+    }
+    const attrToPair = (attr) => [attr.name, attr.value];
+    const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
+    const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
+    const countWords = (str) => str.trim().split(/\s+/).length;
+    const jsonLdString = (scriptEls) => Array.from(scriptEls).map((i) => i.innerText.trim());
+    let metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
+    const wordCount = { word_count: countWords(document.body.textContent) };
+    const jsonLD = jsonLdString(document.querySelectorAll('script[type="application/ld+json"]'));
+    if (jsonLD.length) {
+      metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]];
+    }
+    return metadataAttrs.concat([wordCount]);
+  }
+
   // popup.js
-  var browserTarget = "firefox";
+  var browserTarget = "safari_ios";
+  var safariType = !!browserTarget.match("safari");
   if (browserTarget == "chrome") {
     browser = chrome;
   }
@@ -627,10 +654,38 @@
       login_default.checkAuthToken(data.authToken);
     }
   });
+  var handlePageData = (response, isAuthUrl2) => {
+    log_default.debug("Script response: ", response);
+    const result = safariType ? response[0] : response[0]?.result;
+    if (isAuthUrl2) {
+      log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
+      log_default.warn(`result: ${JSON.stringify(result)}`);
+      login_default.loginFromAuthPageData(result.authToken, result.currentName);
+    } else {
+      rating_default.addMetadata(result);
+    }
+  };
+  var injectScript = async function(tabId, isAuthUrl2) {
+    await browser.scripting.executeScript({
+      target: { tabId },
+      func: injectedScript
+    }).then((response) => {
+      try {
+        handlePageData(response, isAuthUrl2);
+      } catch (e) {
+        log_default.debug(e);
+        let alerts = [["warning", "Unable to parse the page."]];
+        if (browserTarget === "safari_ios") {
+          alerts = [...[["error", "Please upgrade to the most recent version iOS"]], ...alerts];
+        }
+        utilities_default.renderAlerts(alerts);
+      }
+    });
+  };
   var getCurrentTab = async function() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     window.currentUrl = tab.url;
-    const isAuthUrl2 = login_default.isAuthUrl(tab.url);
+    const isAuthUrl2 = login_default.isAuthUrl(window.currentUrl);
     window.tabId = tab.id;
     if (login_default.isSignInOrUpUrl(window.currentUrl)) {
       log_default.debug("Viewing Convus sign in or up");
@@ -638,17 +693,7 @@
     } else if (!isAuthUrl2) {
       rating_default.updateRatingFields(window.currentUrl, tab.title);
     }
-    browser.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ["/injected_script.js"]
-    }).then((response) => {
-      const result = response[0].result;
-      if (isAuthUrl2) {
-        login_default.loginFromAuthPageData(result.authToken, result.currentName);
-      } else {
-        rating_default.addMetadata(result);
-      }
-    });
+    injectScript(window.tabId, isAuthUrl2);
   };
   getCurrentTab();
 })();
