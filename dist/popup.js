@@ -497,6 +497,7 @@
     }
   };
   var updateRatingFields = (tabUrl, title) => {
+    log_default.trace("updateRatingFields");
     const ratingUrlField = document.getElementById("submitted_url");
     utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
     ratingUrlField.value = tabUrl;
@@ -657,9 +658,9 @@
   var handlePageData = (response, isAuthUrl2) => {
     log_default.debug("Script response: ", response);
     const result = safariType ? response[0] : response[0]?.result;
+    log_default.warn(`result: ${JSON.stringify(result)}`);
     if (isAuthUrl2) {
       log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
-      log_default.warn(`result: ${JSON.stringify(result)}`);
       login_default.loginFromAuthPageData(result.authToken, result.currentName);
     } else {
       rating_default.addMetadata(result);
@@ -684,6 +685,7 @@
   };
   var getCurrentTab = async function() {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    log_default.trace(tab);
     window.currentUrl = tab.url;
     const isAuthUrl2 = login_default.isAuthUrl(window.currentUrl);
     window.tabId = tab.id;

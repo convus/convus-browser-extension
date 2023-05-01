@@ -2,12 +2,12 @@ import log from './log' // eslint-disable-line
 import login from './login'
 import rating from './rating'
 import injectedScript from './injected_script'
-// Utilities to render alerts if handlePageData fails
+// TODO: only import renderAlerts
 import utilities from './utilities'
 
 // instantiating these outside functions prevents a periodic "process is undefined" bug
 const browserTarget = process.env.browser_target
-const safariType = !!browserTarget.match('safari') // get safari_ios too
+const safariType = !!browserTarget.match('safari') // match safari and safari_ios
 
 // Oh Chrome, it would be great if you used `browser` instead of `chrome`
 if (browserTarget == 'chrome') { browser = chrome } // eslint-disable-line
@@ -29,9 +29,9 @@ const handlePageData = (response, isAuthUrl) => {
   log.debug('Script response: ', response)
 
   const result = safariType ? response[0] : response[0]?.result
+  log.warn(`result: ${JSON.stringify(result)}`)
   if (isAuthUrl) {
     log.trace(`authUrl?: ${isAuthUrl}    ${window.currentUrl}`)
-    log.warn(`result: ${JSON.stringify(result)}`)
     login.loginFromAuthPageData(result.authToken, result.currentName)
   } else {
     rating.addMetadata(result)
@@ -59,7 +59,7 @@ const injectScript = async function (tabId, isAuthUrl) {
 
 const getCurrentTab = async function () {
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
-  // log.debug(tab)
+  log.trace(tab)
 
   // Assign these things to window so they can be accessed other places
   window.currentUrl = tab.url

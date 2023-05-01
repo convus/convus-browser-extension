@@ -32,7 +32,6 @@ const handleRatingSubmit = async function (e) {
 const updateMenuCheck = (event) => {
   const el = event.target
   const targetField = document.getElementById(el.getAttribute('data-target-id'))
-  // const toggle = el.checked ? 'show' : 'hide'
   utilities.elementsCollapse(targetField, el.checked ? 'show' : 'hide')
 }
 
@@ -73,6 +72,7 @@ const showRatingForm = () => {
 }
 
 const updateRatingFields = (tabUrl, title) => {
+  log.trace('updateRatingFields')
   const ratingUrlField = document.getElementById('submitted_url')
   utilities.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title)
 

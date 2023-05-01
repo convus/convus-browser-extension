@@ -1,6 +1,6 @@
 import log from './log' // eslint-disable-line
 import api from './api'
-// only importing for showRatingForm, TODO stop importing the rest
+// TODO: only import isAuthTokenValid
 import rating from './rating'
 import utilities from './utilities'
 
@@ -12,6 +12,7 @@ const authUrl = baseUrl + '/browser_extension_auth'
 // Internal
 const storeAuthData = (authToken, currentName) => {
   // TODO: ^ there has to be a better way to handle passing the arguments
+  // ... Destructuring assignment was causing issues in Safari
   browser.storage.local.set({ authToken: authToken, currentName: currentName })
   window.authToken = authToken
   window.currentName = currentName
@@ -28,8 +29,7 @@ const countdownAndClose = (selector, ms, closeFunc = false) => {
   }, 1000)
   // Run special close function
   if (closeFunc) { setTimeout(closeFunc, ms) }
-  // Firefox doesn't close the popup on when the tab is closed, so make sure it happens
-  // Close the popup by default
+  // Firefox doesn't close the popup on when the tab is closed - so, always close the popup
   setTimeout(window.close, ms)
 }
 
@@ -41,6 +41,7 @@ const removeAuthData = () => {
 }
 
 const isAuthUrl = (url = null) => authUrl === (url || window.currentUrl)
+
 const isSignInOrUpUrl = (url = null) => {
   url ||= window.currentUrl
   // These are the URLs the user is sent to if they aren't signed signed in to Convus
