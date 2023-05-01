@@ -10,18 +10,19 @@ process.env.NODE_ENV ||= 'production'
 const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.convus.org' : 'http://localhost:3009'
 const version = process.env.npm_package_version
 
-// Generate relevant index.html file via this hack
+const replaceEnvValues = (str) => {
+  return str.replace(/{{baseUrl}}/g, baseUrl)
+    .replace(/{{target}}/g, target)
+    .replace(/{{version}}/g, version)
+}
+
+// HACK HACK HACK! building things by doing substitution
+// TODO: make this a better process
 const htmlContent = fs.readFileSync('src/index.html', 'utf8')
-  .replace(/{{baseUrl}}/g, baseUrl)
-  .replace(/{{target}}/g, target)
-  .replace(/{{version}}/g, version)
-fs.writeFileSync('dist/index.html', htmlContent)
-// Generate manifest for the current env
-const mSuffix = target === 'firefox' ? 'firefox' : 'v3'
-const manifestContent = fs.readFileSync(`src/manifest_${mSuffix}.json`, 'utf8')
-  .replace(/{{baseUrl}}/g, baseUrl) // Not using host permissions, so this doesn't update anything now...
-  .replace(/{{version}}/g, version)
-fs.writeFileSync('dist/manifest.json', manifestContent)
+fs.writeFileSync('dist/index.html', replaceEnvValues(htmlContent))
+// manifest
+const manifestContent = fs.readFileSync('src/manifest_v3.json', 'utf8')
+fs.writeFileSync('dist/manifest.json', replaceEnvValues(manifestContent))
 
 // esbuild, go to town
 const errorFilePath = 'esbuild_error'

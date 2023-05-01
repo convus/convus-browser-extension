@@ -4,21 +4,18 @@ import log from './log' // eslint-disable-line
 const retryIfMissing = (obj, func, ...args) => {
   if (typeof (obj) === 'undefined' || obj === null) {
     log.debug(`${func.name} requires an element not present in DOM, trying again in 50ms`)
-    setTimeout(func, 5000, ...args)
+    setTimeout(func, 50, ...args)
     return true
   }
 }
 
-// Internal
-const baseUrl = () => {
-  return document.getElementById('body-popup').getAttribute('data-baseurl')
-}
+const baseUrl = process.env.baseUrl
 
 // Add a visual cue to show that you're attached to local
 const renderLocalAlert = () => {
   // If alert is already rendered, skip
   if (document.getElementById('local-alert')) { return }
-  if (baseUrl().match(/http:\/\/localhost/i)) {
+  if (baseUrl.match(/http:\/\/localhost/i)) {
     const localAlert = document.createElement('div')
     localAlert.textContent = 'local convus'
     localAlert.classList.add('text-gray-400', 'text-center')
@@ -31,7 +28,44 @@ const pageLoadedFunctions = () => {
   renderLocalAlert() // Render local alert if it's warranted
 }
 
+// Internal
+const elementsFromSelectorOrElements = (selOrEl) => {
+  if (typeof (selOrEl) === 'string') {
+    return document.querySelectorAll(selOrEl)
+  } else {
+    return [selOrEl].flat()
+  }
+}
+
+const elementsHide = (selOrEl) => {
+  elementsFromSelectorOrElements(selOrEl)
+    .forEach(el => el.classList.add('hidden'))
+}
+
+const elementsShow = (selOrEl) => {
+  elementsFromSelectorOrElements(selOrEl)
+    .forEach(el => el.classList.remove('hidden'))
+}
+
+// toggle can be: [true, 'hide', 'show']
+const elementsCollapse = (selOrEl, toggle = true) => {
+  const els = elementsFromSelectorOrElements(selOrEl)
+  // log.trace(`toggling: ${toggle}`)
+  // If toggling, determine which direction to toggle
+  if (toggle === true) {
+    toggle = els[0]?.classList.contains('hidden') ? 'show' : 'hide'
+  }
+  // TODO: add animation functionality
+  if (toggle === 'show') {
+    els.forEach(el => el.classList.remove('hidden'))
+  } else {
+    els.forEach(el => el.classList.add('hidden'))
+  }
+}
+
 const hideAlerts = () => {
+  // TODO: switch to (and test):
+  // elementsHide('.alert, .shareVisible')
   const visibleAlerts = document.querySelectorAll('.alert')
   visibleAlerts.forEach(el => el.classList.add('hidden'))
   const visibleShares = document.querySelectorAll('.shareVisible')
@@ -43,7 +77,7 @@ const copyShare = (event) => {
   // Get the share wrapper
   const el = event.target.closest('.shareVisible')
   const shareText = el.getAttribute('data-sharetext')
-  // log.debug(`copyShare: ${shareText}`)
+  // log.trace(`copyShare: ${shareText}`)
   navigator.clipboard.writeText(shareText)
   const copiedAlert = document.createElement('p')
   copiedAlert.textContent = 'Copied results to clipboard'
@@ -61,12 +95,8 @@ const shareDiv = (shareText) => {
   el.querySelector('.btnShare').addEventListener('click', copyShare)
   return el
 }
-
-// message is an array of: [kind, text]
-const renderAlerts = (message, shareText = null) => {
-  hideAlerts()
-  const kind = message[0]
-  const text = message[1]
+// Internal
+const renderAlert = (kind, text, shareText) => {
   const body = document.getElementById('body-popup')
   const alert = document.createElement('div')
   alert.textContent = text
@@ -78,30 +108,39 @@ const renderAlerts = (message, shareText = null) => {
   }
 }
 
-// closeMenu can be: ["toggle", true, false]
-const toggleMenu = (event = false, closeMenu = 'toggle') => {
+// message is an array of: [kind, text]
+const renderAlerts = (messages, shareText = null) => {
+  hideAlerts()
+  // Wrap messages if messages is just a single message
+  if (typeof (messages[0]) === 'string') { messages = [messages] }
+  messages.forEach(m => renderAlert(m[0], m[1], shareText))
+}
+
+// toggle: [true, 'hide', 'show'] - matches elementsCollapse above
+const toggleMenu = (event = false, toggle = true) => {
   event && event.preventDefault()
   const menuBtn = document.getElementById('rating-menu-btn')
   const menu = document.getElementById('rating-menu')
-  const action = closeMenu === 'toggle' ? menu.classList.contains('active') : closeMenu
-  if (action) {
-    menu.classList.add('hidden')
-    menu.classList.remove('active')
+  // Choose toggle based on state of button, if toggling
+  if (toggle === true) {
+    toggle = menuBtn.classList.contains('active') ? 'hide' : 'show'
+  }
+  elementsCollapse(menu, toggle)
+
+  if (toggle === 'hide') {
     menuBtn.classList.remove('active')
   } else {
-    menu.classList.remove('hidden')
-    menu.classList.add('active')
     menuBtn.classList.add('active')
   }
 }
 
-// Not currently using - but want to remember how to do if necessary in the future
-// const closePopup = () { window.close }
-
 export default {
+  elementsCollapse,
+  elementsHide,
+  elementsShow,
   hideAlerts,
   pageLoadedFunctions,
   renderAlerts,
-  toggleMenu,
-  retryIfMissing
+  retryIfMissing,
+  toggleMenu
 }

@@ -14,6 +14,7 @@
 
  "permissions": [
     "activeTab",
+    "scripting",
     "storage"
   ],
 
@@ -38,6 +39,12 @@
         "mac": "MacCtrl+Shift+R"
       },
       "description": "__MSG_commandOpenPopup__"
+    }
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{f986ea01-4e55-42c5-85a3-763c64126663}"
     }
   }
 }

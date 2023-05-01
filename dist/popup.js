@@ -253,11 +253,7 @@
 
   // log.js
   var import_loglevel = __toESM(require_loglevel());
-  if (true) {
-    import_loglevel.default.setLevel("warn");
-  } else {
-    import_loglevel.default.setLevel("debug");
-  }
+  import_loglevel.default.setLevel("debug");
   var log_default = import_loglevel.default;
 
   // api.js
@@ -274,8 +270,8 @@
     };
     return { ...defaultProps, ...extraProps };
   };
-  var isAuthTokenValid = (authUrl, authToken) => new Promise((resolve, reject) => {
-    const authStatusUrl = `${authUrl}/status`;
+  var isAuthTokenValid = (authUrl2, authToken) => new Promise((resolve, reject) => {
+    const authStatusUrl = `${authUrl2}/status`;
     return fetch(authStatusUrl, requestProps(authToken, { method: "GET" })).then(
       (response) => response.json().then((json) => {
         resolve(json.message !== "missing user" && response.status === 200);
@@ -284,7 +280,7 @@
       resolve(errorResponse(e));
     });
   });
-  var getAuthToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
+  var getAuthToken = (authUrl2, loginFormData) => new Promise((resolve, reject) => {
     const rProps = {
       method: "POST",
       async: true,
@@ -292,7 +288,7 @@
       contentType: "json",
       body: loginFormData
     };
-    return fetch(authUrl, rProps).then(
+    return fetch(authUrl2, rProps).then(
       (response) => response.json().then((json) => {
         let result = {};
         if (response.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
@@ -338,18 +334,16 @@
   var retryIfMissing = (obj, func, ...args) => {
     if (typeof obj === "undefined" || obj === null) {
       log_default.debug(`${func.name} requires an element not present in DOM, trying again in 50ms`);
-      setTimeout(func, 5e3, ...args);
+      setTimeout(func, 50, ...args);
       return true;
     }
   };
-  var baseUrl = () => {
-    return document.getElementById("body-popup").getAttribute("data-baseurl");
-  };
+  var baseUrl = "https://www.convus.org";
   var renderLocalAlert = () => {
     if (document.getElementById("local-alert")) {
       return;
     }
-    if (baseUrl().match(/http:\/\/localhost/i)) {
+    if (baseUrl.match(/http:\/\/localhost/i)) {
       const localAlert = document.createElement("div");
       localAlert.textContent = "local convus";
       localAlert.classList.add("text-gray-400", "text-center");
@@ -359,6 +353,30 @@
   };
   var pageLoadedFunctions = () => {
     renderLocalAlert();
+  };
+  var elementsFromSelectorOrElements = (selOrEl) => {
+    if (typeof selOrEl === "string") {
+      return document.querySelectorAll(selOrEl);
+    } else {
+      return [selOrEl].flat();
+    }
+  };
+  var elementsHide = (selOrEl) => {
+    elementsFromSelectorOrElements(selOrEl).forEach((el) => el.classList.add("hidden"));
+  };
+  var elementsShow = (selOrEl) => {
+    elementsFromSelectorOrElements(selOrEl).forEach((el) => el.classList.remove("hidden"));
+  };
+  var elementsCollapse = (selOrEl, toggle = true) => {
+    const els = elementsFromSelectorOrElements(selOrEl);
+    if (toggle === true) {
+      toggle = els[0]?.classList.contains("hidden") ? "show" : "hide";
+    }
+    if (toggle === "show") {
+      els.forEach((el) => el.classList.remove("hidden"));
+    } else {
+      els.forEach((el) => el.classList.add("hidden"));
+    }
   };
   var hideAlerts = () => {
     const visibleAlerts = document.querySelectorAll(".alert");
@@ -384,10 +402,7 @@
     el.querySelector(".btnShare").addEventListener("click", copyShare);
     return el;
   };
-  var renderAlerts = (message, shareText = null) => {
-    hideAlerts();
-    const kind = message[0];
-    const text = message[1];
+  var renderAlert = (kind, text, shareText) => {
     const body = document.getElementById("body-popup");
     const alert = document.createElement("div");
     alert.textContent = text;
@@ -397,38 +412,65 @@
       alert.after(shareDiv(shareText));
     }
   };
-  var toggleMenu = (event = false, closeMenu = "toggle") => {
+  var renderAlerts = (messages, shareText = null) => {
+    hideAlerts();
+    if (typeof messages[0] === "string") {
+      messages = [messages];
+    }
+    messages.forEach((m) => renderAlert(m[0], m[1], shareText));
+  };
+  var toggleMenu = (event = false, toggle = true) => {
     event && event.preventDefault();
     const menuBtn = document.getElementById("rating-menu-btn");
     const menu = document.getElementById("rating-menu");
-    const action = closeMenu === "toggle" ? menu.classList.contains("active") : closeMenu;
-    if (action) {
-      menu.classList.add("hidden");
-      menu.classList.remove("active");
+    if (toggle === true) {
+      toggle = menuBtn.classList.contains("active") ? "hide" : "show";
+    }
+    elementsCollapse(menu, toggle);
+    if (toggle === "hide") {
       menuBtn.classList.remove("active");
     } else {
-      menu.classList.remove("hidden");
-      menu.classList.add("active");
       menuBtn.classList.add("active");
     }
   };
   var utilities_default = {
+    elementsCollapse,
+    elementsHide,
+    elementsShow,
     hideAlerts,
     pageLoadedFunctions,
     renderAlerts,
-    toggleMenu,
-    retryIfMissing
+    retryIfMissing,
+    toggleMenu
   };
 
   // rating.js
-  var updateRatingFields = (tabUrl, title) => {
-    const ratingUrlField = document.getElementById("submitted_url");
-    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
-    ratingUrlField.value = tabUrl;
-    document.getElementById("citation_title").value = title;
-    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
+  var handleRatingSubmit = async function(e) {
+    e.preventDefault();
+    const submitBtn = document.getElementById("ratingSubmitButton");
+    submitBtn.classList.add("disabled");
+    utilities_default.elementsShow("#rating-submit-spinner");
+    const formData = new FormData(document.getElementById("new_rating"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
+    log_default.debug(result);
+    utilities_default.renderAlerts(result.message, result.share);
+    if (result.success) {
+      document.getElementById("new_rating").classList.add("hidden");
+      utilities_default.toggleMenu(false, "hide");
+    }
+    utilities_default.elementsHide("#rating-submit-spinner");
+    submitBtn.classList.remove("disabled");
+    return false;
+  };
+  var updateMenuCheck = (event) => {
+    const el = event.target;
+    const targetField = document.getElementById(el.getAttribute("data-target-id"));
+    utilities_default.elementsCollapse(targetField, el.checked ? "show" : "hide");
   };
   var ratingTime = () => {
+    log_default.trace("ratingTime");
     const ratingForm = document.getElementById("new_rating");
     if (utilities_default.retryIfMissing(ratingForm, ratingTime)) {
       return;
@@ -437,114 +479,224 @@
     document.getElementById("rating-menu-btn").addEventListener("click", utilities_default.toggleMenu);
     document.querySelectorAll("#rating-menu .form-control-check input").forEach((el) => el.addEventListener("change", updateMenuCheck));
     document.getElementById("logout-btn").addEventListener("click", login_default.logout);
+    showRatingForm();
+    utilities_default.pageLoadedFunctions();
+  };
+  var showRatingForm = () => {
+    log_default.trace("showRatingForm");
     if (window.authToken) {
-      document.getElementById("new_user").classList.add("hidden");
-      ratingForm.classList.remove("hidden");
+      if (login_default.isAuthUrl()) {
+        return;
+      }
+      utilities_default.elementsHide(".spinners, #whitespace-preserver");
+      utilities_default.elementsShow("#rating-save-row");
+      utilities_default.elementsShow("#new_rating");
     }
     if (window.currentName) {
       document.getElementById("username").textContent = window.currentName;
     }
-    utilities_default.pageLoadedFunctions();
   };
-  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
-  var handleRatingSubmit = async function(e) {
-    e.preventDefault();
-    const formData = new FormData(document.getElementById("new_rating"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
-    log_default.debug(result);
-    utilities_default.renderAlerts(result.message, result.share);
-    if (result.success) {
-      document.getElementById("new_rating").classList.add("hidden");
-      utilities_default.toggleMenu(false, true);
-    }
-    return false;
+  var updateRatingFields = (tabUrl, title) => {
+    log_default.trace("updateRatingFields");
+    const ratingUrlField = document.getElementById("submitted_url");
+    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
+    ratingUrlField.value = tabUrl;
+    document.getElementById("citation_title").value = title;
+    document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    ratingTime();
   };
-  var updateMenuCheck = (event) => {
-    const el = event.target;
-    const fieldId = el.getAttribute("data-target-id");
-    if (el.checked) {
-      document.getElementById(fieldId).classList.remove("hidden");
-    } else {
-      document.getElementById(fieldId).classList.add("hidden");
-    }
+  var addMetadata = (metadata) => {
+    log_default.debug(`addMetadata, metadata length: ${metadata?.length}`);
+    const citationMetadataField = document.getElementById("citation_metadata_str");
+    utilities_default.retryIfMissing(citationMetadataField, addMetadata, metadata);
+    citationMetadataField.value = JSON.stringify(metadata);
   };
   var rating_default = {
-    ratingTime,
+    addMetadata,
+    showRatingForm,
     updateRatingFields
   };
 
   // login.js
-  var formAuthUrl = () => document.getElementById("new_user")?.getAttribute("action");
-  var handleLoginSubmit = async function(e) {
-    e.preventDefault();
-    const formData = new FormData(document.getElementById("new_user"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.getAuthToken(formAuthUrl(), jsonFormData);
-    log_default.debug(result);
-    if (typeof result.authToken === "undefined" || result.authToken === null) {
-      utilities_default.renderAlerts(result.message);
-    } else {
-      browser.storage.local.set(result);
-      window.authToken = result.authToken;
-      window.currentName = result.currentName;
-      utilities_default.hideAlerts();
-      rating_default.ratingTime();
+  var baseUrl2 = "https://www.convus.org";
+  var formAuthUrl = baseUrl2 + "/api/v1/auth";
+  var authUrl = baseUrl2 + "/browser_extension_auth";
+  var storeAuthData = (authToken, currentName) => {
+    browser.storage.local.set({ authToken, currentName });
+    window.authToken = authToken;
+    window.currentName = currentName;
+  };
+  var countdownAndClose = (selector, ms, closeFunc = false) => {
+    let secondsLeft = ms / 1e3;
+    const countdownEl = document.querySelector(selector);
+    countdownEl.textContent = secondsLeft;
+    const countdownTimer = setInterval(function() {
+      countdownEl.textContent = secondsLeft -= 1;
+      if (secondsLeft <= 0) {
+        clearInterval(countdownTimer);
+      }
+    }, 1e3);
+    if (closeFunc) {
+      setTimeout(closeFunc, ms);
     }
-    return false;
+    setTimeout(window.close, ms);
+  };
+  var removeAuthData = () => {
+    browser.storage.local.remove("authToken");
+    browser.storage.local.remove("currentName");
+    window.authToken = void 0;
+  };
+  var isAuthUrl = (url = null) => authUrl === (url || window.currentUrl);
+  var isSignInOrUpUrl = (url = null) => {
+    url ||= window.currentUrl;
+    return `${baseUrl2}/users/sign_in` === url || `${baseUrl2}/users/sign_up` === url;
   };
   var checkAuthToken = async function(token) {
-    const authUrl = formAuthUrl();
-    if (utilities_default.retryIfMissing(authUrl, checkAuthToken, token)) {
+    if (utilities_default.retryIfMissing(formAuthUrl, checkAuthToken, token)) {
       return;
     }
-    const result = await api_default.isAuthTokenValid(authUrl, token);
+    const result = await api_default.isAuthTokenValid(formAuthUrl, token);
+    log_default.trace("auth token check success:", result);
     if (result) {
+      rating_default.showRatingForm();
       return;
     }
-    browser.storage.local.remove("authToken");
-    browser.storage.local.remove("name");
-    window.authToken = void 0;
+    removeAuthData();
     loginTime();
+  };
+  var loginFromAuthPageData = (authToken, currentName) => {
+    log_default.trace(`loginFromAuthPageData - authToken: ${authToken}, ${currentName}`);
+    utilities_default.hideAlerts();
+    storeAuthData(authToken, currentName);
+    utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver, #sign_in_message");
+    utilities_default.elementsShow("#auth_message_in");
+    window.closeTabFunction = (event = false) => {
+      event && event.preventDefault();
+      chrome.tabs.remove(window.tabId);
+    };
+    document.getElementById("closeTabLink").addEventListener("click", window.closeTabFunction);
+    countdownAndClose("#in_countdown", 3e3, window.closeTabFunction);
   };
   var loginTime = () => {
-    const loginForm = document.getElementById("new_user");
-    if (utilities_default.retryIfMissing(loginForm, loginTime)) {
+    log_default.trace("loginTime");
+    if (isAuthUrl()) {
       return;
     }
-    loginForm.classList.remove("hidden");
-    document.getElementById("new_rating")?.classList?.add("hidden");
-    loginForm.addEventListener("submit", handleLoginSubmit);
+    const loginMessage = document.getElementById("sign_in_message");
+    if (utilities_default.retryIfMissing(loginMessage, loginTime)) {
+      return;
+    }
+    if (isSignInOrUpUrl()) {
+      log_default.debug("sign in page!!!");
+      document.querySelector("#sign_in_message p").textContent = "Sign in to Convus on this page";
+    }
+    utilities_default.elementsHide(".spinners, #new_rating, #whitespace-preserver");
+    utilities_default.elementsShow(loginMessage);
     utilities_default.pageLoadedFunctions();
+    document.getElementById("signInBtn").addEventListener("click", () => {
+      setTimeout(window.close, 100);
+    });
   };
   var logout = () => {
-    browser.storage.local.remove("authToken");
-    utilities_default.toggleMenu(false, true);
-    loginTime();
+    removeAuthData();
+    utilities_default.toggleMenu(false, "hide");
+    utilities_default.elementsHide("#new_rating");
+    utilities_default.elementsShow("#auth_message_out");
+    countdownAndClose("#out_countdown", 5e3);
   };
   var login_default = {
+    loginFromAuthPageData,
     checkAuthToken,
+    isAuthUrl,
+    isSignInOrUpUrl,
     loginTime,
     logout
   };
 
+  // injected_script.js
+  function injectedScript() {
+    const authUrl2 = "https://www.convus.org/browser_extension_auth";
+    console.log("Convus extension is getting the page metadata!");
+    if (authUrl2 === window.location.href) {
+      const authData = {
+        currentName: document.querySelector('meta[name="ext-username"]')?.content,
+        authToken: document.querySelector('meta[name="ext-token"]')?.content
+      };
+      return authData;
+    }
+    const attrToPair = (attr) => [attr.name, attr.value];
+    const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
+    const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
+    const countWords = (str) => str.trim().split(/\s+/).length;
+    const jsonLdString = (scriptEls) => Array.from(scriptEls).map((i) => i.innerText.trim());
+    let metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
+    const wordCount = { word_count: countWords(document.body.textContent) };
+    const jsonLD = jsonLdString(document.querySelectorAll('script[type="application/ld+json"]'));
+    if (jsonLD.length) {
+      metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]];
+    }
+    return metadataAttrs.concat([wordCount]);
+  }
+
   // popup.js
-  if (true) {
+  var browserTarget = "chrome";
+  var safariType = !!browserTarget.match("safari");
+  if (browserTarget == "chrome") {
     browser = chrome;
   }
   browser.storage.local.get(["authToken", "currentName"]).then((data) => {
     if (typeof data.authToken === "undefined" || data.authToken === null) {
+      log_default.debug(`missing auth!   authToken: ${data.authToken} and currentName: ${data.currentName}`);
       login_default.loginTime();
     } else {
+      log_default.trace("auth present");
       window.authToken = data.authToken;
       window.currentName = data.currentName;
-      rating_default.ratingTime();
       login_default.checkAuthToken(data.authToken);
     }
   });
-  browser.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    const activeTab = tabs[0];
-    rating_default.updateRatingFields(activeTab.url, activeTab.title);
-  });
+  var handlePageData = (response, isAuthUrl2) => {
+    log_default.debug("Script response: ", response);
+    const result = safariType ? response[0] : response[0]?.result;
+    log_default.warn(`result: ${JSON.stringify(result)}`);
+    if (isAuthUrl2) {
+      log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
+      login_default.loginFromAuthPageData(result.authToken, result.currentName);
+    } else {
+      rating_default.addMetadata(result);
+    }
+  };
+  var injectScript = async function(tabId, isAuthUrl2) {
+    await browser.scripting.executeScript({
+      target: { tabId },
+      func: injectedScript
+    }).then((response) => {
+      try {
+        handlePageData(response, isAuthUrl2);
+      } catch (e) {
+        log_default.debug(e);
+        let alerts = [["warning", "Unable to parse the page."]];
+        if (browserTarget === "safari_ios") {
+          alerts = [...[["error", "Please upgrade to the most recent version iOS"]], ...alerts];
+        }
+        utilities_default.renderAlerts(alerts);
+      }
+    });
+  };
+  var getCurrentTab = async function() {
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    log_default.trace(tab);
+    window.currentUrl = tab.url;
+    const isAuthUrl2 = login_default.isAuthUrl(window.currentUrl);
+    window.tabId = tab.id;
+    if (login_default.isSignInOrUpUrl(window.currentUrl)) {
+      log_default.debug("Viewing Convus sign in or up");
+      return;
+    } else if (!isAuthUrl2) {
+      rating_default.updateRatingFields(window.currentUrl, tab.title);
+    }
+    injectScript(window.tabId, isAuthUrl2);
+  };
+  getCurrentTab();
 })();
 //# sourceMappingURL=popup.js.map
