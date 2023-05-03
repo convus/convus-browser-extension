@@ -53,9 +53,8 @@ const injectScript = async function (tabId, isAuthUrl) {
           alert = [['error', 'Please upgrade to the most recent version Safari']]
         }
         utilities.renderAlerts(alert)
-        if (!window.authToken) {
-          login.fallbackLoginTime()
-        }
+        // If there isn't an auth token, show login form
+        if (!window.authToken) { login.fallbackLoginTime() }
       }
     })
 }
