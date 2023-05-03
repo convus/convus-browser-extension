@@ -32,7 +32,7 @@ const handleFallbackLoginSubmit = async function (e) {
     storeAuthData(result.authToken, result.currentName)
     utilities.hideAlerts()
     if (isAuthUrl()) {
-      utilities.elementsCollapse("#new_user")
+      utilities.elementsCollapse('#new_user')
       utilities.renderAlerts([['success', 'Logged in!']])
     } else {
       rating.showRatingForm()
