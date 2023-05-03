@@ -526,6 +526,26 @@
     window.authToken = authToken;
     window.currentName = currentName;
   };
+  var handleFallbackLoginSubmit = async function(e) {
+    e.preventDefault();
+    const formData = new FormData(document.getElementById("new_user"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    const result = await api_default.getAuthToken(formAuthUrl, jsonFormData);
+    log_default.debug(result);
+    if (typeof result.authToken === "undefined" || result.authToken === null) {
+      utilities_default.renderAlerts(result.message);
+    } else {
+      storeAuthData(result.authToken, result.currentName);
+      utilities_default.hideAlerts();
+      if (isAuthUrl()) {
+        utilities_default.elementsCollapse("#new_user");
+        utilities_default.renderAlerts([["success", "Logged in!"]]);
+      } else {
+        rating_default.showRatingForm();
+      }
+    }
+    return false;
+  };
   var countdownAndClose = (selector, ms, closeFunc = false) => {
     let secondsLeft = ms / 1e3;
     const countdownEl = document.querySelector(selector);
@@ -582,6 +602,9 @@
     if (isAuthUrl()) {
       return;
     }
+    if (window.fallbackLogin) {
+      return;
+    }
     const loginMessage = document.getElementById("sign_in_message");
     if (utilities_default.retryIfMissing(loginMessage, loginTime)) {
       return;
@@ -597,6 +620,17 @@
       setTimeout(window.close, 100);
     });
   };
+  var fallbackLoginTime = () => {
+    log_default.debug("fallbacklogintime - UNABLE TO PARSE THE PAGE, probably Safari BS");
+    window.fallbackLogin = true;
+    const loginForm = document.getElementById("new_user");
+    if (utilities_default.retryIfMissing(loginForm, loginTime)) {
+      return;
+    }
+    utilities_default.elementsHide("#new_rating, .spinners, #whitespace-preserver, #sign_in_message");
+    utilities_default.elementsShow(loginForm);
+    loginForm.addEventListener("submit", handleFallbackLoginSubmit);
+  };
   var logout = () => {
     removeAuthData();
     utilities_default.toggleMenu(false, "hide");
@@ -607,6 +641,7 @@
   var login_default = {
     loginFromAuthPageData,
     checkAuthToken,
+    fallbackLoginTime,
     isAuthUrl,
     isSignInOrUpUrl,
     loginTime,
@@ -675,11 +710,14 @@
         handlePageData(response, isAuthUrl2);
       } catch (e) {
         log_default.debug(e);
-        let alerts = [["warning", "Unable to parse the page."]];
-        if (browserTarget === "safari_ios") {
-          alerts = [...[["error", "Please upgrade to the most recent version iOS"]], ...alerts];
+        let alert = [["warning", "Unable to parse the page."]];
+        if (safariType) {
+          alert = [["error", "Please upgrade to the most recent version Safari"]];
         }
-        utilities_default.renderAlerts(alerts);
+        utilities_default.renderAlerts(alert);
+        if (!window.authToken) {
+          login_default.fallbackLoginTime();
+        }
       }
     });
   };
