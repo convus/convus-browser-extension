@@ -23,7 +23,7 @@ export default function injectedScript () {
   const jsonLdString = (scriptEls) => Array.from(scriptEls).map((i) => i.innerText.trim())
 
   let metadataAttrs = elsToAttrs(document.getElementsByTagName('meta'))
-  const wordCount = { word_count: countWords(document.body.textContent) }
+  const wordCount = { word_count: countWords(document.body.innerText) }
 
   // Add jsonLD - don't parse here, in case malformed
   const jsonLD = jsonLdString(document.querySelectorAll('script[type="application/ld+json"]'))

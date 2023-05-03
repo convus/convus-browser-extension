@@ -630,7 +630,7 @@
     const countWords = (str) => str.trim().split(/\s+/).length;
     const jsonLdString = (scriptEls) => Array.from(scriptEls).map((i) => i.innerText.trim());
     let metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
-    const wordCount = { word_count: countWords(document.body.textContent) };
+    const wordCount = { word_count: countWords(document.body.innerText) };
     const jsonLD = jsonLdString(document.querySelectorAll('script[type="application/ld+json"]'));
     if (jsonLD.length) {
       metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]];

@@ -8,8 +8,8 @@
 //  2. Run the Archive process in XCODE
 //  ... Someday use https://fastlane.tools to automate things
 //
-CURRENT_PROJECT_VERSION = 9
-MARKETING_VERSION = 0.9.3
+CURRENT_PROJECT_VERSION = 11
+MARKETING_VERSION = 0.9.4
 //
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
