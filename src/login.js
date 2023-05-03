@@ -31,7 +31,12 @@ const handleFallbackLoginSubmit = async function (e) {
   } else {
     storeAuthData(result.authToken, result.currentName)
     utilities.hideAlerts()
-    rating.showRatingForm()
+    if (isAuthUrl()) {
+      utilities.elementsCollapse("#new_user")
+      utilities.renderAlerts([['success', 'Logged in!']])
+    } else {
+      rating.showRatingForm()
+    }
   }
   return false // fallback prevent submit
 }

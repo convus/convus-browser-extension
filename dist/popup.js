@@ -537,7 +537,12 @@
     } else {
       storeAuthData(result.authToken, result.currentName);
       utilities_default.hideAlerts();
-      rating_default.showRatingForm();
+      if (isAuthUrl()) {
+        utilities_default.elementsCollapse("#new_user");
+        utilities_default.renderAlerts([["success", "Logged in!"]]);
+      } else {
+        rating_default.showRatingForm();
+      }
     }
     return false;
   };
@@ -669,7 +674,7 @@
   }
 
   // popup.js
-  var browserTarget = "chrome";
+  var browserTarget = "safari";
   var safariType = !!browserTarget.match("safari");
   if (browserTarget == "chrome") {
     browser = chrome;
