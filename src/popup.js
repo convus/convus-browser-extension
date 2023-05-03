@@ -48,11 +48,14 @@ const injectScript = async function (tabId, isAuthUrl) {
         handlePageData(response, isAuthUrl)
       } catch (e) {
         log.debug(e)
-        let alerts = [['warning', 'Unable to parse the page.']]
-        if (browserTarget === 'safari_ios') {
-          alerts = [...[['error', 'Please upgrade to the most recent version iOS']], ...alerts]
+        let alert = [['warning', 'Unable to parse the page.']]
+        if (safariType) {
+          alert = [['error', 'Please upgrade to the most recent version Safari']]
         }
-        utilities.renderAlerts(alerts)
+        utilities.renderAlerts(alert)
+        if (!window.authToken) {
+          login.fallbackLoginTime()
+        }
       }
     })
 }

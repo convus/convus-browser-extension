@@ -19,6 +19,24 @@ const storeAuthData = (authToken, currentName) => {
 }
 
 // Internal
+const handleFallbackLoginSubmit = async function (e) {
+  e.preventDefault()
+  const formData = new FormData(document.getElementById('new_user'))
+  const jsonFormData = JSON.stringify(Object.fromEntries(formData))
+
+  const result = await api.getAuthToken(formAuthUrl, jsonFormData)
+  log.debug(result)
+  if (typeof (result.authToken) === 'undefined' || result.authToken === null) {
+    utilities.renderAlerts(result.message)
+  } else {
+    storeAuthData(result.authToken, result.currentName)
+    utilities.hideAlerts()
+    rating.showRatingForm()
+  }
+  return false // fallback prevent submit
+}
+
+// Internal
 const countdownAndClose = (selector, ms, closeFunc = false) => {
   let secondsLeft = ms / 1000
   const countdownEl = document.querySelector(selector)
@@ -83,6 +101,8 @@ const loginTime = () => {
   log.trace('loginTime')
   // If we're on the auth page, exit
   if (isAuthUrl()) { return }
+  // If doing fallback login, do that :(
+  if (window.fallbackLogin) { return }
   const loginMessage = document.getElementById('sign_in_message')
   if (utilities.retryIfMissing(loginMessage, loginTime)) { return }
   // If the user is signing in or signing up on Convus, show text rather than a button which opens another tab
@@ -101,6 +121,19 @@ const loginTime = () => {
   })
 }
 
+// This shows the login form - it should only happen if the browser extension can't parse the page,
+// which happens in older versions of safari
+const fallbackLoginTime = () => {
+  log.debug('fallbacklogintime - UNABLE TO PARSE THE PAGE, probably Safari BS')
+  window.fallbackLogin = true
+  const loginForm = document.getElementById('new_user')
+  if (utilities.retryIfMissing(loginForm, loginTime)) { return }
+
+  utilities.elementsHide('#new_rating, .spinners, #whitespace-preserver, #sign_in_message')
+  utilities.elementsShow(loginForm)
+  loginForm.addEventListener('submit', handleFallbackLoginSubmit)
+}
+
 const logout = () => {
   removeAuthData()
   utilities.toggleMenu(false, 'hide')
@@ -113,6 +146,7 @@ const logout = () => {
 export default {
   loginFromAuthPageData,
   checkAuthToken,
+  fallbackLoginTime,
   isAuthUrl,
   isSignInOrUpUrl,
   loginTime,
