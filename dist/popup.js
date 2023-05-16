@@ -338,7 +338,7 @@
       return true;
     }
   };
-  var baseUrl = "http://localhost:3009";
+  var baseUrl = "https://www.convus.org";
   var renderLocalAlert = () => {
     if (document.getElementById("local-alert")) {
       return;
@@ -518,7 +518,7 @@
   };
 
   // login.js
-  var baseUrl2 = "http://localhost:3009";
+  var baseUrl2 = "https://www.convus.org";
   var formAuthUrl = baseUrl2 + "/api/v1/auth";
   var authUrl = baseUrl2 + "/browser_extension_auth";
   var storeAuthData = (authToken, currentName) => {
@@ -650,7 +650,7 @@
 
   // injected_script.js
   function injectedScript() {
-    const authUrl2 = "http://localhost:3009/browser_extension_auth";
+    const authUrl2 = "https://www.convus.org/browser_extension_auth";
     console.log("Convus extension is getting the page metadata!");
     if (authUrl2 === window.location.href) {
       const authData = {
