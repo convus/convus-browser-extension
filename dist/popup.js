@@ -338,7 +338,7 @@
       return true;
     }
   };
-  var baseUrl = "https://www.convus.org";
+  var baseUrl = "http://localhost:3009";
   var renderLocalAlert = () => {
     if (document.getElementById("local-alert")) {
       return;
@@ -518,7 +518,7 @@
   };
 
   // login.js
-  var baseUrl2 = "https://www.convus.org";
+  var baseUrl2 = "http://localhost:3009";
   var formAuthUrl = baseUrl2 + "/api/v1/auth";
   var authUrl = baseUrl2 + "/browser_extension_auth";
   var storeAuthData = (authToken, currentName) => {
@@ -650,7 +650,7 @@
 
   // injected_script.js
   function injectedScript() {
-    const authUrl2 = "https://www.convus.org/browser_extension_auth";
+    const authUrl2 = "http://localhost:3009/browser_extension_auth";
     console.log("Convus extension is getting the page metadata!");
     if (authUrl2 === window.location.href) {
       const authData = {
@@ -662,14 +662,15 @@
     const attrToPair = (attr) => [attr.name, attr.value];
     const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
     const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
-    const countWords = (str) => str.trim().split(/\s+/).length;
+    const countWords = (str) => str?.trim()?.split(/\s+/)?.length || 0;
     const jsonLdString = (scriptEls) => Array.from(scriptEls).map((i) => i.innerText.trim());
     let metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
-    const wordCount = { word_count: countWords(document.body.innerText) };
     const jsonLD = jsonLdString(document.querySelectorAll('script[type="application/ld+json"]'));
     if (jsonLD.length) {
       metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]];
     }
+    const commentsEl = document.querySelector(".comment-list-container") || document.querySelector(".comment-list") || document.querySelector(".commentlist");
+    const wordCount = { word_count: countWords(document.body.innerText) - countWords(commentsEl?.innerText) };
     return metadataAttrs.concat([wordCount]);
   }
 

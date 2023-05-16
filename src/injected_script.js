@@ -18,18 +18,22 @@ export default function injectedScript () {
   // Convert an iterable of elements to a list of element attributes
   const elsToAttrs = (els) => Array.from(els).map(elToAttrs)
   // Count the total words on the page
-  const countWords = (str) => str.trim().split(/\s+/).length
+  const countWords = (str) => str?.trim()?.split(/\s+/)?.length || 0
   // Grab the JSON-LD data from the script elements, without parsing it
   const jsonLdString = (scriptEls) => Array.from(scriptEls).map((i) => i.innerText.trim())
 
   let metadataAttrs = elsToAttrs(document.getElementsByTagName('meta'))
-  const wordCount = { word_count: countWords(document.body.innerText) }
 
   // Add jsonLD - don't parse here, in case malformed
   const jsonLD = jsonLdString(document.querySelectorAll('script[type="application/ld+json"]'))
   if (jsonLD.length) {
     metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]]
   }
+
+  // Calculate wordCount
+  const commentsEl = document.querySelector('.comment-list-container') || document.querySelector('.comment-list') || document.querySelector('.commentlist')
+  // Subtract comment words from the total
+  const wordCount = { word_count: countWords(document.body.innerText) - countWords(commentsEl?.innerText) }
 
   return metadataAttrs.concat([wordCount])
 }
