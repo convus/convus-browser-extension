@@ -20,7 +20,8 @@
     "nodemon": "^2.0.22",
     "prettier-standard": "^16.4.1",
     "standard": "^16.0.4",
-    "ts-migrate": "^0.1.35"
+    "ts-migrate": "^0.1.35",
+    "typescript": "^5.1.6"
   },
   "standard": {
     "globals": [
