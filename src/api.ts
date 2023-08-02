@@ -3,6 +3,7 @@ import log from './log' // eslint-disable-line
 const requestProps = (authToken = false, extraProps = {}) => {
   const headers = { 'Content-Type': 'application/json' }
   if (authToken) {
+    // @ts-expect-error TS(2339): Property 'Authorization' does not exist on type '{... Remove this comment to see the full error message
     headers.Authorization = `Bearer ${authToken}`
   }
 
@@ -16,7 +17,7 @@ const requestProps = (authToken = false, extraProps = {}) => {
 }
 
 // Returns true/false
-const isAuthTokenValid = (authUrl, authToken) => new Promise((resolve, reject) => {
+const isAuthTokenValid = (authUrl: any, authToken: any) => new Promise((resolve, reject) => {
   const authStatusUrl = `${authUrl}/status`
 
   return fetch(authStatusUrl, requestProps(authToken, { method: 'GET' }))
@@ -29,7 +30,7 @@ const isAuthTokenValid = (authUrl, authToken) => new Promise((resolve, reject) =
     })
 })
 
-const getAuthToken = (authUrl, loginFormData) => new Promise((resolve, reject) => {
+const getAuthToken = (authUrl: any, loginFormData: any) => new Promise((resolve, reject) => {
   const rProps = {
     method: 'POST',
     async: true,
@@ -42,6 +43,7 @@ const getAuthToken = (authUrl, loginFormData) => new Promise((resolve, reject) =
       .then((json) => {
         let result = {}
         if (response.status !== 200 || typeof (json.review_token) === 'undefined' || json.review_token === null) {
+          // @ts-expect-error TS(2339): Property 'message' does not exist on type '{}'.
           result.message = ['error', json.message]
         } else {
           result = { authToken: json.review_token, currentName: json.name, message: ['success', 'authenticated'] }
@@ -53,7 +55,7 @@ const getAuthToken = (authUrl, loginFormData) => new Promise((resolve, reject) =
     })
 })
 
-const submitRating = (ratingUrl, authToken, ratingFormData) => new Promise((resolve, reject) => {
+const submitRating = (ratingUrl: any, authToken: any, ratingFormData: any) => new Promise((resolve, reject) => {
   const rProps = requestProps(authToken, { body: ratingFormData })
 
   return fetch(ratingUrl, rProps)
@@ -75,7 +77,7 @@ const submitRating = (ratingUrl, authToken, ratingFormData) => new Promise((reso
 })
 
 // Just return an error message that includes the error
-const errorResponse = (e) => {
+const errorResponse = (e: any) => {
   return { success: false, message: ['error', `Error: ${e})`] }
 }
 
