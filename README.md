@@ -30,7 +30,7 @@ Required to store a key to authenticate your rating.
 
 This extension uses [yarn](https://yarnpkg.com/) for package management. Install the dependencies with `yarn install`
 
-There are configuration options in [esbuild.config.js](esbuild.config.js) (for example - specify whether you're building for Firefox, Chrome or Safari)
+There are configuration options in [esbuild.config.mjs](esbuild.config.mjs) (for example - specify whether you're building for Firefox, Chrome or Safari)
 
 Build the extension and create a zip file for submission with:
 
@@ -52,7 +52,7 @@ To run the build process with watch, run:
 ./start.sh
 ```
 
-This builds and watches using the configuration options from `esbuild.config.js` and uses nodemon to restart esbuild if the html, manifests or config change.
+This builds and watches using the configuration options from `esbuild.config.mjs` and uses nodemon to restart esbuild if the html, manifests or config change.
 
 ---
 
