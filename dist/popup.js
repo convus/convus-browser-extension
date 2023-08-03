@@ -270,7 +270,7 @@
     return { ...defaultProps, ...extraProps };
   }
   async function isAuthTokenValid(authUrl2, authToken) {
-    return await new Promise(async (resolve, reject) => {
+    return await new Promise(async (resolve, _reject) => {
       const authStatusUrl = `${authUrl2}/status`;
       return await fetch(authStatusUrl, requestProps(authToken, { method: "GET" })).then(
         async (response) => await response.json().then((json) => {
@@ -283,7 +283,7 @@
     });
   }
   async function getAuthToken(authUrl2, loginFormData) {
-    return await new Promise(async (resolve, reject) => {
+    return await new Promise(async (resolve, _reject) => {
       const rProps = {
         method: "POST",
         async: true,
@@ -308,7 +308,7 @@
     }
   }
   async function submitRating(ratingUrl, authToken, ratingFormData) {
-    return await new Promise(async (resolve, reject) => {
+    return await new Promise(async (resolve, _reject) => {
       const rProps = requestProps(authToken, { body: ratingFormData });
       return await fetch(ratingUrl, rProps).then(
         async (response) => await response.json().then((json) => {

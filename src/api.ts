@@ -14,7 +14,7 @@ function requestProps (authToken = '', extraProps = {}): object {
 }
 
 async function isAuthTokenValid (authUrl: string, authToken: string | undefined): Promise<boolean> {
-  return await new Promise(async (resolve, reject) => {
+  return await new Promise(async (resolve, _reject) => {
     const authStatusUrl = `${authUrl}/status`
 
     return await fetch(authStatusUrl, requestProps(authToken, { method: 'GET' }))
@@ -30,7 +30,7 @@ async function isAuthTokenValid (authUrl: string, authToken: string | undefined)
 }
 
 async function getAuthToken (authUrl: RequestInfo | URL, loginFormData: any) {
-  return await new Promise(async (resolve, reject) => {
+  return await new Promise(async (resolve, _reject) => {
     const rProps = {
       method: 'POST',
       async: true,
@@ -58,7 +58,7 @@ function responseFormatter (authResponse: any, authJson: any) {
 }
 
 async function submitRating (ratingUrl: RequestInfo | URL, authToken: string | undefined, ratingFormData: any) {
-  return await new Promise(async (resolve, reject) => {
+  return await new Promise(async (resolve, _reject) => {
     const rProps = requestProps(authToken, { body: ratingFormData })
 
     return await fetch(ratingUrl, rProps)
