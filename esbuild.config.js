@@ -6,7 +6,7 @@ const watch = process.argv.includes('--watch') || process.env.WATCH === 'true'
 // Current options: chrome, firefox, safari, safari_ios
 const target = 'chrome'
 
-process.env.NODE_ENV ||= 'production'
+process.env.NODE_ENV ||= 'development'
 const baseUrl = process.env.NODE_ENV === 'production' ? 'https://www.convus.org' : 'http://localhost:3009'
 const version = process.env.npm_package_version
 
@@ -27,7 +27,7 @@ fs.writeFileSync('dist/manifest.json', replaceEnvValues(manifestContent))
 // esbuild, go to town
 const errorFilePath = 'esbuild_error'
 const watchOptions = {
-  onRebuild(error, result) {
+  onRebuild (error, result) {
     if (error) {
       console.error('watch build failed:', error)
       fs.writeFileSync(errorFilePath, error.toString())
