@@ -1,9 +1,9 @@
 import log from './log' // eslint-disable-line
 
-const requestProps = (authToken = false, extraProps = {}) => {
-  const headers = { 'Content-Type': 'application/json' }
-  if (authToken) {
-    headers.Authorization = `Bearer ${authToken}`
+const requestProps = (authToken = "", extraProps = {}) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(authToken.length > 0) && { 'Authorization': `Bearer ${authToken}` }
   }
 
   const defaultProps = {
@@ -40,18 +40,20 @@ const getAuthToken = (authUrl, loginFormData) => new Promise((resolve, reject) =
   return fetch(authUrl, rProps)
     .then(response => response.json()
       .then((json) => {
-        let result = {}
-        if (response.status !== 200 || typeof (json.review_token) === 'undefined' || json.review_token === null) {
-          result.message = ['error', json.message]
-        } else {
-          result = { authToken: json.review_token, currentName: json.name, message: ['success', 'authenticated'] }
-        }
-        resolve(result)
+        resolve(responseFormatter(response, json))
       })
     ).catch((e) => {
       resolve(errorResponse(e))
     })
 })
+
+const responseFormatter = (authResponse: any, authJson: any) => {
+  if (authResponse.status !== 200 || typeof (authJson.review_token) === 'undefined' || authJson.review_token === null) {
+    return { message: ['error', authJson.message] }
+  } else {
+    return { authToken: authJson.review_token, currentName: authJson.name, message: ['success', 'authenticated'] }
+  }
+}
 
 const submitRating = (ratingUrl, authToken, ratingFormData) => new Promise((resolve, reject) => {
   const rProps = requestProps(authToken, { body: ratingFormData })

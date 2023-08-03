@@ -256,12 +256,12 @@
   import_loglevel.default.setLevel("debug");
   var log_default = import_loglevel.default;
 
-  // api.js
-  var requestProps = (authToken = false, extraProps = {}) => {
-    const headers = { "Content-Type": "application/json" };
-    if (authToken) {
-      headers.Authorization = `Bearer ${authToken}`;
-    }
+  // api.ts
+  var requestProps = (authToken = "", extraProps = {}) => {
+    const headers = {
+      "Content-Type": "application/json",
+      ...authToken.length > 0 && { "Authorization": `Bearer ${authToken}` }
+    };
     const defaultProps = {
       method: "POST",
       async: true,
@@ -290,18 +290,19 @@
     };
     return fetch(authUrl2, rProps).then(
       (response) => response.json().then((json) => {
-        let result = {};
-        if (response.status !== 200 || typeof json.review_token === "undefined" || json.review_token === null) {
-          result.message = ["error", json.message];
-        } else {
-          result = { authToken: json.review_token, currentName: json.name, message: ["success", "authenticated"] };
-        }
-        resolve(result);
+        resolve(responseFormatter(response, json));
       })
     ).catch((e) => {
       resolve(errorResponse(e));
     });
   });
+  var responseFormatter = (authResponse, authJson) => {
+    if (authResponse.status !== 200 || typeof authJson.review_token === "undefined" || authJson.review_token === null) {
+      return { message: ["error", authJson.message] };
+    } else {
+      return { authToken: authJson.review_token, currentName: authJson.name, message: ["success", "authenticated"] };
+    }
+  };
   var submitRating = (ratingUrl, authToken, ratingFormData) => new Promise((resolve, reject) => {
     const rProps = requestProps(authToken, { body: ratingFormData });
     return fetch(ratingUrl, rProps).then(

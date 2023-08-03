@@ -13,13 +13,15 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.16.4",
+    "@babel/preset-typescript": "^7.22.5",
     "babel-jest": "^27.4.6",
     "jest-cli": "^27.4.7",
     "jest-fetch-mock": "^3.0.3",
     "jest-junit": "^13.0.0",
     "nodemon": "^2.0.22",
     "prettier-standard": "^16.4.1",
-    "standard": "^16.0.4"
+    "standard": "^16.0.4",
+    "typescript": "^5.1.6"
   },
   "standard": {
     "globals": [

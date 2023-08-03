@@ -27,7 +27,8 @@ module.exports = function (api) {
             browsers: '> 1%'
           }
         }
-      ]
+      ],
+      '@babel/preset-typescript'
     ].filter(Boolean)
   }
 }
