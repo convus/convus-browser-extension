@@ -257,73 +257,79 @@
   var log_default = import_loglevel.default;
 
   // api.ts
-  var requestProps = (authToken = "", extraProps = {}) => {
-    const headers = {
-      "Content-Type": "application/json",
-      ...authToken.length > 0 && { Authorization: `Bearer ${authToken}` }
-    };
+  function requestProps(authToken = "", extraProps = {}) {
     const defaultProps = {
       method: "POST",
       async: true,
-      headers,
+      headers: {
+        "Content-Type": "application/json",
+        ...authToken.length > 0 && { Authorization: `Bearer ${authToken}` }
+      },
       contentType: "json"
     };
     return { ...defaultProps, ...extraProps };
-  };
-  var isAuthTokenValid = async (authUrl2, authToken) => await new Promise(async (resolve, reject) => {
-    const authStatusUrl = `${authUrl2}/status`;
-    return await fetch(authStatusUrl, requestProps(authToken, { method: "GET" })).then(
-      async (response) => await response.json().then((json) => {
-        resolve(json.message !== "missing user" && response.status === 200);
-      })
-    ).catch((e) => {
-      resolve(errorResponse(e));
+  }
+  async function isAuthTokenValid(authUrl2, authToken) {
+    return await new Promise(async (resolve, reject) => {
+      const authStatusUrl = `${authUrl2}/status`;
+      return await fetch(authStatusUrl, requestProps(authToken, { method: "GET" })).then(
+        async (response) => await response.json().then((json) => {
+          resolve(json.message !== "missing user" && response.status === 200);
+        })
+      ).catch((e) => {
+        log_default.debug(errorResponse(e));
+        resolve(false);
+      });
     });
-  });
-  var getAuthToken = async (authUrl2, loginFormData) => await new Promise(async (resolve, reject) => {
-    const rProps = {
-      method: "POST",
-      async: true,
-      headers: { "Content-Type": "application/json" },
-      contentType: "json",
-      body: loginFormData
-    };
-    return await fetch(authUrl2, rProps).then(
-      async (response) => await response.json().then((json) => {
-        resolve(responseFormatter(response, json));
-      })
-    ).catch((e) => {
-      resolve(errorResponse(e));
+  }
+  async function getAuthToken(authUrl2, loginFormData) {
+    return await new Promise(async (resolve, reject) => {
+      const rProps = {
+        method: "POST",
+        async: true,
+        headers: { "Content-Type": "application/json" },
+        contentType: "json",
+        body: loginFormData
+      };
+      return await fetch(authUrl2, rProps).then(
+        async (response) => await response.json().then((json) => {
+          resolve(responseFormatter(response, json));
+        })
+      ).catch((e) => {
+        resolve(errorResponse(e));
+      });
     });
-  });
-  var responseFormatter = function(authResponse, authJson) {
+  }
+  function responseFormatter(authResponse, authJson) {
     if (authResponse.status !== 200 || typeof authJson.review_token === "undefined" || authJson.review_token === null) {
       return { message: ["error", authJson.message] };
     } else {
       return { authToken: authJson.review_token, currentName: authJson.name, message: ["success", "authenticated"] };
     }
-  };
-  var submitRating = async (ratingUrl, authToken, ratingFormData) => await new Promise(async (resolve, reject) => {
-    const rProps = requestProps(authToken, { body: ratingFormData });
-    return await fetch(ratingUrl, rProps).then(
-      async (response) => await response.json().then((json) => {
-        if (response.status === 200) {
-          resolve({
-            success: true,
-            message: ["success", json.message],
-            share: json.share
-          });
-        } else {
-          resolve({ success: false, message: ["error", json.message] });
-        }
-      })
-    ).catch((e) => {
-      resolve(errorResponse(e));
+  }
+  async function submitRating(ratingUrl, authToken, ratingFormData) {
+    return await new Promise(async (resolve, reject) => {
+      const rProps = requestProps(authToken, { body: ratingFormData });
+      return await fetch(ratingUrl, rProps).then(
+        async (response) => await response.json().then((json) => {
+          if (response.status === 200) {
+            resolve({
+              success: true,
+              message: ["success", json.message],
+              share: json.share
+            });
+          } else {
+            resolve({ success: false, message: ["error", json.message] });
+          }
+        })
+      ).catch((e) => {
+        resolve(errorResponse(e));
+      });
     });
-  });
-  var errorResponse = (e) => {
+  }
+  function errorResponse(e) {
     return { success: false, message: ["error", `Error: ${e})`] };
-  };
+  }
   var api_default = {
     getAuthToken,
     isAuthTokenValid,
