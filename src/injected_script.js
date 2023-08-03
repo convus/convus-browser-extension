@@ -1,4 +1,4 @@
-export default function injectedScript () {
+export default function injectedScript() {
   const authUrl = process.env.baseUrl + '/browser_extension_auth'
 
   console.log('Convus extension is getting the page metadata!')
@@ -17,8 +17,6 @@ export default function injectedScript () {
   const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair))
   // Convert an iterable of elements to a list of element attributes
   const elsToAttrs = (els) => Array.from(els).map(elToAttrs)
-  // Count the total words on the page
-  const countWords = (str) => str?.trim()?.split(/\s+/)?.length || 0
   // Grab the JSON-LD data from the script elements, without parsing it
   const jsonLdString = (scriptEls) => Array.from(scriptEls).map((i) => i.innerText.trim())
 
@@ -30,10 +28,15 @@ export default function injectedScript () {
     metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]]
   }
 
-  // Calculate wordCount
-  const commentsEl = document.querySelector('.comment-list-container') || document.querySelector('.comment-list') || document.querySelector('.commentlist')
-  // Subtract comment words from the total
-  const wordCount = { word_count: countWords(document.body.innerText) - countWords(commentsEl?.innerText) }
-
-  return metadataAttrs.concat([wordCount])
+  // Get articleText
+  let articleText = document.querySelector('body').innerText
+  // List of selectors for things that we don't want to include in articleText
+  const nonArticleSelectors = ['nav', 'header', 'footer', '#disqus_thread',
+    '.GoogleActiveViewElement', '.hide-for-print']
+  // Get all the nonArticleSelectors elements, remove any text matching the text of those elements
+  Array.from(document.querySelectorAll(nonArticleSelectors))
+    .forEach(function(t) { articleText = articleText.replaceAll(t.innerText, '') })
+  // A lot of these get created, so remove them
+  articleText = articleText.replaceAll('\\nADVERTISEMENT\\n', '\n').trim()
+  return metadataAttrs.concat([{ articleText: articleText }])
 }

@@ -669,16 +669,26 @@
     const attrToPair = (attr) => [attr.name, attr.value];
     const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
     const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
-    const countWords = (str) => str?.trim()?.split(/\s+/)?.length || 0;
     const jsonLdString = (scriptEls) => Array.from(scriptEls).map((i) => i.innerText.trim());
     let metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
     const jsonLD = jsonLdString(document.querySelectorAll('script[type="application/ld+json"]'));
     if (jsonLD.length) {
       metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]];
     }
-    const commentsEl = document.querySelector(".comment-list-container") || document.querySelector(".comment-list") || document.querySelector(".commentlist");
-    const wordCount = { word_count: countWords(document.body.innerText) - countWords(commentsEl?.innerText) };
-    return metadataAttrs.concat([wordCount]);
+    let articleText = document.querySelector("body").innerText;
+    const nonArticleSelectors = [
+      "nav",
+      "header",
+      "footer",
+      "#disqus_thread",
+      ".GoogleActiveViewElement",
+      ".hide-for-print"
+    ];
+    Array.from(document.querySelectorAll(nonArticleSelectors)).forEach(function(t) {
+      articleText = articleText.replaceAll(t.innerText, "");
+    });
+    articleText = articleText.replaceAll("\\nADVERTISEMENT\\n", "\n").trim();
+    return metadataAttrs.concat([{ articleText }]);
   }
 
   // popup.js
