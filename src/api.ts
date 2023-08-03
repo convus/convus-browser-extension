@@ -1,11 +1,13 @@
-// import log from './log' // eslint-disable-line
+import log from './log' // eslint-disable-line
 
-const requestProps = (authToken = false, extraProps = {}) => {
-  const headers = { 'Content-Type': 'application/json' }
-  if (authToken) {
-    // @ts-expect-error TS(2339): Property 'Authorization' does not exist on type '{... Remove this comment to see the full error message
-    headers.Authorization = `Bearer ${authToken}`
+const requestProps = function (authToken = "", extraProps = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(authToken.length > 0) && { 'Authorization': `Bearer ${authToken}` }
   }
+  // if (authToken.length > 0) {
+  //   headers['Authorization'] = `Bearer ${authToken}`
+  // }
 
   const defaultProps = {
     method: 'POST', // because default to some method
@@ -17,7 +19,7 @@ const requestProps = (authToken = false, extraProps = {}) => {
 }
 
 // Returns true/false
-const isAuthTokenValid = (authUrl: any, authToken: any) => new Promise((resolve, reject) => {
+const isAuthTokenValid = (authUrl:string, authToken:string) => new Promise((resolve, reject) => {
   const authStatusUrl = `${authUrl}/status`
 
   return fetch(authStatusUrl, requestProps(authToken, { method: 'GET' }))
@@ -41,19 +43,20 @@ const getAuthToken = (authUrl: any, loginFormData: any) => new Promise((resolve,
   return fetch(authUrl, rProps)
     .then(response => response.json()
       .then((json) => {
-        let result = {}
-        if (response.status !== 200 || typeof (json.review_token) === 'undefined' || json.review_token === null) {
-          // @ts-expect-error TS(2339): Property 'message' does not exist on type '{}'.
-          result.message = ['error', json.message]
-        } else {
-          result = { authToken: json.review_token, currentName: json.name, message: ['success', 'authenticated'] }
-        }
-        resolve(result)
+        resolve(responseFormatter(response, json))
       })
     ).catch((e) => {
       resolve(errorResponse(e))
     })
 })
+
+const responseFormatter(authResponse: any, authJson: any) {
+  if (authResponse.status !== 200 || typeof (authJson.review_token) === 'undefined' || authJson.review_token === null) {
+    return {message: ['error', authJson.message]}
+  } else {
+    return { authToken: authJson.review_token, currentName: authJson.name, message: ['success', 'authenticated'] }
+  }
+}
 
 const submitRating = (ratingUrl: any, authToken: any, ratingFormData: any) => new Promise((resolve, reject) => {
   const rProps = requestProps(authToken, { body: ratingFormData })
