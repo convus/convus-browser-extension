@@ -42,5 +42,13 @@
     "env": [
       "jest"
     ]
+  },
+  "ts-standard": {
+    "ignore": [
+      "apple",
+      "dist",
+      "tests",
+      "src/**/*.js"
+    ]
   }
 }

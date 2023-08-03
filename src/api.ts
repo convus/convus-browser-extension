@@ -1,5 +1,3 @@
-import log from './log' // eslint-disable-line
-
 const requestProps = (authToken = '', extraProps = {}) => {
   const headers = {
     'Content-Type': 'application/json',
@@ -16,7 +14,7 @@ const requestProps = (authToken = '', extraProps = {}) => {
 }
 
 // Returns true/false
-const isAuthTokenValid = async (authUrl, authToken) => await new Promise(async (resolve, reject) => {
+const isAuthTokenValid = async (authUrl: string, authToken: string | undefined): => await new Promise(async (resolve, reject) => {
   const authStatusUrl = `${authUrl}/status`
 
   return await fetch(authStatusUrl, requestProps(authToken, { method: 'GET' }))
@@ -77,7 +75,7 @@ const submitRating = async (ratingUrl: RequestInfo | URL, authToken: string | un
 })
 
 // Just return an error message that includes the error
-const errorResponse = (e: any) => {
+const errorResponse = (e: string) => {
   return { success: false, message: ['error', `Error: ${e})`] }
 }
 

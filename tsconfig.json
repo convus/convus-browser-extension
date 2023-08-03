@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "isolatedModules": true,
-    "esModuleInterop": true
+    "strictNullChecks": true
   },
   "include": [
     "src/*.ts"
