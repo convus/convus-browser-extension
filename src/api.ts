@@ -1,4 +1,4 @@
-import log from './log' // eslint-disable-line
+// import log from './log' // eslint-disable-line
 
 const requestProps = (authToken = false, extraProps = {}) => {
   const headers = { 'Content-Type': 'application/json' }

@@ -1,10 +1,25 @@
+"use strict";
 (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
   var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __propIsEnum = Object.prototype.propertyIsEnumerable;
+  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+  var __spreadValues = (a, b) => {
+    for (var prop in b ||= {})
+      if (__hasOwnProp.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    if (__getOwnPropSymbols)
+      for (var prop of __getOwnPropSymbols(b)) {
+        if (__propIsEnum.call(b, prop))
+          __defNormalProp(a, prop, b[prop]);
+      }
+    return a;
+  };
   var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
@@ -20,6 +35,26 @@
     isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
     mod
   ));
+  var __async = (__this, __arguments, generator) => {
+    return new Promise((resolve, reject) => {
+      var fulfilled = (value) => {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var rejected = (value) => {
+        try {
+          step(generator.throw(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      step((generator = generator.apply(__this, __arguments)).next());
+    });
+  };
 
   // ../node_modules/loglevel/lib/loglevel.js
   var require_loglevel = __commonJS({
@@ -251,12 +286,12 @@
     }
   });
 
-  // log.js
+  // log.ts
   var import_loglevel = __toESM(require_loglevel());
   import_loglevel.default.setLevel("debug");
   var log_default = import_loglevel.default;
 
-  // api.js
+  // api.ts
   var requestProps = (authToken = false, extraProps = {}) => {
     const headers = { "Content-Type": "application/json" };
     if (authToken) {
@@ -268,7 +303,7 @@
       headers,
       contentType: "json"
     };
-    return { ...defaultProps, ...extraProps };
+    return __spreadValues(__spreadValues({}, defaultProps), extraProps);
   };
   var isAuthTokenValid = (authUrl2, authToken) => new Promise((resolve, reject) => {
     const authStatusUrl = `${authUrl2}/status`;
@@ -330,7 +365,7 @@
     submitRating
   };
 
-  // utilities.js
+  // utilities.ts
   var retryIfMissing = (obj, func, ...args) => {
     if (typeof obj === "undefined" || obj === null) {
       log_default.debug(`${func.name} requires an element not present in DOM, trying again in 50ms`);
@@ -368,9 +403,10 @@
     elementsFromSelectorOrElements(selOrEl).forEach((el) => el.classList.remove("hidden"));
   };
   var elementsCollapse = (selOrEl, toggle = true) => {
+    var _a;
     const els = elementsFromSelectorOrElements(selOrEl);
     if (toggle === true) {
-      toggle = els[0]?.classList.contains("hidden") ? "show" : "hide";
+      toggle = ((_a = els[0]) == null ? void 0 : _a.classList.contains("hidden")) ? "show" : "hide";
     }
     if (toggle === "show") {
       els.forEach((el) => el.classList.remove("hidden"));
@@ -444,25 +480,30 @@
     toggleMenu
   };
 
-  // rating.js
-  var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
-  var handleRatingSubmit = async function(e) {
-    e.preventDefault();
-    const submitBtn = document.getElementById("ratingSubmitButton");
-    submitBtn.classList.add("disabled");
-    utilities_default.elementsShow("#rating-submit-spinner");
-    const formData = new FormData(document.getElementById("new_rating"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
-    log_default.debug(result);
-    utilities_default.renderAlerts(result.message, result.share);
-    if (result.success) {
-      document.getElementById("new_rating").classList.add("hidden");
-      utilities_default.toggleMenu(false, "hide");
-    }
-    utilities_default.elementsHide("#rating-submit-spinner");
-    submitBtn.classList.remove("disabled");
-    return false;
+  // rating.ts
+  var formNewRatingUrl = () => {
+    var _a;
+    return (_a = document.getElementById("new_rating")) == null ? void 0 : _a.getAttribute("action");
+  };
+  var handleRatingSubmit = function(e) {
+    return __async(this, null, function* () {
+      e.preventDefault();
+      const submitBtn = document.getElementById("ratingSubmitButton");
+      submitBtn.classList.add("disabled");
+      utilities_default.elementsShow("#rating-submit-spinner");
+      const formData = new FormData(document.getElementById("new_rating"));
+      const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+      const result = yield api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
+      log_default.debug(result);
+      utilities_default.renderAlerts(result.message, result.share);
+      if (result.success) {
+        document.getElementById("new_rating").classList.add("hidden");
+        utilities_default.toggleMenu(false, "hide");
+      }
+      utilities_default.elementsHide("#rating-submit-spinner");
+      submitBtn.classList.remove("disabled");
+      return false;
+    });
   };
   var updateMenuCheck = (event) => {
     const el = event.target;
@@ -506,7 +547,7 @@
     ratingTime();
   };
   var addMetadata = (metadata) => {
-    log_default.debug(`addMetadata, metadata length: ${metadata?.length}`);
+    log_default.debug(`addMetadata, metadata length: ${metadata == null ? void 0 : metadata.length}`);
     const citationMetadataField = document.getElementById("citation_metadata_str");
     utilities_default.retryIfMissing(citationMetadataField, addMetadata, metadata);
     citationMetadataField.value = JSON.stringify(metadata);
@@ -517,7 +558,7 @@
     updateRatingFields
   };
 
-  // login.js
+  // login.ts
   var baseUrl2 = "https://www.convus.org";
   var formAuthUrl = baseUrl2 + "/api/v1/auth";
   var authUrl = baseUrl2 + "/browser_extension_auth";
@@ -526,25 +567,27 @@
     window.authToken = authToken;
     window.currentName = currentName;
   };
-  var handleFallbackLoginSubmit = async function(e) {
-    e.preventDefault();
-    const formData = new FormData(document.getElementById("new_user"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.getAuthToken(formAuthUrl, jsonFormData);
-    log_default.debug(result);
-    if (typeof result.authToken === "undefined" || result.authToken === null) {
-      utilities_default.renderAlerts(result.message);
-    } else {
-      storeAuthData(result.authToken, result.currentName);
-      utilities_default.hideAlerts();
-      if (isAuthUrl()) {
-        utilities_default.elementsCollapse("#new_user");
-        utilities_default.renderAlerts([["success", "Logged in!"]]);
+  var handleFallbackLoginSubmit = function(e) {
+    return __async(this, null, function* () {
+      e.preventDefault();
+      const formData = new FormData(document.getElementById("new_user"));
+      const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+      const result = yield api_default.getAuthToken(formAuthUrl, jsonFormData);
+      log_default.debug(result);
+      if (typeof result.authToken === "undefined" || result.authToken === null) {
+        utilities_default.renderAlerts(result.message);
       } else {
-        rating_default.showRatingForm();
+        storeAuthData(result.authToken, result.currentName);
+        utilities_default.hideAlerts();
+        if (isAuthUrl()) {
+          utilities_default.elementsCollapse("#new_user");
+          utilities_default.renderAlerts([["success", "Logged in!"]]);
+        } else {
+          rating_default.showRatingForm();
+        }
       }
-    }
-    return false;
+      return false;
+    });
   };
   var countdownAndClose = (selector, ms, closeFunc = false) => {
     let secondsLeft = ms / 1e3;
@@ -568,21 +611,23 @@
   };
   var isAuthUrl = (url = null) => authUrl === (url || window.currentUrl);
   var isSignInOrUpUrl = (url = null) => {
-    url ||= window.currentUrl;
+    url || (url = window.currentUrl);
     return `${baseUrl2}/users/sign_in` === url || `${baseUrl2}/users/sign_up` === url;
   };
-  var checkAuthToken = async function(token) {
-    if (utilities_default.retryIfMissing(formAuthUrl, checkAuthToken, token)) {
-      return;
-    }
-    const result = await api_default.isAuthTokenValid(formAuthUrl, token);
-    log_default.trace("auth token check success:", result);
-    if (result) {
-      rating_default.showRatingForm();
-      return;
-    }
-    removeAuthData();
-    loginTime();
+  var checkAuthToken = function(token) {
+    return __async(this, null, function* () {
+      if (utilities_default.retryIfMissing(formAuthUrl, checkAuthToken, token)) {
+        return;
+      }
+      const result = yield api_default.isAuthTokenValid(formAuthUrl, token);
+      log_default.trace("auth token check success:", result);
+      if (result) {
+        rating_default.showRatingForm();
+        return;
+      }
+      removeAuthData();
+      loginTime();
+    });
   };
   var loginFromAuthPageData = (authToken, currentName) => {
     log_default.trace(`loginFromAuthPageData - authToken: ${authToken}, ${currentName}`);
@@ -648,21 +693,25 @@
     logout
   };
 
-  // injected_script.js
+  // injected_script.ts
   function injectedScript() {
+    var _a, _b;
     const authUrl2 = "https://www.convus.org/browser_extension_auth";
     console.log("Convus extension is getting the page metadata!");
     if (authUrl2 === window.location.href) {
       const authData = {
-        currentName: document.querySelector('meta[name="ext-username"]')?.content,
-        authToken: document.querySelector('meta[name="ext-token"]')?.content
+        currentName: (_a = document.querySelector('meta[name="ext-username"]')) == null ? void 0 : _a.content,
+        authToken: (_b = document.querySelector('meta[name="ext-token"]')) == null ? void 0 : _b.content
       };
       return authData;
     }
     const attrToPair = (attr) => [attr.name, attr.value];
     const elToAttrs = (el) => Object.fromEntries(Array.from(el.attributes).map(attrToPair));
     const elsToAttrs = (els) => Array.from(els).map(elToAttrs);
-    const countWords = (str) => str?.trim()?.split(/\s+/)?.length || 0;
+    const countWords = (str) => {
+      var _a2, _b2;
+      return ((_b2 = (_a2 = str == null ? void 0 : str.trim()) == null ? void 0 : _a2.split(/\s+/)) == null ? void 0 : _b2.length) || 0;
+    };
     const jsonLdString = (scriptEls) => Array.from(scriptEls).map((i) => i.innerText.trim());
     let metadataAttrs = elsToAttrs(document.getElementsByTagName("meta"));
     const jsonLD = jsonLdString(document.querySelectorAll('script[type="application/ld+json"]'));
@@ -670,11 +719,11 @@
       metadataAttrs = [...metadataAttrs, ...[{ json_ld: jsonLD }]];
     }
     const commentsEl = document.querySelector(".comment-list-container") || document.querySelector(".comment-list") || document.querySelector(".commentlist");
-    const wordCount = { word_count: countWords(document.body.innerText) - countWords(commentsEl?.innerText) };
+    const wordCount = { word_count: countWords(document.body.innerText) - countWords(commentsEl == null ? void 0 : commentsEl.innerText) };
     return metadataAttrs.concat([wordCount]);
   }
 
-  // popup.js
+  // popup.ts
   var browserTarget = "chrome";
   var safariType = !!browserTarget.match("safari");
   if (browserTarget == "chrome") {
@@ -692,8 +741,9 @@
     }
   });
   var handlePageData = (response, isAuthUrl2) => {
+    var _a;
     log_default.debug("Script response: ", response);
-    const result = safariType ? response[0] : response[0]?.result;
+    const result = safariType ? response[0] : (_a = response[0]) == null ? void 0 : _a.result;
     log_default.warn(`result: ${JSON.stringify(result)}`);
     if (isAuthUrl2) {
       log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
@@ -702,39 +752,43 @@
       rating_default.addMetadata(result);
     }
   };
-  var injectScript = async function(tabId, isAuthUrl2) {
-    await browser.scripting.executeScript({
-      target: { tabId },
-      func: injectedScript
-    }).then((response) => {
-      try {
-        handlePageData(response, isAuthUrl2);
-      } catch (e) {
-        log_default.debug(e);
-        let alert = [["warning", "Unable to parse the page."]];
-        if (safariType) {
-          alert = [["error", "Please upgrade to the most recent version Safari"]];
+  var injectScript = function(tabId, isAuthUrl2) {
+    return __async(this, null, function* () {
+      yield browser.scripting.executeScript({
+        target: { tabId },
+        func: injectedScript
+      }).then((response) => {
+        try {
+          handlePageData(response, isAuthUrl2);
+        } catch (e) {
+          log_default.debug(e);
+          let alert = [["warning", "Unable to parse the page."]];
+          if (safariType) {
+            alert = [["error", "Please upgrade to the most recent version Safari"]];
+          }
+          utilities_default.renderAlerts(alert);
+          if (!window.authToken) {
+            login_default.fallbackLoginTime();
+          }
         }
-        utilities_default.renderAlerts(alert);
-        if (!window.authToken) {
-          login_default.fallbackLoginTime();
-        }
-      }
+      });
     });
   };
-  var getCurrentTab = async function() {
-    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-    log_default.trace(tab);
-    window.currentUrl = tab.url;
-    const isAuthUrl2 = login_default.isAuthUrl(window.currentUrl);
-    window.tabId = tab.id;
-    if (login_default.isSignInOrUpUrl(window.currentUrl)) {
-      log_default.debug("Viewing Convus sign in or up");
-      return;
-    } else if (!isAuthUrl2) {
-      rating_default.updateRatingFields(window.currentUrl, tab.title);
-    }
-    injectScript(window.tabId, isAuthUrl2);
+  var getCurrentTab = function() {
+    return __async(this, null, function* () {
+      const [tab] = yield browser.tabs.query({ active: true, currentWindow: true });
+      log_default.trace(tab);
+      window.currentUrl = tab.url;
+      const isAuthUrl2 = login_default.isAuthUrl(window.currentUrl);
+      window.tabId = tab.id;
+      if (login_default.isSignInOrUpUrl(window.currentUrl)) {
+        log_default.debug("Viewing Convus sign in or up");
+        return;
+      } else if (!isAuthUrl2) {
+        rating_default.updateRatingFields(window.currentUrl, tab.title);
+      }
+      injectScript(window.tabId, isAuthUrl2);
+    });
   };
   getCurrentTab();
 })();

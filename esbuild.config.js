@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('path') // eslint-disable-line
 const fs = require('fs')
 
 const watch = process.argv.includes('--watch') || process.env.WATCH === 'true'
@@ -27,13 +27,13 @@ fs.writeFileSync('dist/manifest.json', replaceEnvValues(manifestContent))
 // esbuild, go to town
 const errorFilePath = 'esbuild_error'
 const watchOptions = {
-  onRebuild (error, result) {
+  onRebuild(error, result) {
     if (error) {
       console.error('watch build failed:', error)
       fs.writeFileSync(errorFilePath, error.toString())
     } else if (fs.existsSync(errorFilePath)) {
       console.log(`${target} - watch build succeeded:`, result)
-      fs.truncate(errorFilePath, 0, () => {})
+      fs.truncate(errorFilePath, 0, () => { })
     }
   }
 }
@@ -46,7 +46,7 @@ require('esbuild')
       'process.env.version': `"${version}"`,
       'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`
     },
-    entryPoints: ['popup.js'],
+    entryPoints: ['popup.ts'],
     bundle: true,
     sourcemap: true,
     outdir: path.join(process.cwd(), 'dist'),
