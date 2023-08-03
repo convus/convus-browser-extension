@@ -1,5 +1,5 @@
-const path = require('path')
-const fs = require('fs')
+import { join } from 'path'
+import { readFileSync, writeFileSync, existsSync, truncate } from 'fs'
 
 const watch = process.argv.includes('--watch') || process.env.WATCH === 'true'
 
@@ -18,11 +18,13 @@ const replaceEnvValues = (str) => {
 
 // HACK HACK HACK! building things by doing substitution
 // TODO: make this a better process
-const htmlContent = fs.readFileSync('src/index.html', 'utf8')
-fs.writeFileSync('dist/index.html', replaceEnvValues(htmlContent))
+const htmlContent = readFileSync('src/index.html', 'utf8')
+writeFileSync('dist/index.html', replaceEnvValues(htmlContent))
 // manifest
-const manifestContent = fs.readFileSync('src/manifest_v3.json', 'utf8')
-fs.writeFileSync('dist/manifest.json', replaceEnvValues(manifestContent))
+const manifestContent = readFileSync('src/manifest_v3.json', 'utf8')
+writeFileSync('dist/manifest.json', replaceEnvValues(manifestContent))
+
+import * as esbuild from 'esbuild'
 
 // esbuild, go to town
 const errorFilePath = 'esbuild_error'
@@ -30,16 +32,15 @@ const watchOptions = {
   onRebuild (error, result) {
     if (error) {
       console.error('watch build failed:', error)
-      fs.writeFileSync(errorFilePath, error.toString())
-    } else if (fs.existsSync(errorFilePath)) {
+      writeFileSync(errorFilePath, error.toString())
+    } else if (existsSync(errorFilePath)) {
       console.log(`${target} - watch build succeeded:`, result)
-      fs.truncate(errorFilePath, 0, () => {})
+      truncate(errorFilePath, 0, () => {})
     }
   }
 }
 
-require('esbuild')
-  .build({
+await esbuild.build({
     define: {
       'process.env.baseUrl': `"${baseUrl}"`,
       'process.env.browser_target': `"${target}"`,
@@ -49,8 +50,8 @@ require('esbuild')
     entryPoints: ['popup.js'],
     bundle: true,
     sourcemap: true,
-    outdir: path.join(process.cwd(), 'dist'),
-    absWorkingDir: path.join(process.cwd(), 'src'),
+    outdir: join(process.cwd(), 'dist'),
+    absWorkingDir: join(process.cwd(), 'src'),
     watch: watch && watchOptions,
     plugins: []
   })
