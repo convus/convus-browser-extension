@@ -9,17 +9,20 @@
   },
   "dependencies": {
     "esbuild": "^0.15.3",
-    "loglevel": "^1.8.1"
+    "loglevel": "^1.8.1",
+    "ts-standard": "^12.0.2"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.16.4",
+    "@babel/preset-typescript": "^7.22.5",
     "babel-jest": "^27.4.6",
     "jest-cli": "^27.4.7",
     "jest-fetch-mock": "^3.0.3",
     "jest-junit": "^13.0.0",
     "nodemon": "^2.0.22",
     "prettier-standard": "^16.4.1",
-    "standard": "^16.0.4"
+    "standard": "^16.0.4",
+    "typescript": "^5.1.6"
   },
   "standard": {
     "globals": [
@@ -38,6 +41,14 @@
     ],
     "env": [
       "jest"
+    ]
+  },
+  "ts-standard": {
+    "ignore": [
+      "apple",
+      "dist",
+      "tests",
+      "src/**/*.js"
     ]
   }
 }
