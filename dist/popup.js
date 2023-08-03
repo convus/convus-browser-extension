@@ -516,8 +516,6 @@
     log_default.debug(`addMetadata, metadata length: ${metadata?.length}`);
     const citationMetadataField = document.getElementById("citation_metadata_str");
     utilities_default.retryIfMissing(citationMetadataField, addMetadata, metadata);
-    document.getElementById("citation_text").value = metadata.articleText;
-    delete metadata.articleText;
     citationMetadataField.value = JSON.stringify(metadata);
   };
   var rating_default = {
