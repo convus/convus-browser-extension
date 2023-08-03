@@ -86,6 +86,9 @@ const addMetadata = (metadata) => {
   log.debug(`addMetadata, metadata length: ${metadata?.length}`)
   const citationMetadataField = document.getElementById('citation_metadata_str')
   utilities.retryIfMissing(citationMetadataField, addMetadata, metadata)
+  document.getElementById('citation_text').value = metadata.articleText
+  // This could use destructuring, but it's a bit more readable this way
+  delete metadata.articleText
   citationMetadataField.value = JSON.stringify(metadata)
 }
 
