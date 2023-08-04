@@ -21,6 +21,8 @@ browser.storage.local.get(['authToken', 'currentName'])
       log.trace('auth present')
       window.authToken = data.authToken
       window.currentName = data.currentName
+      log.debug(`URL: ${window.currentUrl}`)
+      // TODO: include the URL here, so that we only need to make one request
       login.checkAuthToken(data.authToken)
     }
   })
@@ -29,7 +31,7 @@ const handlePageData = (response, isAuthUrl) => {
   log.debug('Script response: ', response)
 
   const result = safariType ? response[0] : response[0]?.result
-  log.warn(`result: ${JSON.stringify(result)}`)
+  // log.warn(`result: ${JSON.stringify(result)}`)
   if (isAuthUrl) {
     log.trace(`authUrl?: ${isAuthUrl}    ${window.currentUrl}`)
     login.loginFromAuthPageData(result.authToken, result.currentName)
@@ -38,7 +40,7 @@ const handlePageData = (response, isAuthUrl) => {
   }
 }
 
-const injectScript = async function (tabId, isAuthUrl) {
+const injectScript = async function(tabId, isAuthUrl) {
   await browser.scripting.executeScript({
     target: { tabId: tabId },
     func: injectedScript
@@ -59,7 +61,7 @@ const injectScript = async function (tabId, isAuthUrl) {
     })
 }
 
-const getCurrentTab = async function () {
+const getCurrentTab = async function() {
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
   log.trace(tab)
 
@@ -74,7 +76,8 @@ const getCurrentTab = async function () {
     return
   } else if (!isAuthUrl) {
     // Update rating fields that we have info for, the metadata can be added later
-    rating.updateRatingFields(window.currentUrl, tab.title)
+    rating.updateBasicRatingFields(window.currentUrl, tab.title)
+    rating.loadRemoteRatingData(window.currentUrl)
   }
   injectScript(window.tabId, isAuthUrl)
 }

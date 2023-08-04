@@ -89,3 +89,27 @@ describe('postRating', function() {
     expect(res).toStrictEqual({ success: true, message: ['success', 'rating added'], share: 'share message' })
   })
 })
+
+describe('getRating', function() {
+  test('getRating empty', async () => {
+
+    fetch.mockResponseOnce(JSON.stringify({}), { status: 200 })
+
+    const res = await api.getRating(`${ratingUrl}/for_url`, 'xxxx')
+    expect(res).toStrictEqual({ success: false, data: {} })
+  })
+
+  test('getRating succeeds', async () => {
+    const responseJson = {
+      agreement: "disagree", quality: "quality_high", changed_opinion: true,
+      significant_factual_error: true, error_quotes: "Quote goes here",
+      topics_text: "A topic\n\nAnd another topic", learned_something: true,
+      not_understood: true, not_finished: true
+    }
+
+    fetch.mockResponseOnce(JSON.stringify(responseJson), { status: 200 })
+
+    const res = await api.getRating(`${ratingUrl}/for_url`, 'xxxx')
+    expect(res).toStrictEqual({ success: true, data: responseJson })
+  })
+})

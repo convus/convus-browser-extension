@@ -6,6 +6,7 @@ import login from './login'
 // Internal
 const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribute('action')
 
+// Internal
 const submitRating = async function() {
   const formData = new FormData(document.getElementById('new_rating'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
@@ -75,15 +76,38 @@ const showRatingForm = () => {
   }
 }
 
-const updateRatingFields = (tabUrl, title) => {
-  log.trace('updateRatingFields')
+const updateBasicRatingFields = (tabUrl, title) => {
+  log.trace('updateBasicRatingFields')
   const ratingUrlField = document.getElementById('submitted_url')
-  utilities.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title)
+  utilities.retryIfMissing(ratingUrlField, updateBasicRatingFields, tabUrl, title)
 
   ratingUrlField.value = tabUrl
   document.getElementById('citation_title').value = title
   document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone
   ratingTime()
+}
+
+// Internal
+const updateAdditionalRatingFields = (ratingAttrs) => {
+  log.trace('updateAdditionalRatingFields')
+  log.debug(ratingAttrs)
+  const ratingUrlField = document.getElementById('submitted_url')
+  utilities.retryIfMissing(ratingUrlField, updateAdditionalRatingFields, ratingAttrs)
+  // Only update quality if it's not the default
+  if (ratingAttrs.quality !== "quality_med") {
+    document.getElementById(`quality_${ratingAttrs.quality}`).checked = true
+  }
+  const checkedBoxes = ["changed_opinion", "significant_factual_error", "learned_something",
+    "not_understood", "not_finished"].filter((field) => ratingAttrs[field])
+  checkedBoxes.forEach((field) => document.getElementById(field).checked = true)
+}
+
+const loadRemoteRatingData = async (tabUrl) => {
+  const result = await api.getRating(formNewRatingUrl(), window.authToken, tabUrl)
+  log.debug(`rating result: ${JSON.stringify(result)}`)
+  if (result.success) {
+    updateAdditionalRatingFields(result.data)
+  }
 }
 
 const addMetadata = (metadata) => {
@@ -96,5 +120,6 @@ const addMetadata = (metadata) => {
 export default {
   addMetadata,
   showRatingForm,
-  updateRatingFields
+  updateBasicRatingFields,
+  loadRemoteRatingData
 }

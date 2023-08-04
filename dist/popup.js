@@ -327,6 +327,27 @@
       });
     });
   }
+  async function getRating(ratingUrl, authToken, url) {
+    return await new Promise(async (resolve, _reject) => {
+      const rProps = requestProps(authToken, { method: "GET" });
+      const getRatingUrl = `${ratingUrl}/for_url?url=${encodeURIComponent(url)}`;
+      log_default.trace("getRatingUrl", getRatingUrl);
+      return await fetch(getRatingUrl, rProps).then(
+        async (response) => await response.json().then((json) => {
+          if (response.status === 200 && json.quality) {
+            resolve({
+              success: true,
+              data: json
+            });
+          } else {
+            resolve({ success: false, data: json });
+          }
+        })
+      ).catch((e) => {
+        resolve(errorResponse(e));
+      });
+    });
+  }
   function errorResponse(e) {
     return { success: false, message: ["error", `Error: ${e})`] };
   }
@@ -334,6 +355,7 @@
     getAuthToken,
     isAuthTokenValid,
     requestProps,
+    getRating,
     postRating
   };
 
@@ -506,14 +528,38 @@
       document.getElementById("username").textContent = window.currentName;
     }
   };
-  var updateRatingFields = (tabUrl, title) => {
-    log_default.trace("updateRatingFields");
+  var updateBasicRatingFields = (tabUrl, title) => {
+    log_default.trace("updateBasicRatingFields");
     const ratingUrlField = document.getElementById("submitted_url");
-    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
+    utilities_default.retryIfMissing(ratingUrlField, updateBasicRatingFields, tabUrl, title);
     ratingUrlField.value = tabUrl;
     document.getElementById("citation_title").value = title;
     document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
     ratingTime();
+  };
+  var updateAdditionalRatingFields = (ratingAttrs) => {
+    log_default.trace("updateAdditionalRatingFields");
+    log_default.debug(ratingAttrs);
+    const ratingUrlField = document.getElementById("submitted_url");
+    utilities_default.retryIfMissing(ratingUrlField, updateAdditionalRatingFields, ratingAttrs);
+    if (ratingAttrs.quality !== "quality_med") {
+      document.getElementById(`quality_${ratingAttrs.quality}`).checked = true;
+    }
+    const checkedBoxes = [
+      "changed_opinion",
+      "significant_factual_error",
+      "learned_something",
+      "not_understood",
+      "not_finished"
+    ].filter((field) => ratingAttrs[field]);
+    checkedBoxes.forEach((field) => document.getElementById(field).checked = true);
+  };
+  var loadRemoteRatingData = async (tabUrl) => {
+    const result = await api_default.getRating(formNewRatingUrl(), window.authToken, tabUrl);
+    log_default.debug(`rating result: ${JSON.stringify(result)}`);
+    if (result.success) {
+      updateAdditionalRatingFields(result.data);
+    }
   };
   var addMetadata = (metadata) => {
     log_default.debug(`addMetadata, metadata length: ${metadata?.length}`);
@@ -524,7 +570,8 @@
   var rating_default = {
     addMetadata,
     showRatingForm,
-    updateRatingFields
+    updateBasicRatingFields,
+    loadRemoteRatingData
   };
 
   // login.js
@@ -708,13 +755,13 @@
       log_default.trace("auth present");
       window.authToken = data.authToken;
       window.currentName = data.currentName;
+      log_default.debug(`URL: ${window.currentUrl}`);
       login_default.checkAuthToken(data.authToken);
     }
   });
   var handlePageData = (response, isAuthUrl2) => {
     log_default.debug("Script response: ", response);
     const result = safariType ? response[0] : response[0]?.result;
-    log_default.warn(`result: ${JSON.stringify(result)}`);
     if (isAuthUrl2) {
       log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
       login_default.loginFromAuthPageData(result.authToken, result.currentName);
@@ -752,7 +799,8 @@
       log_default.debug("Viewing Convus sign in or up");
       return;
     } else if (!isAuthUrl2) {
-      rating_default.updateRatingFields(window.currentUrl, tab.title);
+      rating_default.updateBasicRatingFields(window.currentUrl, tab.title);
+      rating_default.loadRemoteRatingData(window.currentUrl);
     }
     injectScript(window.tabId, isAuthUrl2);
   };

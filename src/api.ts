@@ -80,6 +80,31 @@ async function postRating(ratingUrl: RequestInfo | URL, authToken: string | unde
   })
 }
 
+async function getRating(ratingUrl: RequestInfo | URL, authToken: string | undefined, url: string) {
+  return await new Promise(async (resolve, _reject) => {
+    const rProps = requestProps(authToken, { method: 'GET' })
+
+    const getRatingUrl = `${ratingUrl}/for_url?url=${encodeURIComponent(url)}`
+    log.trace('getRatingUrl', getRatingUrl)
+
+    return await fetch(getRatingUrl, rProps)
+      .then(async (response) => await response.json()
+        .then((json) => {
+          if (response.status === 200 && json.quality) {
+            resolve({
+              success: true,
+              data: json
+            })
+          } else {
+            resolve({ success: false, data: json })
+          }
+        })
+      ).catch((e) => {
+        resolve(errorResponse(e))
+      })
+  })
+}
+
 // Just return an error message that includes the error
 function errorResponse(e: string) {
   return { success: false, message: ['error', `Error: ${e})`] }
@@ -89,5 +114,6 @@ export default {
   getAuthToken,
   isAuthTokenValid,
   requestProps, // Only exported for testing
+  getRating,
   postRating
 }
