@@ -748,7 +748,7 @@
   }
 
   // popup.js
-  var browserTarget = "chrome";
+  var browserTarget = "firefox";
   var safariType = !!browserTarget.match("safari");
   if (browserTarget == "chrome") {
     browser = chrome;
