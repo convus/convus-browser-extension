@@ -60,11 +60,6 @@ Run the tests with `yarn test`
 
 Lint with `yarn lint`
 
-<!--
+---
 
-NOTE: This no longer works, because of autoformatting on save
-
-Lint HTML with `htmlbeautifier src/index.html`
-
-_NOTE: 👆 is a lazy hack - it requires Ruby and [htmlbeautifier](https://github.com/threedaymonk/htmlbeautifier/), which isn't actually bundled/packaged here_
--->
+[Open source](https://github.com/convus/convus-browser-extension) under the GPLv3 License

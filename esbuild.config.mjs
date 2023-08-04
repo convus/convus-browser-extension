@@ -34,7 +34,7 @@ const watchOptions = {
       writeFileSync(errorFilePath, error.toString())
     } else if (existsSync(errorFilePath)) {
       console.log(`${target} - watch build succeeded:`, result)
-      truncate(errorFilePath, 0, () => {})
+      truncate(errorFilePath, 0, () => { })
     }
   }
 }
