@@ -7,7 +7,7 @@ import login from './login'
 const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribute('action')
 
 // Internal
-const handleRatingSubmit = async function(e) {
+const handleRatingSubmit = async function (e) {
   e.preventDefault()
   const submitBtn = document.getElementById('ratingSubmitButton')
   submitBtn.classList.add('disabled')
