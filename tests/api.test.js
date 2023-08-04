@@ -11,7 +11,7 @@ beforeEach(() => {
 const authUrl = 'http://localhost:3009/api/v1/auth'
 const ratingUrl = 'http://localhost:3009/api/v1/ratings'
 
-describe('requestProps', function() {
+describe('requestProps', function () {
   test('returns target', () => {
     const target = {
       async: true,
@@ -45,7 +45,7 @@ describe('requestProps', function() {
   })
 })
 
-describe('isAuthTokenValid', function() {
+describe('isAuthTokenValid', function () {
   test('returns false for missing', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'missing users' }), { status: 401 })
 
@@ -61,7 +61,7 @@ describe('isAuthTokenValid', function() {
   })
 })
 
-describe('getAuthToken', function() {
+describe('getAuthToken', function () {
   test('returns message for not-authenticated', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'Incorrect email or password' }), { status: 401 })
     const loginFormJson = { email: 'test@example.com', password: 'fakepass' }
@@ -79,7 +79,7 @@ describe('getAuthToken', function() {
   })
 })
 
-describe('postRating', function() {
+describe('postRating', function () {
   test('postRating succeeds', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'rating added', share: 'share message' }), { status: 200 })
 
@@ -90,9 +90,8 @@ describe('postRating', function() {
   })
 })
 
-describe('getRating', function() {
+describe('getRating', function () {
   test('getRating empty', async () => {
-
     fetch.mockResponseOnce(JSON.stringify({}), { status: 200 })
 
     const res = await api.getRating(`${ratingUrl}/for_url`, 'xxxx')
@@ -101,10 +100,15 @@ describe('getRating', function() {
 
   test('getRating succeeds', async () => {
     const responseJson = {
-      agreement: "disagree", quality: "quality_high", changed_opinion: true,
-      significant_factual_error: true, error_quotes: "Quote goes here",
-      topics_text: "A topic\n\nAnd another topic", learned_something: true,
-      not_understood: true, not_finished: true
+      agreement: 'disagree',
+      quality: 'quality_high',
+      changed_opinion: true,
+      significant_factual_error: true,
+      error_quotes: 'Quote goes here',
+      topics_text: 'A topic\n\nAnd another topic',
+      learned_something: true,
+      not_understood: true,
+      not_finished: true
     }
 
     fetch.mockResponseOnce(JSON.stringify(responseJson), { status: 200 })

@@ -7,17 +7,17 @@ import login from './login'
 const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribute('action')
 
 // Internal
-const ratingCheckboxes = ["changed_opinion", "significant_factual_error", "learned_something", "not_understood", "not_finished"]
+const ratingCheckboxes = ['changed_opinion', 'significant_factual_error', 'learned_something', 'not_understood', 'not_finished']
 
 // Internal
-const submitRating = async function() {
+const submitRating = async function () {
   const formData = new FormData(document.getElementById('new_rating'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
   return await api.postRating(formNewRatingUrl(), window.authToken, jsonFormData)
 }
 
 // Internal
-const handleRatingSubmit = async function(e) {
+const handleRatingSubmit = async function (e) {
   e.preventDefault()
   const submitBtn = document.getElementById('ratingSubmitButton')
   submitBtn.classList.add('disabled')
@@ -38,14 +38,13 @@ const handleRatingSubmit = async function(e) {
 
 // Internal
 // This is called whenever the form changes
-const backgroundRatingUpdate = async function() {
+const backgroundRatingUpdate = async function () {
   if (window.ratingDataLoaded && window.metadataLoaded) {
     result = await submitRating()
     log.debug(result)
   }
   true
 }
-
 
 // Internal
 const updateMenuCheck = (event) => {
@@ -108,14 +107,14 @@ const updateAdditionalRatingFields = (ratingAttrs) => {
   const ratingUrlField = document.getElementById('submitted_url')
   utilities.retryIfMissing(ratingUrlField, updateAdditionalRatingFields, ratingAttrs)
   // Only update quality if it's not the default
-  if (ratingAttrs.quality !== "quality_med") {
+  if (ratingAttrs.quality !== 'quality_med') {
     document.getElementById(`quality_${ratingAttrs.quality}`).checked = true
   }
   ratingCheckboxes.filter((field) => ratingAttrs[field])
     .forEach((field) => document.getElementById(field).checked = true)
   window.ratingDataLoaded = true
   // Add event listener to all the checkboxes
-  ratingCheckboxes.concat(["quality_quality_high", "quality_quality_med", "quality_quality_low"])
+  ratingCheckboxes.concat(['quality_quality_high', 'quality_quality_med', 'quality_quality_low'])
     .forEach((field) => document.getElementById(field).addEventListener('change', backgroundRatingUpdate))
 }
 

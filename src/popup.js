@@ -40,7 +40,7 @@ const handlePageData = (response, isAuthUrl) => {
   }
 }
 
-const injectScript = async function(tabId, isAuthUrl) {
+const injectScript = async function (tabId, isAuthUrl) {
   await browser.scripting.executeScript({
     target: { tabId: tabId },
     func: injectedScript
@@ -61,7 +61,7 @@ const injectScript = async function(tabId, isAuthUrl) {
     })
 }
 
-const getCurrentTab = async function() {
+const getCurrentTab = async function () {
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
   log.trace(tab)
 
