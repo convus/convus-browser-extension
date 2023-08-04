@@ -307,7 +307,7 @@
       return { authToken: authJson.review_token, currentName: authJson.name, message: ["success", "authenticated"] };
     }
   }
-  async function submitRating(ratingUrl, authToken, ratingFormData) {
+  async function postRating(ratingUrl, authToken, ratingFormData) {
     return await new Promise(async (resolve, _reject) => {
       const rProps = requestProps(authToken, { body: ratingFormData });
       return await fetch(ratingUrl, rProps).then(
@@ -327,6 +327,27 @@
       });
     });
   }
+  async function getRating(ratingUrl, authToken, url) {
+    return await new Promise(async (resolve, _reject) => {
+      const rProps = requestProps(authToken, { method: "GET" });
+      const getRatingUrl = `${ratingUrl}/for_url?url=${encodeURIComponent(url)}`;
+      log_default.trace("getRatingUrl", getRatingUrl);
+      return await fetch(getRatingUrl, rProps).then(
+        async (response) => await response.json().then((json) => {
+          if (response.status === 200 && json.quality) {
+            resolve({
+              success: true,
+              data: json
+            });
+          } else {
+            resolve({ success: false, data: json });
+          }
+        })
+      ).catch((e) => {
+        resolve(errorResponse(e));
+      });
+    });
+  }
   function errorResponse(e) {
     return { success: false, message: ["error", `Error: ${e})`] };
   }
@@ -334,7 +355,8 @@
     getAuthToken,
     isAuthTokenValid,
     requestProps,
-    submitRating
+    getRating,
+    postRating
   };
 
   // utilities.js
@@ -453,14 +475,18 @@
 
   // rating.js
   var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
+  var ratingCheckboxes = ["changed_opinion", "significant_factual_error", "learned_something", "not_understood", "not_finished"];
+  var submitRating = async function() {
+    const formData = new FormData(document.getElementById("new_rating"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    return await api_default.postRating(formNewRatingUrl(), window.authToken, jsonFormData);
+  };
   var handleRatingSubmit = async function(e) {
     e.preventDefault();
     const submitBtn = document.getElementById("ratingSubmitButton");
     submitBtn.classList.add("disabled");
     utilities_default.elementsShow("#rating-submit-spinner");
-    const formData = new FormData(document.getElementById("new_rating"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
+    const result = await submitRating();
     log_default.debug(result);
     utilities_default.renderAlerts(result.message, result.share);
     if (result.success) {
@@ -470,6 +496,13 @@
     utilities_default.elementsHide("#rating-submit-spinner");
     submitBtn.classList.remove("disabled");
     return false;
+  };
+  var backgroundRatingUpdate = async function() {
+    if (window.ratingDataLoaded && window.metadataLoaded) {
+      const result = await submitRating();
+      log_default.debug(result);
+    }
+    return true;
   };
   var updateMenuCheck = (event) => {
     const el = event.target;
@@ -503,25 +536,48 @@
       document.getElementById("username").textContent = window.currentName;
     }
   };
-  var updateRatingFields = (tabUrl, title) => {
-    log_default.trace("updateRatingFields");
+  var updateBasicRatingFields = (tabUrl, title) => {
+    log_default.trace("updateBasicRatingFields");
     const ratingUrlField = document.getElementById("submitted_url");
-    utilities_default.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title);
+    utilities_default.retryIfMissing(ratingUrlField, updateBasicRatingFields, tabUrl, title);
     ratingUrlField.value = tabUrl;
     document.getElementById("citation_title").value = title;
     document.getElementById("timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
     ratingTime();
+  };
+  var updateAdditionalRatingFields = (ratingAttrs) => {
+    log_default.trace("updateAdditionalRatingFields");
+    log_default.debug(ratingAttrs);
+    const ratingUrlField = document.getElementById("submitted_url");
+    utilities_default.retryIfMissing(ratingUrlField, updateAdditionalRatingFields, ratingAttrs);
+    if (ratingAttrs.quality !== "quality_med") {
+      document.getElementById(`quality_${ratingAttrs.quality}`).checked = true;
+    }
+    ratingCheckboxes.filter((field) => ratingAttrs[field]).forEach(function(field) {
+      document.getElementById(field).checked = true;
+    });
+    window.ratingDataLoaded = true;
+    ratingCheckboxes.concat(["quality_quality_high", "quality_quality_med", "quality_quality_low"]).forEach((field) => document.getElementById(field).addEventListener("change", backgroundRatingUpdate));
+  };
+  var loadRemoteRatingData = async (tabUrl) => {
+    const result = await api_default.getRating(formNewRatingUrl(), window.authToken, tabUrl);
+    log_default.debug(`rating result: ${JSON.stringify(result)}`);
+    if (result.success) {
+      updateAdditionalRatingFields(result.data);
+    }
   };
   var addMetadata = (metadata) => {
     log_default.debug(`addMetadata, metadata length: ${metadata?.length}`);
     const citationMetadataField = document.getElementById("citation_metadata_str");
     utilities_default.retryIfMissing(citationMetadataField, addMetadata, metadata);
     citationMetadataField.value = JSON.stringify(metadata);
+    window.metadataLoaded = true;
   };
   var rating_default = {
     addMetadata,
     showRatingForm,
-    updateRatingFields
+    updateBasicRatingFields,
+    loadRemoteRatingData
   };
 
   // login.js
@@ -711,7 +767,6 @@
   var handlePageData = (response, isAuthUrl2) => {
     log_default.debug("Script response: ", response);
     const result = safariType ? response[0] : response[0]?.result;
-    log_default.warn(`result: ${JSON.stringify(result)}`);
     if (isAuthUrl2) {
       log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
       login_default.loginFromAuthPageData(result.authToken, result.currentName);
@@ -745,11 +800,14 @@
     window.currentUrl = tab.url;
     const isAuthUrl2 = login_default.isAuthUrl(window.currentUrl);
     window.tabId = tab.id;
+    window.ratingDataLoaded = false;
+    window.metadataLoaded = false;
     if (login_default.isSignInOrUpUrl(window.currentUrl)) {
       log_default.debug("Viewing Convus sign in or up");
       return;
     } else if (!isAuthUrl2) {
-      rating_default.updateRatingFields(window.currentUrl, tab.title);
+      rating_default.updateBasicRatingFields(window.currentUrl, tab.title);
+      rating_default.loadRemoteRatingData(window.currentUrl);
     }
     injectScript(window.tabId, isAuthUrl2);
   };

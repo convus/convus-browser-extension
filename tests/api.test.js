@@ -79,13 +79,41 @@ describe('getAuthToken', function () {
   })
 })
 
-describe('submitRating', function () {
-  test('submitRating succeeds', async () => {
+describe('postRating', function () {
+  test('postRating succeeds', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'rating added', share: 'share message' }), { status: 200 })
 
     const ratingJson = { source: 'chrome_extension', submitted_url: 'https://github.com/convus/convus-browser-extension/pull/4', agreement: 'neutral', quality: 'quality_med', changed_my_opinion: '1', significant_factual_error: '0', citation_title: 'Remove remote code loading by sethherr · Pull Request #4 · convus/convus-browser-extension' }
 
-    const res = await api.submitRating(ratingUrl, 'xxxx', ratingJson)
+    const res = await api.postRating(ratingUrl, 'xxxx', ratingJson)
     expect(res).toStrictEqual({ success: true, message: ['success', 'rating added'], share: 'share message' })
+  })
+})
+
+describe('getRating', function () {
+  test('getRating empty', async () => {
+    fetch.mockResponseOnce(JSON.stringify({}), { status: 200 })
+
+    const res = await api.getRating(`${ratingUrl}/for_url`, 'xxxx')
+    expect(res).toStrictEqual({ success: false, data: {} })
+  })
+
+  test('getRating succeeds', async () => {
+    const responseJson = {
+      agreement: 'disagree',
+      quality: 'quality_high',
+      changed_opinion: true,
+      significant_factual_error: true,
+      error_quotes: 'Quote goes here',
+      topics_text: 'A topic\n\nAnd another topic',
+      learned_something: true,
+      not_understood: true,
+      not_finished: true
+    }
+
+    fetch.mockResponseOnce(JSON.stringify(responseJson), { status: 200 })
+
+    const res = await api.getRating(`${ratingUrl}/for_url`, 'xxxx')
+    expect(res).toStrictEqual({ success: true, data: responseJson })
   })
 })

@@ -21,6 +21,8 @@ browser.storage.local.get(['authToken', 'currentName'])
       log.trace('auth present')
       window.authToken = data.authToken
       window.currentName = data.currentName
+      // TODO: include the URL here, so that we only need to make one request
+      // HOWEVER! the url isn't available yet. Not sure the best approach
       login.checkAuthToken(data.authToken)
     }
   })
@@ -29,7 +31,7 @@ const handlePageData = (response, isAuthUrl) => {
   log.debug('Script response: ', response)
 
   const result = safariType ? response[0] : response[0]?.result
-  log.warn(`result: ${JSON.stringify(result)}`)
+  // log.warn(`result: ${JSON.stringify(result)}`)
   if (isAuthUrl) {
     log.trace(`authUrl?: ${isAuthUrl}    ${window.currentUrl}`)
     login.loginFromAuthPageData(result.authToken, result.currentName)
@@ -67,6 +69,9 @@ const getCurrentTab = async function () {
   window.currentUrl = tab.url
   const isAuthUrl = login.isAuthUrl(window.currentUrl)
   window.tabId = tab.id
+  // When both of these values are true, the form updates on every change
+  window.ratingDataLoaded = false
+  window.metadataLoaded = false
 
   if (login.isSignInOrUpUrl(window.currentUrl)) {
     // If the user is signing in/up to Convus, don't inject a script
@@ -74,7 +79,8 @@ const getCurrentTab = async function () {
     return
   } else if (!isAuthUrl) {
     // Update rating fields that we have info for, the metadata can be added later
-    rating.updateRatingFields(window.currentUrl, tab.title)
+    rating.updateBasicRatingFields(window.currentUrl, tab.title)
+    rating.loadRemoteRatingData(window.currentUrl)
   }
   injectScript(window.tabId, isAuthUrl)
 }

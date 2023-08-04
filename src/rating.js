@@ -7,14 +7,22 @@ import login from './login'
 const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribute('action')
 
 // Internal
+const ratingCheckboxes = ['changed_opinion', 'significant_factual_error', 'learned_something', 'not_understood', 'not_finished']
+
+// Internal
+const submitRating = async function () {
+  const formData = new FormData(document.getElementById('new_rating'))
+  const jsonFormData = JSON.stringify(Object.fromEntries(formData))
+  return await api.postRating(formNewRatingUrl(), window.authToken, jsonFormData)
+}
+
+// Internal
 const handleRatingSubmit = async function (e) {
   e.preventDefault()
   const submitBtn = document.getElementById('ratingSubmitButton')
   submitBtn.classList.add('disabled')
   utilities.elementsShow('#rating-submit-spinner')
-  const formData = new FormData(document.getElementById('new_rating'))
-  const jsonFormData = JSON.stringify(Object.fromEntries(formData))
-  const result = await api.submitRating(formNewRatingUrl(), window.authToken, jsonFormData)
+  const result = await submitRating()
 
   log.debug(result)
   utilities.renderAlerts(result.message, result.share)
@@ -26,6 +34,16 @@ const handleRatingSubmit = async function (e) {
   submitBtn.classList.remove('disabled')
 
   return false // fallback prevent submit
+}
+
+// Internal
+// This is called whenever the form changes
+const backgroundRatingUpdate = async function () {
+  if (window.ratingDataLoaded && window.metadataLoaded) {
+    const result = await submitRating()
+    log.debug(result)
+  }
+  return true
 }
 
 // Internal
@@ -71,10 +89,10 @@ const showRatingForm = () => {
   }
 }
 
-const updateRatingFields = (tabUrl, title) => {
-  log.trace('updateRatingFields')
+const updateBasicRatingFields = (tabUrl, title) => {
+  log.trace('updateBasicRatingFields')
   const ratingUrlField = document.getElementById('submitted_url')
-  utilities.retryIfMissing(ratingUrlField, updateRatingFields, tabUrl, title)
+  utilities.retryIfMissing(ratingUrlField, updateBasicRatingFields, tabUrl, title)
 
   ratingUrlField.value = tabUrl
   document.getElementById('citation_title').value = title
@@ -82,15 +100,43 @@ const updateRatingFields = (tabUrl, title) => {
   ratingTime()
 }
 
+// Internal
+const updateAdditionalRatingFields = (ratingAttrs) => {
+  log.trace('updateAdditionalRatingFields')
+  log.debug(ratingAttrs)
+  const ratingUrlField = document.getElementById('submitted_url')
+  utilities.retryIfMissing(ratingUrlField, updateAdditionalRatingFields, ratingAttrs)
+  // Only update quality if it's not the default
+  if (ratingAttrs.quality !== 'quality_med') {
+    document.getElementById(`quality_${ratingAttrs.quality}`).checked = true
+  }
+  ratingCheckboxes.filter((field) => ratingAttrs[field])
+    .forEach(function (field) { document.getElementById(field).checked = true })
+  window.ratingDataLoaded = true
+  // Add event listener to all the checkboxes
+  ratingCheckboxes.concat(['quality_quality_high', 'quality_quality_med', 'quality_quality_low'])
+    .forEach((field) => document.getElementById(field).addEventListener('change', backgroundRatingUpdate))
+}
+
+const loadRemoteRatingData = async (tabUrl) => {
+  const result = await api.getRating(formNewRatingUrl(), window.authToken, tabUrl)
+  log.debug(`rating result: ${JSON.stringify(result)}`)
+  if (result.success) {
+    updateAdditionalRatingFields(result.data)
+  }
+}
+
 const addMetadata = (metadata) => {
   log.debug(`addMetadata, metadata length: ${metadata?.length}`)
   const citationMetadataField = document.getElementById('citation_metadata_str')
   utilities.retryIfMissing(citationMetadataField, addMetadata, metadata)
   citationMetadataField.value = JSON.stringify(metadata)
+  window.metadataLoaded = true
 }
 
 export default {
   addMetadata,
   showRatingForm,
-  updateRatingFields
+  updateBasicRatingFields,
+  loadRemoteRatingData
 }
