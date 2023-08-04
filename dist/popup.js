@@ -486,10 +486,10 @@
     const submitBtn = document.getElementById("ratingSubmitButton");
     submitBtn.classList.add("disabled");
     utilities_default.elementsShow("#rating-submit-spinner");
-    const result2 = await submitRating();
-    log_default.debug(result2);
-    utilities_default.renderAlerts(result2.message, result2.share);
-    if (result2.success) {
+    const result = await submitRating();
+    log_default.debug(result);
+    utilities_default.renderAlerts(result.message, result.share);
+    if (result.success) {
       document.getElementById("new_rating").classList.add("hidden");
       utilities_default.toggleMenu(false, "hide");
     }
@@ -499,10 +499,10 @@
   };
   var backgroundRatingUpdate = async function() {
     if (window.ratingDataLoaded && window.metadataLoaded) {
-      result = await submitRating();
+      const result = await submitRating();
       log_default.debug(result);
     }
-    true;
+    return true;
   };
   var updateMenuCheck = (event) => {
     const el = event.target;
@@ -553,15 +553,17 @@
     if (ratingAttrs.quality !== "quality_med") {
       document.getElementById(`quality_${ratingAttrs.quality}`).checked = true;
     }
-    ratingCheckboxes.filter((field) => ratingAttrs[field]).forEach((field) => document.getElementById(field).checked = true);
+    ratingCheckboxes.filter((field) => ratingAttrs[field]).forEach(function(field) {
+      document.getElementById(field).checked = true;
+    });
     window.ratingDataLoaded = true;
     ratingCheckboxes.concat(["quality_quality_high", "quality_quality_med", "quality_quality_low"]).forEach((field) => document.getElementById(field).addEventListener("change", backgroundRatingUpdate));
   };
   var loadRemoteRatingData = async (tabUrl) => {
-    const result2 = await api_default.getRating(formNewRatingUrl(), window.authToken, tabUrl);
-    log_default.debug(`rating result: ${JSON.stringify(result2)}`);
-    if (result2.success) {
-      updateAdditionalRatingFields(result2.data);
+    const result = await api_default.getRating(formNewRatingUrl(), window.authToken, tabUrl);
+    log_default.debug(`rating result: ${JSON.stringify(result)}`);
+    if (result.success) {
+      updateAdditionalRatingFields(result.data);
     }
   };
   var addMetadata = (metadata) => {
@@ -591,12 +593,12 @@
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_user"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result2 = await api_default.getAuthToken(formAuthUrl, jsonFormData);
-    log_default.debug(result2);
-    if (typeof result2.authToken === "undefined" || result2.authToken === null) {
-      utilities_default.renderAlerts(result2.message);
+    const result = await api_default.getAuthToken(formAuthUrl, jsonFormData);
+    log_default.debug(result);
+    if (typeof result.authToken === "undefined" || result.authToken === null) {
+      utilities_default.renderAlerts(result.message);
     } else {
-      storeAuthData(result2.authToken, result2.currentName);
+      storeAuthData(result.authToken, result.currentName);
       utilities_default.hideAlerts();
       if (isAuthUrl()) {
         utilities_default.elementsCollapse("#new_user");
@@ -636,9 +638,9 @@
     if (utilities_default.retryIfMissing(formAuthUrl, checkAuthToken, token)) {
       return;
     }
-    const result2 = await api_default.isAuthTokenValid(formAuthUrl, token);
-    log_default.trace("auth token check success:", result2);
-    if (result2) {
+    const result = await api_default.isAuthTokenValid(formAuthUrl, token);
+    log_default.trace("auth token check success:", result);
+    if (result) {
       rating_default.showRatingForm();
       return;
     }
@@ -764,12 +766,12 @@
   });
   var handlePageData = (response, isAuthUrl2) => {
     log_default.debug("Script response: ", response);
-    const result2 = safariType ? response[0] : response[0]?.result;
+    const result = safariType ? response[0] : response[0]?.result;
     if (isAuthUrl2) {
       log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
-      login_default.loginFromAuthPageData(result2.authToken, result2.currentName);
+      login_default.loginFromAuthPageData(result.authToken, result.currentName);
     } else {
-      rating_default.addMetadata(result2);
+      rating_default.addMetadata(result);
     }
   };
   var injectScript = async function(tabId, isAuthUrl2) {

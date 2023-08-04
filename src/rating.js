@@ -40,10 +40,10 @@ const handleRatingSubmit = async function (e) {
 // This is called whenever the form changes
 const backgroundRatingUpdate = async function () {
   if (window.ratingDataLoaded && window.metadataLoaded) {
-    result = await submitRating()
+    const result = await submitRating()
     log.debug(result)
   }
-  true
+  return true
 }
 
 // Internal
@@ -111,7 +111,7 @@ const updateAdditionalRatingFields = (ratingAttrs) => {
     document.getElementById(`quality_${ratingAttrs.quality}`).checked = true
   }
   ratingCheckboxes.filter((field) => ratingAttrs[field])
-    .forEach((field) => document.getElementById(field).checked = true)
+    .forEach(function (field) { document.getElementById(field).checked = true })
   window.ratingDataLoaded = true
   // Add event listener to all the checkboxes
   ratingCheckboxes.concat(['quality_quality_high', 'quality_quality_med', 'quality_quality_low'])
