@@ -19,7 +19,7 @@ const storeAuthData = (authToken, currentName) => {
 }
 
 // Internal
-const handleFallbackLoginSubmit = async function (e) {
+const handleFallbackLoginSubmit = async function(e) {
   e.preventDefault()
   const formData = new FormData(document.getElementById('new_user'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
@@ -46,7 +46,7 @@ const countdownAndClose = (selector, ms, closeFunc = false) => {
   let secondsLeft = ms / 1000
   const countdownEl = document.querySelector(selector)
   countdownEl.textContent = secondsLeft // Set the initial time
-  const countdownTimer = setInterval(function () {
+  const countdownTimer = setInterval(function() {
     countdownEl.textContent = secondsLeft -= 1
     if (secondsLeft <= 0) { clearInterval(countdownTimer) }
   }, 1000)
@@ -72,7 +72,7 @@ const isSignInOrUpUrl = (url = null) => {
   return (`${baseUrl}/users/sign_in` === url) || (`${baseUrl}/users/sign_up` === url)
 }
 
-const checkAuthToken = async function (token) {
+const checkAuthToken = async function(token) {
   if (utilities.retryIfMissing(formAuthUrl, checkAuthToken, token)) { return }
 
   const result = await api.isAuthTokenValid(formAuthUrl, token)

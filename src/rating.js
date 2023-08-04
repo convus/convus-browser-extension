@@ -37,6 +37,7 @@ const handleRatingSubmit = async function(e) {
 }
 
 // Internal
+// This is called whenever the form changes
 const backgroundRatingUpdate = async function() {
   if (window.ratingDataLoaded && window.metadataLoaded) {
     result = await submitRating()
@@ -114,7 +115,8 @@ const updateAdditionalRatingFields = (ratingAttrs) => {
     .forEach((field) => document.getElementById(field).checked = true)
   window.ratingDataLoaded = true
   // Add event listener to all the checkboxes
-  ratingCheckboxes.forEach((field) => document.getElementById(field).addEventListener('change', backgroundRatingUpdate))
+  ratingCheckboxes.concat(["quality_quality_high", "quality_quality_med", "quality_quality_low"])
+    .forEach((field) => document.getElementById(field).addEventListener('change', backgroundRatingUpdate))
 }
 
 const loadRemoteRatingData = async (tabUrl) => {

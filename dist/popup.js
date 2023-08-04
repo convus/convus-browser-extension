@@ -555,7 +555,7 @@
     }
     ratingCheckboxes.filter((field) => ratingAttrs[field]).forEach((field) => document.getElementById(field).checked = true);
     window.ratingDataLoaded = true;
-    ratingCheckboxes.forEach((field) => document.getElementById(field).addEventListener("change", backgroundRatingUpdate));
+    ratingCheckboxes.concat(["quality_quality_high", "quality_quality_med", "quality_quality_low"]).forEach((field) => document.getElementById(field).addEventListener("change", backgroundRatingUpdate));
   };
   var loadRemoteRatingData = async (tabUrl) => {
     const result2 = await api_default.getRating(formNewRatingUrl(), window.authToken, tabUrl);
