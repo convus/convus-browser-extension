@@ -687,8 +687,8 @@
     Array.from(document.querySelectorAll(nonArticleSelectors)).forEach(function(t) {
       articleText = articleText.replaceAll(t.innerText, "");
     });
-    articleText = articleText.replaceAll("\\nADVERTISEMENT\\n", "\n").trim();
-    return metadataAttrs.concat([{ articleText }]);
+    articleText = articleText.replaceAll("\\nADVERTISEMENT\\n", "\n");
+    return metadataAttrs.concat([{ citation_text: articleText }]);
   }
 
   // popup.js

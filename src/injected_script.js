@@ -1,4 +1,4 @@
-export default function injectedScript () {
+export default function injectedScript() {
   const authUrl = process.env.baseUrl + '/browser_extension_auth'
 
   console.log('Convus extension is getting the page metadata!')
@@ -35,8 +35,8 @@ export default function injectedScript () {
     '.GoogleActiveViewElement', '.hide-for-print']
   // Get all the nonArticleSelectors elements, remove any text matching the text of those elements
   Array.from(document.querySelectorAll(nonArticleSelectors))
-    .forEach(function (t) { articleText = articleText.replaceAll(t.innerText, '') })
+    .forEach(function(t) { articleText = articleText.replaceAll(t.innerText, '') })
   // A lot of these can be included, so remove them
-  articleText = articleText.replaceAll('\\nADVERTISEMENT\\n', '\n').trim()
-  return metadataAttrs.concat([{ articleText: articleText }])
+  articleText = articleText.replaceAll('\\nADVERTISEMENT\\n', '\n')
+  return metadataAttrs.concat([{ citation_text: articleText }])
 }
