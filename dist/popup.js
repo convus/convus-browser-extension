@@ -475,6 +475,7 @@
 
   // rating.js
   var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
+  var ratingCheckboxes = ["changed_opinion", "significant_factual_error", "learned_something", "not_understood", "not_finished"];
   var submitRating = async function() {
     const formData = new FormData(document.getElementById("new_rating"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
@@ -485,16 +486,23 @@
     const submitBtn = document.getElementById("ratingSubmitButton");
     submitBtn.classList.add("disabled");
     utilities_default.elementsShow("#rating-submit-spinner");
-    const result = await submitRating();
-    log_default.debug(result);
-    utilities_default.renderAlerts(result.message, result.share);
-    if (result.success) {
+    const result2 = await submitRating();
+    log_default.debug(result2);
+    utilities_default.renderAlerts(result2.message, result2.share);
+    if (result2.success) {
       document.getElementById("new_rating").classList.add("hidden");
       utilities_default.toggleMenu(false, "hide");
     }
     utilities_default.elementsHide("#rating-submit-spinner");
     submitBtn.classList.remove("disabled");
     return false;
+  };
+  var backgroundRatingUpdate = async function() {
+    if (window.ratingDataLoaded && window.metadataLoaded) {
+      result = await submitRating();
+      log_default.debug(result);
+    }
+    true;
   };
   var updateMenuCheck = (event) => {
     const el = event.target;
@@ -545,20 +553,15 @@
     if (ratingAttrs.quality !== "quality_med") {
       document.getElementById(`quality_${ratingAttrs.quality}`).checked = true;
     }
-    const checkedBoxes = [
-      "changed_opinion",
-      "significant_factual_error",
-      "learned_something",
-      "not_understood",
-      "not_finished"
-    ].filter((field) => ratingAttrs[field]);
-    checkedBoxes.forEach((field) => document.getElementById(field).checked = true);
+    ratingCheckboxes.filter((field) => ratingAttrs[field]).forEach((field) => document.getElementById(field).checked = true);
+    window.ratingDataLoaded = true;
+    ratingCheckboxes.forEach((field) => document.getElementById(field).addEventListener("change", backgroundRatingUpdate));
   };
   var loadRemoteRatingData = async (tabUrl) => {
-    const result = await api_default.getRating(formNewRatingUrl(), window.authToken, tabUrl);
-    log_default.debug(`rating result: ${JSON.stringify(result)}`);
-    if (result.success) {
-      updateAdditionalRatingFields(result.data);
+    const result2 = await api_default.getRating(formNewRatingUrl(), window.authToken, tabUrl);
+    log_default.debug(`rating result: ${JSON.stringify(result2)}`);
+    if (result2.success) {
+      updateAdditionalRatingFields(result2.data);
     }
   };
   var addMetadata = (metadata) => {
@@ -566,6 +569,7 @@
     const citationMetadataField = document.getElementById("citation_metadata_str");
     utilities_default.retryIfMissing(citationMetadataField, addMetadata, metadata);
     citationMetadataField.value = JSON.stringify(metadata);
+    window.metadataLoaded = true;
   };
   var rating_default = {
     addMetadata,
@@ -587,12 +591,12 @@
     e.preventDefault();
     const formData = new FormData(document.getElementById("new_user"));
     const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.getAuthToken(formAuthUrl, jsonFormData);
-    log_default.debug(result);
-    if (typeof result.authToken === "undefined" || result.authToken === null) {
-      utilities_default.renderAlerts(result.message);
+    const result2 = await api_default.getAuthToken(formAuthUrl, jsonFormData);
+    log_default.debug(result2);
+    if (typeof result2.authToken === "undefined" || result2.authToken === null) {
+      utilities_default.renderAlerts(result2.message);
     } else {
-      storeAuthData(result.authToken, result.currentName);
+      storeAuthData(result2.authToken, result2.currentName);
       utilities_default.hideAlerts();
       if (isAuthUrl()) {
         utilities_default.elementsCollapse("#new_user");
@@ -632,9 +636,9 @@
     if (utilities_default.retryIfMissing(formAuthUrl, checkAuthToken, token)) {
       return;
     }
-    const result = await api_default.isAuthTokenValid(formAuthUrl, token);
-    log_default.trace("auth token check success:", result);
-    if (result) {
+    const result2 = await api_default.isAuthTokenValid(formAuthUrl, token);
+    log_default.trace("auth token check success:", result2);
+    if (result2) {
       rating_default.showRatingForm();
       return;
     }
@@ -755,18 +759,17 @@
       log_default.trace("auth present");
       window.authToken = data.authToken;
       window.currentName = data.currentName;
-      log_default.debug(`URL: ${window.currentUrl}`);
       login_default.checkAuthToken(data.authToken);
     }
   });
   var handlePageData = (response, isAuthUrl2) => {
     log_default.debug("Script response: ", response);
-    const result = safariType ? response[0] : response[0]?.result;
+    const result2 = safariType ? response[0] : response[0]?.result;
     if (isAuthUrl2) {
       log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
-      login_default.loginFromAuthPageData(result.authToken, result.currentName);
+      login_default.loginFromAuthPageData(result2.authToken, result2.currentName);
     } else {
-      rating_default.addMetadata(result);
+      rating_default.addMetadata(result2);
     }
   };
   var injectScript = async function(tabId, isAuthUrl2) {
@@ -795,6 +798,8 @@
     window.currentUrl = tab.url;
     const isAuthUrl2 = login_default.isAuthUrl(window.currentUrl);
     window.tabId = tab.id;
+    window.ratingDataLoaded = false;
+    window.metadataLoaded = false;
     if (login_default.isSignInOrUpUrl(window.currentUrl)) {
       log_default.debug("Viewing Convus sign in or up");
       return;

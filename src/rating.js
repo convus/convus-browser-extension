@@ -7,6 +7,9 @@ import login from './login'
 const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribute('action')
 
 // Internal
+const ratingCheckboxes = ["changed_opinion", "significant_factual_error", "learned_something", "not_understood", "not_finished"]
+
+// Internal
 const submitRating = async function() {
   const formData = new FormData(document.getElementById('new_rating'))
   const jsonFormData = JSON.stringify(Object.fromEntries(formData))
@@ -32,6 +35,16 @@ const handleRatingSubmit = async function(e) {
 
   return false // fallback prevent submit
 }
+
+// Internal
+const backgroundRatingUpdate = async function() {
+  if (window.ratingDataLoaded && window.metadataLoaded) {
+    result = await submitRating()
+    log.debug(result)
+  }
+  true
+}
+
 
 // Internal
 const updateMenuCheck = (event) => {
@@ -97,9 +110,11 @@ const updateAdditionalRatingFields = (ratingAttrs) => {
   if (ratingAttrs.quality !== "quality_med") {
     document.getElementById(`quality_${ratingAttrs.quality}`).checked = true
   }
-  const checkedBoxes = ["changed_opinion", "significant_factual_error", "learned_something",
-    "not_understood", "not_finished"].filter((field) => ratingAttrs[field])
-  checkedBoxes.forEach((field) => document.getElementById(field).checked = true)
+  ratingCheckboxes.filter((field) => ratingAttrs[field])
+    .forEach((field) => document.getElementById(field).checked = true)
+  window.ratingDataLoaded = true
+  // Add event listener to all the checkboxes
+  ratingCheckboxes.forEach((field) => document.getElementById(field).addEventListener('change', backgroundRatingUpdate))
 }
 
 const loadRemoteRatingData = async (tabUrl) => {
@@ -115,6 +130,7 @@ const addMetadata = (metadata) => {
   const citationMetadataField = document.getElementById('citation_metadata_str')
   utilities.retryIfMissing(citationMetadataField, addMetadata, metadata)
   citationMetadataField.value = JSON.stringify(metadata)
+  window.metadataLoaded = true
 }
 
 export default {

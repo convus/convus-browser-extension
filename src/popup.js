@@ -21,8 +21,8 @@ browser.storage.local.get(['authToken', 'currentName'])
       log.trace('auth present')
       window.authToken = data.authToken
       window.currentName = data.currentName
-      log.debug(`URL: ${window.currentUrl}`)
       // TODO: include the URL here, so that we only need to make one request
+      // HOWEVER! the url isn't available yet. Not sure the best approach
       login.checkAuthToken(data.authToken)
     }
   })
@@ -69,6 +69,9 @@ const getCurrentTab = async function() {
   window.currentUrl = tab.url
   const isAuthUrl = login.isAuthUrl(window.currentUrl)
   window.tabId = tab.id
+  // When both of these values are true, the form updates on every change
+  window.ratingDataLoaded = false
+  window.metadataLoaded = false
 
   if (login.isSignInOrUpUrl(window.currentUrl)) {
     // If the user is signing in/up to Convus, don't inject a script
