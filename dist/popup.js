@@ -307,7 +307,7 @@
       return { authToken: authJson.review_token, currentName: authJson.name, message: ["success", "authenticated"] };
     }
   }
-  async function submitRating(ratingUrl, authToken, ratingFormData) {
+  async function postRating(ratingUrl, authToken, ratingFormData) {
     return await new Promise(async (resolve, _reject) => {
       const rProps = requestProps(authToken, { body: ratingFormData });
       return await fetch(ratingUrl, rProps).then(
@@ -334,7 +334,7 @@
     getAuthToken,
     isAuthTokenValid,
     requestProps,
-    submitRating
+    postRating
   };
 
   // utilities.js
@@ -453,14 +453,17 @@
 
   // rating.js
   var formNewRatingUrl = () => document.getElementById("new_rating")?.getAttribute("action");
+  var submitRating = async function() {
+    const formData = new FormData(document.getElementById("new_rating"));
+    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
+    return await api_default.postRating(formNewRatingUrl(), window.authToken, jsonFormData);
+  };
   var handleRatingSubmit = async function(e) {
     e.preventDefault();
     const submitBtn = document.getElementById("ratingSubmitButton");
     submitBtn.classList.add("disabled");
     utilities_default.elementsShow("#rating-submit-spinner");
-    const formData = new FormData(document.getElementById("new_rating"));
-    const jsonFormData = JSON.stringify(Object.fromEntries(formData));
-    const result = await api_default.submitRating(formNewRatingUrl(), window.authToken, jsonFormData);
+    const result = await submitRating();
     log_default.debug(result);
     utilities_default.renderAlerts(result.message, result.share);
     if (result.success) {

@@ -11,7 +11,7 @@ beforeEach(() => {
 const authUrl = 'http://localhost:3009/api/v1/auth'
 const ratingUrl = 'http://localhost:3009/api/v1/ratings'
 
-describe('requestProps', function () {
+describe('requestProps', function() {
   test('returns target', () => {
     const target = {
       async: true,
@@ -45,7 +45,7 @@ describe('requestProps', function () {
   })
 })
 
-describe('isAuthTokenValid', function () {
+describe('isAuthTokenValid', function() {
   test('returns false for missing', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'missing users' }), { status: 401 })
 
@@ -61,7 +61,7 @@ describe('isAuthTokenValid', function () {
   })
 })
 
-describe('getAuthToken', function () {
+describe('getAuthToken', function() {
   test('returns message for not-authenticated', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'Incorrect email or password' }), { status: 401 })
     const loginFormJson = { email: 'test@example.com', password: 'fakepass' }
@@ -79,13 +79,13 @@ describe('getAuthToken', function () {
   })
 })
 
-describe('submitRating', function () {
-  test('submitRating succeeds', async () => {
+describe('postRating', function() {
+  test('postRating succeeds', async () => {
     fetch.mockResponseOnce(JSON.stringify({ message: 'rating added', share: 'share message' }), { status: 200 })
 
     const ratingJson = { source: 'chrome_extension', submitted_url: 'https://github.com/convus/convus-browser-extension/pull/4', agreement: 'neutral', quality: 'quality_med', changed_my_opinion: '1', significant_factual_error: '0', citation_title: 'Remove remote code loading by sethherr · Pull Request #4 · convus/convus-browser-extension' }
 
-    const res = await api.submitRating(ratingUrl, 'xxxx', ratingJson)
+    const res = await api.postRating(ratingUrl, 'xxxx', ratingJson)
     expect(res).toStrictEqual({ success: true, message: ['success', 'rating added'], share: 'share message' })
   })
 })

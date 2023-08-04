@@ -28,7 +28,7 @@ writeFileSync('dist/manifest.json', replaceEnvValues(manifestContent))
 // esbuild, go to town
 const errorFilePath = 'esbuild_error'
 const watchOptions = {
-  onRebuild (error, result) {
+  onRebuild(error, result) {
     if (error) {
       console.error('watch build failed:', error)
       writeFileSync(errorFilePath, error.toString())

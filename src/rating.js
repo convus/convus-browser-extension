@@ -6,15 +6,19 @@ import login from './login'
 // Internal
 const formNewRatingUrl = () => document.getElementById('new_rating')?.getAttribute('action')
 
+const submitRating = async function() {
+  const formData = new FormData(document.getElementById('new_rating'))
+  const jsonFormData = JSON.stringify(Object.fromEntries(formData))
+  return await api.postRating(formNewRatingUrl(), window.authToken, jsonFormData)
+}
+
 // Internal
-const handleRatingSubmit = async function (e) {
+const handleRatingSubmit = async function(e) {
   e.preventDefault()
   const submitBtn = document.getElementById('ratingSubmitButton')
   submitBtn.classList.add('disabled')
   utilities.elementsShow('#rating-submit-spinner')
-  const formData = new FormData(document.getElementById('new_rating'))
-  const jsonFormData = JSON.stringify(Object.fromEntries(formData))
-  const result = await api.submitRating(formNewRatingUrl(), window.authToken, jsonFormData)
+  const result = await submitRating()
 
   log.debug(result)
   utilities.renderAlerts(result.message, result.share)

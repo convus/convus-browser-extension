@@ -1,6 +1,6 @@
 import log from './log' // eslint-disable-line
 
-function requestProps (authToken = '', extraProps = {}): object {
+function requestProps(authToken = '', extraProps = {}): object {
   const defaultProps = {
     method: 'POST',
     async: true,
@@ -13,7 +13,7 @@ function requestProps (authToken = '', extraProps = {}): object {
   return { ...defaultProps, ...extraProps }
 }
 
-async function isAuthTokenValid (authUrl: string, authToken: string | undefined): Promise<boolean> {
+async function isAuthTokenValid(authUrl: string, authToken: string | undefined): Promise<boolean> {
   return await new Promise(async (resolve, _reject) => {
     const authStatusUrl = `${authUrl}/status`
 
@@ -29,7 +29,7 @@ async function isAuthTokenValid (authUrl: string, authToken: string | undefined)
   })
 }
 
-async function getAuthToken (authUrl: RequestInfo | URL, loginFormData: any) {
+async function getAuthToken(authUrl: RequestInfo | URL, loginFormData: any) {
   return await new Promise(async (resolve, _reject) => {
     const rProps = {
       method: 'POST',
@@ -49,7 +49,7 @@ async function getAuthToken (authUrl: RequestInfo | URL, loginFormData: any) {
   })
 }
 
-function responseFormatter (authResponse: any, authJson: any) {
+function responseFormatter(authResponse: any, authJson: any) {
   if (authResponse.status !== 200 || typeof (authJson.review_token) === 'undefined' || authJson.review_token === null) {
     return { message: ['error', authJson.message] }
   } else {
@@ -57,7 +57,7 @@ function responseFormatter (authResponse: any, authJson: any) {
   }
 }
 
-async function submitRating (ratingUrl: RequestInfo | URL, authToken: string | undefined, ratingFormData: any) {
+async function postRating(ratingUrl: RequestInfo | URL, authToken: string | undefined, ratingFormData: any) {
   return await new Promise(async (resolve, _reject) => {
     const rProps = requestProps(authToken, { body: ratingFormData })
 
@@ -81,7 +81,7 @@ async function submitRating (ratingUrl: RequestInfo | URL, authToken: string | u
 }
 
 // Just return an error message that includes the error
-function errorResponse (e: string) {
+function errorResponse(e: string) {
   return { success: false, message: ['error', `Error: ${e})`] }
 }
 
@@ -89,5 +89,5 @@ export default {
   getAuthToken,
   isAuthTokenValid,
   requestProps, // Only exported for testing
-  submitRating
+  postRating
 }
