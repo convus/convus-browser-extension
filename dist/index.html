@@ -51,7 +51,7 @@
     <p class="mt-2"><a href="http://localhost:3009/users/sign_up" target="_blank">Sign up</a></p>
   </form>
   <form id="new_rating" action="http://localhost:3009/api/v1/ratings" accept-charset="UTF-8" method="post" class="pb-2 hidden">
-    <input autocomplete="off" type="hidden" value="chrome_extension-0.11.0" name="source" id="source" />
+    <input autocomplete="off" type="hidden" value="chrome_extension-0.11.1" name="source" id="source" />
     <input class="hiddenFieldTimezone" autocomplete="off" type="hidden" name="timezone" id="timezone" />
     <div class="row grid-cols-2 divide-x border-b">
       <div class="col pb-1 pt-2">
@@ -69,44 +69,51 @@
         </label>
       </div>
       <div class="col pb-1 pt-2">
-        <label class="form-control-check" for="learned_something">
-          <input name="learned_something" type="hidden" value="0" autocomplete="off" />
-          <input type="checkbox" value="1" name="learned_something" id="learned_something" />
-          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-4 inline-block -mt-1">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5">
-            </path>
-          </svg>
-          Learned something
+        <label class="form-control-radio" for="agreement_agree">
+          <input type="radio" value="agree" name="agreement" id="agreement_agree" />
+          Agree
         </label>
-        <label class="form-control-check" for="changed_opinion">
-          <input name="changed_opinion" type="hidden" value="0" autocomplete="off" />
-          <input type="checkbox" value="1" name="changed_opinion" id="changed_opinion" />
-          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-4 inline-block -mt-1">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99">
-            </path>
-          </svg>
-          Changed opinion
+        <label class="form-control-radio" for="agreement_neutral">
+          <input type="radio" value="neutral" checked="checked" name="agreement" id="agreement_neutral" />
+          Neutral
         </label>
-        <label class="form-control-check" for="not_finished">
-          <input name="not_finished" type="hidden" value="0" autocomplete="off" />
-          <input type="checkbox" value="1" name="not_finished" id="not_finished" />
-          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-4 inline-block -mt-1">
-            <path stroke-dasharray="1 3" stroke-linecap="round" stroke-linejoin="round"
-              d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z">
-            </path>
-          </svg>
-          Didn't finish
+        <label class="form-control-radio" for="agreement_disagree">
+          <input type="radio" value="disagree" name="agreement" id="agreement_disagree" />
+          Disagree
         </label>
       </div>
     </div>
-    <div class="row grid-cols-2 mt-1">
+    <div class="row grid-cols-2">
       <div class="col">
-        <div class="form-row mt-2">
+        <div class="form-row">
+          <label class="form-control-check" for="learned_something">
+            <input name="learned_something" type="hidden" value="0" autocomplete="off" />
+            <input type="checkbox" value="1" name="learned_something" id="learned_something" />
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-4 inline-block -mt-1">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5">
+              </path>
+            </svg>
+            Learned something
+          </label>
+        </div>
+        <div class="form-row">
+          <label class="form-control-check" for="changed_opinion">
+            <input name="changed_opinion" type="hidden" value="0" autocomplete="off" />
+            <input type="checkbox" value="1" name="changed_opinion" id="changed_opinion" />
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-4 inline-block -mt-1">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99">
+              </path>
+            </svg>
+            Changed opinion
+          </label>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-row">
           <label class="form-control-check" for="not_understood">
             <input name="not_understood" type="hidden" value="0" autocomplete="off" />
             <input type="checkbox" value="1" name="not_understood" id="not_understood" />
@@ -119,22 +126,35 @@
             Didn't understand
           </label>
         </div>
-      </div>
-      <div class="col">
+        <div class="form-row">
+          <label class="form-control-check" for="not_finished">
+            <input name="not_finished" type="hidden" value="0" autocomplete="off" />
+            <input type="checkbox" value="1" name="not_finished" id="not_finished" />
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-4 inline-block -mt-1">
+              <path stroke-dasharray="1 3" stroke-linecap="round" stroke-linejoin="round"
+                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z">
+              </path>
+            </svg>
+            Didn't finish
+          </label>
+        </div>
         <div class="form-row">
           <label class="form-control-check" for="significant_factual_error">
             <input name="significant_factual_error" type="hidden" value="0" autocomplete="off" />
             <input type="checkbox" value="1" name="significant_factual_error" id="significant_factual_error" />
-            <!-- skipping error icon
-              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-4 inline-block -mt-1">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
-              </svg> -->
-            Significant factual error(s)
+            <!-- skipping error icon to fit better
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true" class="w-4 inline-block -mt-1">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
+            </svg> -->
+            Significant factual error
           </label>
         </div>
       </div>
     </div>
-    <div class="row grid-cols-2 mt-2 hidden" id="rating-save-row">
+    <div class="row grid-cols-2 hidden" id="rating-save-row">
       <div class="col">
         <div class="form-row-btn">
           <input id="ratingSubmitButton" type="submit" name="commit" value="save" class="btn btn-success"
@@ -190,7 +210,7 @@
         style="height:4rem;font-size:75%;line-height:1.5;"></textarea>
     </div>
   </form>
-  <div id="rating-menu" class="collapsible hidden">
+  <div id="rating-menu" class="collapsible hidden mt-4">
     <hr>
     <p class="text-sm mt-2 hidden-safari_ios">Open rating dialog with <code>control</code> + <code>shift</code> +
       <code>R</code>

@@ -1663,9 +1663,6 @@ input.form-control.number-field-no-btns::-webkit-outer-spin-button,
 #rating-menu-btn svg {
     height: 1.75rem;
   }
-#rating-menu {
-  margin-top: 1rem;
-}
 #rating-menu hr {
     margin: 0 -0.75rem;
   }
