@@ -110,6 +110,7 @@ const updateAdditionalRatingFields = (ratingAttrs) => {
   if (ratingAttrs.quality !== 'quality_med') {
     document.getElementById(`quality_${ratingAttrs.quality}`).checked = true
   }
+  // Only update agreement if it's not the default
   if (ratingAttrs.agreement !== 'neutral') {
     document.getElementById(`agreement_${ratingAttrs.agreement}`).checked = true
   }
