@@ -8,7 +8,7 @@
 //  2. Run the Archive process in XCODE
 //  ... Someday use https://fastlane.tools to automate things
 //
-CURRENT_PROJECT_VERSION = 19
+CURRENT_PROJECT_VERSION = 20
 MARKETING_VERSION = 0.11.2
 //
 // Configuration settings file format documentation can be found at:
