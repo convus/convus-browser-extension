@@ -553,6 +553,9 @@
     if (ratingAttrs.quality !== "quality_med") {
       document.getElementById(`quality_${ratingAttrs.quality}`).checked = true;
     }
+    if (ratingAttrs.agreement !== "neutral") {
+      document.getElementById(`agreement_${ratingAttrs.agreement}`).checked = true;
+    }
     ratingCheckboxes.filter((field) => ratingAttrs[field]).forEach(function(field) {
       document.getElementById(field).checked = true;
     });
