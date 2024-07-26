@@ -31,7 +31,7 @@ const handlePageData = (response, isAuthUrl) => {
   log.debug('Script response: ', response)
 
   const result = safariType ? response[0] : response[0]?.result
-  // log.warn(`result: ${JSON.stringify(result)}`)
+  log.warn(`result: ${JSON.stringify(result)}`)
   if (isAuthUrl) {
     log.trace(`authUrl?: ${isAuthUrl}    ${window.currentUrl}`)
     login.loginFromAuthPageData(result.authToken, result.currentName)

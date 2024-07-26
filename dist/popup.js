@@ -367,7 +367,7 @@
       return true;
     }
   };
-  var baseUrl = "http://localhost:3009";
+  var baseUrl = "https://www.convus.org";
   var renderLocalAlert = () => {
     if (document.getElementById("local-alert")) {
       return;
@@ -584,7 +584,7 @@
   };
 
   // login.js
-  var baseUrl2 = "http://localhost:3009";
+  var baseUrl2 = "https://www.convus.org";
   var formAuthUrl = baseUrl2 + "/api/v1/auth";
   var authUrl = baseUrl2 + "/browser_extension_auth";
   var storeAuthData = (authToken, currentName) => {
@@ -613,9 +613,9 @@
     return false;
   };
   var countdownAndClose = (selector, ms, closeFunc = false) => {
-    if (window.currentUrl.toLowerCase().endsWith("#noclose")) {
+    if (window.currentUrl?.toLowerCase()?.endsWith("#noclose")) {
       log_default.trace("URL ends with #noClose, so skip automatically closing");
-      utilities_default.elementsHide(selector);
+      utilities_default.elementsHide(".closeAutomaticallyText");
       return;
     }
     let secondsLeft = ms / 1e3;
@@ -637,7 +637,7 @@
     browser.storage.local.remove("currentName");
     window.authToken = void 0;
   };
-  var isAuthUrl = (url = null) => authUrl === (url || window.currentUrl).replace(/\/(#.*)?$/g, "");
+  var isAuthUrl = (url = null) => authUrl === (url || window.currentUrl)?.replace(/\/?(#.*)?$/, "");
   var isSignInOrUpUrl = (url = null) => {
     url ||= window.currentUrl;
     return `${baseUrl2}/users/sign_in` === url || `${baseUrl2}/users/sign_up` === url;
@@ -721,7 +721,7 @@
 
   // injected_script.js
   function injectedScript() {
-    const authUrl2 = "http://localhost:3009/browser_extension_auth";
+    const authUrl2 = "https://www.convus.org/browser_extension_auth";
     console.log("Convus extension is getting the page metadata!");
     if (authUrl2 === window.location.href) {
       const authData = {
@@ -775,6 +775,7 @@
   var handlePageData = (response, isAuthUrl2) => {
     log_default.debug("Script response: ", response);
     const result = safariType ? response[0] : response[0]?.result;
+    log_default.warn(`result: ${JSON.stringify(result)}`);
     if (isAuthUrl2) {
       log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
       login_default.loginFromAuthPageData(result.authToken, result.currentName);
