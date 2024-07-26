@@ -613,6 +613,11 @@
     return false;
   };
   var countdownAndClose = (selector, ms, closeFunc = false) => {
+    if (window.currentUrl.toLowerCase().endsWith("#noclose")) {
+      log_default.trace("URL ends with #noClose, so skip automatically closing");
+      utilities_default.elementsHide(selector);
+      return;
+    }
     let secondsLeft = ms / 1e3;
     const countdownEl = document.querySelector(selector);
     countdownEl.textContent = secondsLeft;
@@ -632,7 +637,7 @@
     browser.storage.local.remove("currentName");
     window.authToken = void 0;
   };
-  var isAuthUrl = (url = null) => authUrl === (url || window.currentUrl);
+  var isAuthUrl = (url = null) => authUrl === (url || window.currentUrl).replace(/\/(#.*)?$/g, "");
   var isSignInOrUpUrl = (url = null) => {
     url ||= window.currentUrl;
     return `${baseUrl2}/users/sign_in` === url || `${baseUrl2}/users/sign_up` === url;
@@ -751,7 +756,7 @@
   }
 
   // popup.js
-  var browserTarget = "chrome";
+  var browserTarget = "safari_ios";
   var safariType = !!browserTarget.match("safari");
   if (browserTarget == "chrome") {
     browser = chrome;

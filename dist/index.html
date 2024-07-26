@@ -9,12 +9,12 @@
   <title>Convus</title>
 </head>
 
-<body id="body-popup" class="target-chrome">
+<body id="body-popup" class="target-safari_ios">
   <div id="whitespace-preserver" style="height: 3rem"></div>
   <div id="sign_in_message" class="hidden">
     <h2 class="my-4">Convus browser extension</h2>
     <p class="mt-4 mb-4">
-      <a href="http://localhost:3009/browser_extension_auth" target="_blank" class="btn btn-success" id="signInBtn">Sign in to the
+      <a href="https://www.convus.org/browser_extension_auth" target="_blank" class="btn btn-success" id="signInBtn">Sign in to the
         browser extension</a>
     </p>
   </div>
@@ -32,7 +32,7 @@
     <p class="mt-4 mb-4">You can close this popup, or it will close automatically in <span id="out_countdown">5</span>
       seconds.</p>
   </div>
-  <form class="hidden pb-2" id="new_user" action="http://localhost:3009/api/v1/auth" accept-charset="UTF-8" method="post">
+  <form class="hidden pb-2" id="new_user" action="https://www.convus.org/api/v1/auth" accept-charset="UTF-8" method="post">
     <h2 class="mb-2 mt-3">Log in</h2>
     <div class="form-row">
       <label for="email">Email</label>
@@ -47,11 +47,11 @@
       <input type="submit" name="commit" value="Log in" id="loginBtn" class="btn btn-success"
         data-disable-with="Log in" />
     </div>
-    <p class="mt-2"><a href="http://localhost:3009/users/password/new" target="_blank">Forgot your password?</a></p>
-    <p class="mt-2"><a href="http://localhost:3009/users/sign_up" target="_blank">Sign up</a></p>
+    <p class="mt-2"><a href="https://www.convus.org/users/password/new" target="_blank">Forgot your password?</a></p>
+    <p class="mt-2"><a href="https://www.convus.org/users/sign_up" target="_blank">Sign up</a></p>
   </form>
-  <form id="new_rating" action="http://localhost:3009/api/v1/ratings" accept-charset="UTF-8" method="post" class="pb-2 hidden">
-    <input autocomplete="off" type="hidden" value="chrome_extension-0.11.2" name="source" id="source" />
+  <form id="new_rating" action="https://www.convus.org/api/v1/ratings" accept-charset="UTF-8" method="post" class="pb-2 hidden">
+    <input autocomplete="off" type="hidden" value="safari_ios_extension-0.11.2" name="source" id="source" />
     <input class="hiddenFieldTimezone" autocomplete="off" type="hidden" name="timezone" id="timezone" />
     <div class="row grid-cols-2 divide-x border-b">
       <div class="col pb-1 pt-2">

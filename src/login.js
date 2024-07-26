@@ -43,6 +43,12 @@ const handleFallbackLoginSubmit = async function (e) {
 
 // Internal
 const countdownAndClose = (selector, ms, closeFunc = false) => {
+  // Stop countdown and exit timeout if URL ends with #noClose (to aid in bug fixing)
+  if (window.currentUrl.toLowerCase().endsWith('#noclose')) {
+    log.trace('URL ends with #noClose, so skip automatically closing')
+    utilities.elementsHide(selector)
+    return
+  }
   let secondsLeft = ms / 1000
   const countdownEl = document.querySelector(selector)
   countdownEl.textContent = secondsLeft // Set the initial time
@@ -63,7 +69,8 @@ const removeAuthData = () => {
   window.authToken = undefined
 }
 
-const isAuthUrl = (url = null) => authUrl === (url || window.currentUrl)
+// Remove the trailing / and any anchor tag (added because #noClose)
+const isAuthUrl = (url = null) => authUrl === (url || window.currentUrl).replace(/\/(#.*)?$/g, '')
 
 const isSignInOrUpUrl = (url = null) => {
   url ||= window.currentUrl
