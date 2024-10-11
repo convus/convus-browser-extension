@@ -723,7 +723,7 @@
   function injectedScript() {
     const authUrl2 = "https://www.convus.org/browser_extension_auth";
     console.log("Convus extension is getting the page metadata!");
-    if (authUrl2 === window.location.href) {
+    if (window.location.href.startsWith(authUrl2)) {
       const authData = {
         currentName: document.querySelector('meta[name="ext-username"]')?.content,
         authToken: document.querySelector('meta[name="ext-token"]')?.content
@@ -763,7 +763,7 @@
   }
   browser.storage.local.get(["authToken", "currentName"]).then((data) => {
     if (typeof data.authToken === "undefined" || data.authToken === null) {
-      log_default.debug(`missing auth!   authToken: ${data.authToken} and currentName: ${data.currentName}`);
+      log_default.debug(`missing auth!   authToken: '${data.authToken}' and currentName: '${data.currentName}'`);
       login_default.loginTime();
     } else {
       log_default.trace("auth present");
@@ -774,7 +774,10 @@
   });
   var handlePageData = (response, isAuthUrl2) => {
     log_default.debug("Script response: ", response);
-    const result = safariType ? response[0] : response[0]?.result;
+    let result = response[0];
+    if (result.result !== void 0) {
+      result = result.result;
+    }
     log_default.warn(`result: ${JSON.stringify(result)}`);
     if (isAuthUrl2) {
       log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);

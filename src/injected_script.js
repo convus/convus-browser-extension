@@ -4,7 +4,8 @@ export default function injectedScript () {
   console.log('Convus extension is getting the page metadata!')
 
   // If on the extension auth URL, we only care about the two auth meta fields
-  if (authUrl === window.location.href) {
+  // compare the start so that #noClose still matches
+  if (window.location.href.startsWith(authUrl)) {
     const authData = {
       currentName: document.querySelector('meta[name="ext-username"]')?.content,
       authToken: document.querySelector('meta[name="ext-token"]')?.content

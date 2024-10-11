@@ -10,7 +10,7 @@ jobs:
     environment:
       NODE_ENV: test
     docker:
-      - image: cimg/node:18.14.2
+      - image: cimg/node:20.17.0
     steps:
       - checkout
       - restore_cache:
