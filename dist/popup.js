@@ -637,7 +637,7 @@
     browser.storage.local.remove("currentName");
     window.authToken = void 0;
   };
-  var isAuthUrl = (url = null) => authUrl === (url || window.currentUrl)?.replace(/\/?(#.*)?$/, "");
+  var isAuthUrl = (url = null) => (url || window.currentUrl).startsWith(authUrl);
   var isSignInOrUpUrl = (url = null) => {
     url ||= window.currentUrl;
     return `${baseUrl2}/users/sign_in` === url || `${baseUrl2}/users/sign_up` === url;

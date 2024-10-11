@@ -69,8 +69,8 @@ const removeAuthData = () => {
   window.authToken = undefined
 }
 
-// Remove the trailing / and any anchor tag (added because #noClose)
-const isAuthUrl = (url = null) => authUrl === (url || window.currentUrl)?.replace(/\/?(#.*)?$/, '')
+// use .startsWith so trailing / and any anchor tag (added because #noClose) match
+const isAuthUrl = (url = null) => (url || window.currentUrl).startsWith(authUrl)
 
 const isSignInOrUpUrl = (url = null) => {
   url ||= window.currentUrl
