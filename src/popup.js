@@ -31,10 +31,8 @@ const handlePageData = (response, isAuthUrl) => {
   log.debug('Script response: ', response)
 
   let result = response[0]
-  if (result.result !== undefined) {
-    result = result.result;
-  }
-  // const result = safariType ? response[0] : response[0]?.result
+  // This is required because safari doesn't necessarily have a result subkey
+  if (result.result !== undefined) { result = result.result }
   log.warn(`result: ${JSON.stringify(result)}`)
   if (isAuthUrl) {
     log.trace(`authUrl?: ${isAuthUrl}    ${window.currentUrl}`)
