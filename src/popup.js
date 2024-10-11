@@ -15,7 +15,7 @@ if (browserTarget == 'chrome') { browser = chrome } // eslint-disable-line
 browser.storage.local.get(['authToken', 'currentName'])
   .then(data => {
     if (typeof (data.authToken) === 'undefined' || data.authToken === null) {
-      log.debug(`missing auth!   authToken: ${data.authToken} and currentName: ${data.currentName}`)
+      log.debug(`missing auth!   authToken: '${data.authToken}' and currentName: '${data.currentName}'`)
       login.loginTime()
     } else {
       log.trace('auth present')
@@ -30,8 +30,10 @@ browser.storage.local.get(['authToken', 'currentName'])
 const handlePageData = (response, isAuthUrl) => {
   log.debug('Script response: ', response)
 
-  const result = safariType ? response[0] : response[0]?.result
-  // log.warn(`result: ${JSON.stringify(result)}`)
+  let result = response[0]
+  // This is required because safari doesn't necessarily have a result subkey
+  if (result.result !== undefined) { result = result.result }
+  log.warn(`result: ${JSON.stringify(result)}`)
   if (isAuthUrl) {
     log.trace(`authUrl?: ${isAuthUrl}    ${window.currentUrl}`)
     login.loginFromAuthPageData(result.authToken, result.currentName)

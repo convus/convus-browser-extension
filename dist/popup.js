@@ -613,6 +613,11 @@
     return false;
   };
   var countdownAndClose = (selector, ms, closeFunc = false) => {
+    if (window.currentUrl?.toLowerCase()?.endsWith("#noclose")) {
+      log_default.trace("URL ends with #noClose, so skip automatically closing");
+      utilities_default.elementsHide(".closeAutomaticallyText");
+      return;
+    }
     let secondsLeft = ms / 1e3;
     const countdownEl = document.querySelector(selector);
     countdownEl.textContent = secondsLeft;
@@ -632,7 +637,7 @@
     browser.storage.local.remove("currentName");
     window.authToken = void 0;
   };
-  var isAuthUrl = (url = null) => authUrl === (url || window.currentUrl);
+  var isAuthUrl = (url = null) => (url || window.currentUrl).startsWith(authUrl);
   var isSignInOrUpUrl = (url = null) => {
     url ||= window.currentUrl;
     return `${baseUrl2}/users/sign_in` === url || `${baseUrl2}/users/sign_up` === url;
@@ -718,7 +723,7 @@
   function injectedScript() {
     const authUrl2 = "http://localhost:3009/browser_extension_auth";
     console.log("Convus extension is getting the page metadata!");
-    if (authUrl2 === window.location.href) {
+    if (window.location.href.startsWith(authUrl2)) {
       const authData = {
         currentName: document.querySelector('meta[name="ext-username"]')?.content,
         authToken: document.querySelector('meta[name="ext-token"]')?.content
@@ -758,7 +763,7 @@
   }
   browser.storage.local.get(["authToken", "currentName"]).then((data) => {
     if (typeof data.authToken === "undefined" || data.authToken === null) {
-      log_default.debug(`missing auth!   authToken: ${data.authToken} and currentName: ${data.currentName}`);
+      log_default.debug(`missing auth!   authToken: '${data.authToken}' and currentName: '${data.currentName}'`);
       login_default.loginTime();
     } else {
       log_default.trace("auth present");
@@ -769,7 +774,11 @@
   });
   var handlePageData = (response, isAuthUrl2) => {
     log_default.debug("Script response: ", response);
-    const result = safariType ? response[0] : response[0]?.result;
+    let result = response[0];
+    if (result.result !== void 0) {
+      result = result.result;
+    }
+    log_default.warn(`result: ${JSON.stringify(result)}`);
     if (isAuthUrl2) {
       log_default.trace(`authUrl?: ${isAuthUrl2}    ${window.currentUrl}`);
       login_default.loginFromAuthPageData(result.authToken, result.currentName);
